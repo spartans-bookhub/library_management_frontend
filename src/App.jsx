@@ -1,9 +1,13 @@
 import { useState } from 'react'
+// import 'bootstrap/dist/css/bootstrap.min.css';
+/* The following line can be included in a src/App.scss */
+
 import './App.css'
-import UserProfile from './components/user/userprofile'
+// import UserProfile from './components/user/userprofile'
 import Registration from './components/user/registration'
 import { BrowserRouter, Routes , Route} from 'react-router-dom'
-import Navbar from './components/common/navbar'
+import Navbar from './components/common/Navbar'
+import Login from './components/user/Login';
 
 
 function App() {
@@ -11,14 +15,16 @@ function App() {
 
   return (
   <>
-   <BrowserRouter>
-    <Navbar/>
-       <Routes>
-        <Route path="/register" element={<Registration/>}/>
-        {/* <Route path="/login" element={<Login/>}/>
-        <Route path="/userprofile" element = {<UserProfile/>}/> */}       
-       </Routes>
-    </BrowserRouter>
+
+    <div>
+
+    <Login />
+  
+  <Registration />
+
+     <Navbar />
+    
+    </div> 
         
    </>
    
