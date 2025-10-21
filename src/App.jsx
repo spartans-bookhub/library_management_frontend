@@ -5,9 +5,10 @@ import { useState } from 'react'
 import './App.css'
 // import UserProfile from './components/user/userprofile'
 import Registration from './components/user/registration'
-import { BrowserRouter, Routes , Route} from 'react-router-dom'
+import { Routes , Route} from 'react-router-dom'
 import Navbar from './components/common/Navbar'
 import Login from './components/user/Login';
+import ResetPassword from './components/user/ResetPassword'
 
 
 function App() {
@@ -15,15 +16,14 @@ function App() {
 
   return (
   <>
-
     <div>
 
-    <Login />
-  
-  <Registration />
-
-     <Navbar />
-    
+    <Routes>
+      {/* <Route path="/" element={<Home />} /> */}
+      <Route path="/login" element={<Login />} />
+      <Route path="/register" element={<Registration />} />
+      <Route path="/resetPassword" element={<ResetPassword />} />
+    </Routes>
     </div> 
         
    </>
