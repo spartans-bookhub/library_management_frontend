@@ -9,6 +9,7 @@ import { Routes , Route} from 'react-router-dom'
 import Navbar from './components/common/Navbar'
 import Login from './components/user/Login';
 import ResetPassword from './components/user/ResetPassword'
+import MainLayout from './layout/mainLayout'
 
 
 function App() {
@@ -17,13 +18,12 @@ function App() {
   return (
   <>
     <div>
-
-    <Routes>
-      {/* <Route path="/" element={<Home />} /> */}
-      <Route path="/login" element={<Login />} />
-      <Route path="/register" element={<Registration />} />
-      <Route path="/resetPassword" element={<ResetPassword />} />
-    </Routes>
+        <Routes>
+          <Route path="/" element={<MainLayout />} />
+          <Route path="/login" element={<Login />} />
+          <Route path="/register" element={<Registration />} />
+          <Route path="/resetPassword" element={<ResetPassword />} />
+        </Routes>
     </div> 
         
    </>
