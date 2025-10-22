@@ -11,15 +11,23 @@ import { AuthProvider } from "./context/AuthContext";
 import { CartProvider } from "./context/CartContext";
 import { ToastProvider } from "./context/ToastContext";
 import ProtectedRoute from "./components/auth/ProtectedRoute";
+import UserProfile from "./components/user/userprofile";
 
 function App() {
   const [count, setCount] = useState(0);
 
+  const currentUser = {
+  name: 'Jane Doe',
+  email: 'jane.doe@example.com',
+  avatarUrl: 'https://i.pravatar.cc/150?img=5',
+  bio: 'Frontend developer passionate about React and Material UI.',
+};
+
   return (
     <>
       <ToastProvider>
-        <AuthProvider>
-          <CartProvider>
+         <AuthProvider>
+         <CartProvider>
             <BrowserRouter>
               <Navbar />
               <Routes>
@@ -49,11 +57,19 @@ function App() {
                     </ProtectedRoute>
                   } 
                 />
-                {/* <Route path="/userprofile" element = {<UserProfile/>}/> */}
+             
+               <Route 
+                  path="/userprofile" 
+                  element={
+                    <ProtectedRoute>
+                      <UserProfile user={currentUser} />
+                    </ProtectedRoute>
+                  } 
+                />
               </Routes>
             </BrowserRouter>
           </CartProvider>
-        </AuthProvider>
+        </AuthProvider> 
       </ToastProvider>
     </>
   );
