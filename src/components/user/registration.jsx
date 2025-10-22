@@ -18,8 +18,11 @@ const passwordRegex =
 const contactNumberRegex = /^(?:\+91|91)?[789]\d{9}$/;
 
 export default function Registration() {
+
+  // Used for navigation 
   const navigate = useNavigate();
 
+  // Set the initial State
   const [formData, setFormData] = useState({
     email: "",
     password: "",
@@ -60,7 +63,6 @@ export default function Registration() {
     }
 
     // address is optional, no validation
-
     return err;
   }
 

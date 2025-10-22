@@ -1,5 +1,5 @@
 @import "tailwindcss";
-
+/* @import '~bootstrap/scss/bootstrap'; */
 @layer base {
   :root {
     --sidebar: oklch(0.985 0 0);
