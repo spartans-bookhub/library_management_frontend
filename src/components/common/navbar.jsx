@@ -26,6 +26,13 @@ export default function Navbar() {
           >
             Login
           </Button>
+           <Button
+            color="inherit"
+            component={RouterLink}
+            to="/userprofile"
+          >
+            user
+          </Button>
 
         </Box>
       </Toolbar>
