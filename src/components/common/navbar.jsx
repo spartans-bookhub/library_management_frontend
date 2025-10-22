@@ -37,9 +37,14 @@ export default function Navbar() {
     setAnchorEl(null);
   };
 
-  const handleProfileClick = () => {
+  const handlePDashboardClick = () => {
     handleProfileMenuClose();
     navigate("/dashboard");
+  };
+
+    const handleProfileClick = () => {
+    handleProfileMenuClose();
+    navigate("/userprofile");
   };
 
   const handleLogoutClick = () => {
@@ -105,6 +110,7 @@ export default function Navbar() {
                 }}
               >
                 <MenuItem onClick={handleProfileClick}>Profile</MenuItem>
+                 <MenuItem onClick={handlePDashboardClick}>Dashboard</MenuItem>
                 <MenuItem onClick={handleLogoutClick}>Logout</MenuItem>
               </Menu>
             </>

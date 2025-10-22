@@ -11,13 +11,22 @@ export const useAuth = () => {
 };
 
 export const AuthProvider = ({ children }) => {
-  const [user, setUser] = useState(null);
+  const [user, setUser] = useState(() => {
+    const storedUser = localStorage.getItem("user");
+    return storedUser ? JSON.parse(storedUser) : null;
+  });
+  // const [userId, setUserId] = useState(() => {
+  //   const storedUserId = localStorage.getItem("userId");
+  //   return storedUserId ? Number(storedUserId) : null;
+  // });
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [loading, setLoading] = useState(true);
 
-  useEffect(() => {
+  useEffect(() => {  
+      console.log('AuthProvider user state:');
     // Check if token exists in localStorage on app startup
     const token = localStorage.getItem("token");
+    const storedUser = localStorage.getItem("user");
     if (token) {
       setIsAuthenticated(true);
     }
@@ -26,10 +35,13 @@ export const AuthProvider = ({ children }) => {
 
   const login = (userData, token) => {
     // Save token to localStorage
+     console.log('AuthProvider login:');
     localStorage.setItem("token", token);
+    localStorage.setItem("user", JSON.stringify(userData));
     
     // Save user data to context state
     setUser(userData);
+    // setUserId(userData.userId)
     setIsAuthenticated(true);
   };
 
@@ -42,6 +54,20 @@ export const AuthProvider = ({ children }) => {
     setIsAuthenticated(false);
   };
 
+  const updateUser = (updatedUser) =>{
+    // Merge userId from state with updatedUser data 
+    setUser(prevUser => {
+    const newUser = {
+      ...updatedUser,
+      userId: prevUser?.userId,  // get userId from existing user state
+    };
+     setUser(newUser);
+    localStorage.setItem("user", JSON.stringify(newUser));
+    return newUser;
+    });
+   
+  }
+
   const getToken = () => {
     return localStorage.getItem("token");
   };
@@ -53,6 +79,7 @@ export const AuthProvider = ({ children }) => {
     login,
     logout,
     getToken,
+    updateUser,
   };
 
   return (
