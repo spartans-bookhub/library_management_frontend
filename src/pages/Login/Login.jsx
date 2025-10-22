@@ -8,61 +8,39 @@ import {
   Paper,
   Stack,
   Alert,
+  Link,
 } from "@mui/material";
 import { useNavigate } from "react-router-dom";
+import { useAuth } from "../../context/AuthContext";
 import { authService } from "../../services/authService";
 
 const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-const passwordRegex =
-  /^(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z])(?=.*[@#$%^&+=!]).{6,}$/;
-const contactNumberRegex = /^(?:\+91|91)?[789]\d{9}$/;
 
-export default function Registration() {
-
-  // Used for navigation 
+const Login = () => {
   const navigate = useNavigate();
+  const { login } = useAuth();
 
-  // Set the initial State
   const [formData, setFormData] = useState({
     email: "",
     password: "",
-    name: "",
-    contactNumber: "",
-    address: "",
   });
 
   const [errors, setErrors] = useState({});
   const [apiError, setApiError] = useState("");
-  const [apiSuccess, setApiSuccess] = useState("");
 
-  // Validate inputs, returns errors object
   function validate(data) {
     const err = {};
 
     if (!data.email) {
-      err.email = "Login email is required.";
+      err.email = "Email is required.";
     } else if (!emailRegex.test(data.email)) {
-      err.email = "Email id must be valid.";
+      err.email = "Email must be valid.";
     }
 
     if (!data.password) {
       err.password = "Password is required.";
-    } else if (!passwordRegex.test(data.password)) {
-      err.password =
-        "Password must contain at least one digit, one uppercase letter, one lowercase letter, one special character and be at least 6 characters.";
     }
 
-    if (!data.name) {
-      err.name = "Name is required.";
-    }
-
-    if (!data.contactNumber) {
-      err.contactNumber = "Contact number is required.";
-    } else if (!contactNumberRegex.test(data.contactNumber)) {
-      err.contactNumber = "Invalid mobile number.";
-    }
-
-    // address is optional, no validation
     return err;
   }
 
@@ -73,20 +51,28 @@ export default function Registration() {
   async function handleSubmit(e) {
     e.preventDefault();
     setApiError("");
-    setApiSuccess("");
 
     const validationErrors = validate(formData);
     setErrors(validationErrors);
     if (Object.keys(validationErrors).length > 0) return;
 
     try {
-      await authService.register(formData);
-      setApiSuccess("Registered successfully! Redirecting to login...");
-      setTimeout(() => {
-        navigate("/login");
-      }, 2000);
+      const data = await authService.login(formData);
+      const { token, userId, userName, email, role, address, contactNumber } = data;
+      
+      // Use AuthContext login method
+      login({
+        userId,
+        userName,
+        email,
+        role,
+        address,
+        contactNumber
+      }, token);
+      
+      navigate("/books");
     } catch (error) {
-      setApiError(error.message || "Failed to register. Please try again.");
+      setApiError(error.message || "Invalid email or password. Please try again.");
     }
   }
 
@@ -94,17 +80,12 @@ export default function Registration() {
     <Container maxWidth="sm" sx={{ mt: 4 }}>
       <Paper elevation={3} sx={{ p: 4 }}>
         <Typography variant="h4" component="h1" gutterBottom>
-          Register
+          Login
         </Typography>
 
         {apiError && (
           <Alert severity="error" sx={{ mb: 2 }}>
             {apiError}
-          </Alert>
-        )}
-        {apiSuccess && (
-          <Alert severity="success" sx={{ mb: 2 }}>
-            {apiSuccess}
           </Alert>
         )}
 
@@ -134,44 +115,25 @@ export default function Registration() {
               fullWidth
             />
 
-            <TextField
-              label="Name"
-              name="name"
-              value={formData.name}
-              onChange={handleChange}
-              error={!!errors.name}
-              helperText={errors.name}
-              required
-              fullWidth
-            />
-
-            <TextField
-              label="Contact Number"
-              name="contactNumber"
-              value={formData.contactNumber}
-              onChange={handleChange}
-              error={!!errors.contactNumber}
-              helperText={errors.contactNumber}
-              required
-              fullWidth
-            />
-
-            <TextField
-              label="Address"
-              name="address"
-              value={formData.address}
-              onChange={handleChange}
-              multiline
-              rows={3}
-              fullWidth
-            />
-
             <Button variant="contained" type="submit" fullWidth>
-              Register
+              Login
             </Button>
+
+            <Typography variant="body2" align="center">
+              Don't have an account?{" "}
+              <Link
+                component="button"
+                variant="body2"
+                onClick={() => navigate("/register")}
+              >
+                Register here
+              </Link>
+            </Typography>
           </Stack>
         </Box>
       </Paper>
     </Container>
   );
-}
+};
+
+export default Login;
