@@ -113,5 +113,35 @@ export const libraryService = {
     } catch (error) {
       throw new Error(error.response?.data?.message || "Failed to borrow books");
     }
+  },
+
+  // Get borrowed books
+  getBorrowedBooks: async () => {
+    try {
+      const response = await apiClient.get(API_ENDPOINTS.LIBRARY.GET_BORROWED_BOOKS);
+      return response.data;
+    } catch (error) {
+      throw new Error(error.response?.data?.message || "Failed to fetch borrowed books");
+    }
+  },
+
+  // Return borrowed book
+  returnBorrowedBook: async (bookId) => {
+    try {
+      const response = await apiClient.post(`/api/v1/transactions/book/${bookId}/return`);
+      return response.data;
+    } catch (error) {
+      throw new Error(error.response?.data?.message || "Failed to return book");
+    }
+  },
+
+  // Get transaction history
+  getHistory: async () => {
+    try {
+      const response = await apiClient.get(API_ENDPOINTS.LIBRARY.GET_HISTORY);
+      return response.data;
+    } catch (error) {
+      throw new Error(error.response?.data?.message || "Failed to fetch history");
+    }
   }
 };
