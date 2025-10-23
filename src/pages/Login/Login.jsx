@@ -9,10 +9,15 @@ import {
   Stack,
   Alert,
   Link,
+  Dialog,
+  DialogTitle,
+  DialogContent,
+  DialogActions,
 } from "@mui/material";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../../context/AuthContext";
 import { authService } from "../../services/authService";
+import ForgotPasswordDialog from "../../components/user/forgotpassword";
 
 const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
@@ -27,6 +32,7 @@ const Login = () => {
 
   const [errors, setErrors] = useState({});
   const [apiError, setApiError] = useState("");
+  const [openForgot, setOpenForgot] = useState(false);
 
   function validate(data) {
     const err = {};
@@ -114,7 +120,19 @@ const Login = () => {
               required
               fullWidth
             />
-
+             <Typography variant="body2">
+              <Link
+                component="button"
+                variant="body2"
+                type="button"  
+                onClick={()=>setOpenForgot(true) }>
+                Forgot Password?
+              </Link>   
+             </Typography>
+                <ForgotPasswordDialog
+                  open={openForgot}
+                  onClose={() => setOpenForgot(false)}
+                />
             <Button variant="contained" type="submit" fullWidth>
               Login
             </Button>
