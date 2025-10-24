@@ -16,7 +16,7 @@ import MenuBookIcon from '@mui/icons-material/MenuBook';
 
 export default function ProfileMenu() {
   const [anchorEl, setAnchorEl] = useState(null);
-  const {user, logout} = useAuth();
+  const {user, isAdmin, logout} = useAuth();
    const { mode, toggleTheme } = useThemeMode();
   const navigate = useNavigate();
   const open = Boolean(anchorEl);
@@ -24,7 +24,8 @@ export default function ProfileMenu() {
   const handleClick = (event) => setAnchorEl(event.currentTarget);
   const handleClose = () => setAnchorEl(null);
 
-const getUserInitials = (name) => {
+
+  const getUserInitials = (name) => {
     if (!name) return "U";
     const nameParts = name.split(" ");
     if (nameParts.length >= 2) {
@@ -84,10 +85,21 @@ const getUserInitials = (name) => {
         transformOrigin={{ horizontal: "right", vertical: "top" }}
         anchorOrigin={{ horizontal: "right", vertical: "bottom" }}
       >
-        <Typography sx={{ px: 2, py: 1.2, fontWeight: 500 }}>{user?.userName}</Typography>
-        <Divider />
-
-        <MenuItem onClick={handleDashboardClick}>
+        
+         {isAdmin ? (
+          <>
+          <Typography sx={{ px: 2, py: 1.2, fontWeight: 500, textAlign: "center" }}>ADMIN</Typography>
+          <Divider />
+          <MenuItem onClick={handleDashboardClick}>
+          <ListItemIcon><Dashboard fontSize="small" /></ListItemIcon>  
+          Admin Dashboard
+          </MenuItem>
+          </>
+         ) : (
+          <>
+          <Typography sx={{ px: 2, py: 1.2, fontWeight: 500 }}>{user?.userName}</Typography>
+         <Divider />
+           <MenuItem onClick={handleDashboardClick}>
           <ListItemIcon><Dashboard fontSize="small" /></ListItemIcon>
           Dashboard
         </MenuItem>
@@ -101,6 +113,11 @@ const getUserInitials = (name) => {
          <ListItemIcon> <MenuBookIcon fontSize="small" /> </ListItemIcon>
           Books
         </MenuItem>
+        </>
+         )}
+         
+        
+       
 
 
         <MenuItem onClick={() => { toggleTheme(); handleClose(); }}>
