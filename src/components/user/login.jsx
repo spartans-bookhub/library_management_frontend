@@ -22,7 +22,7 @@ const Login = () => {
         .email("Invalid email address")
         .required("Email is required"),
       password: Yup.string()
-        .min(8, "Password must be at least 8 characters")
+        .min(6, "Password must be at least 6 characters")
         .required("Password is required"),
     }),
     onSubmit: (values) => {
@@ -40,12 +40,15 @@ const Login = () => {
       <Row className="w-100 justify-content-center mx-0">
         <Col xs={11} sm={9} md={7} lg={5} xl={4}>
           <Card className="p-4 shadow-lg rounded-4 border-0">
-            <Typography variant="h5" className="text-center mb-4 fw-semibold text-primary">
+            <Typography
+              variant="h5"
+              className="text-center mb-4 fw-semibold text-primary"
+            >
               Login
             </Typography>
 
             <form onSubmit={formik.handleSubmit} noValidate>
-            
+              {/* Email Field */}
               <TextField
                 fullWidth
                 label="Email"
@@ -60,7 +63,7 @@ const Login = () => {
                 variant="outlined"
               />
 
-              
+              {/* Password Field with Toggle */}
               <TextField
                 fullWidth
                 label="Password"
@@ -76,6 +79,7 @@ const Login = () => {
                
               />
 
+              {/* Submit Button */}
               <Button
                 type="submit"
                 fullWidth
@@ -92,6 +96,7 @@ const Login = () => {
                 Login
               </Button>
 
+              {/* Register Redirect */}
               <Typography
                 variant="body2"
                 className="text-center mt-3"

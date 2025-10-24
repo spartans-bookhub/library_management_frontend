@@ -15,12 +15,10 @@ export const AuthProvider = ({ children }) => {
     const storedUser = localStorage.getItem("user");
     return storedUser ? JSON.parse(storedUser) : null;
   });
-  // const [userId, setUserId] = useState(() => {
-  //   const storedUserId = localStorage.getItem("userId");
-  //   return storedUserId ? Number(storedUserId) : null;
-  // });
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [loading, setLoading] = useState(true);
+  const [isAdmin, setIsAdmin] = useState(false);;
+  
 
   useEffect(() => {  
       console.log('AuthProvider user state:');
@@ -30,6 +28,7 @@ export const AuthProvider = ({ children }) => {
     if (token) {
       setIsAuthenticated(true);
     }
+   
     setLoading(false);
   }, []);
 
@@ -41,13 +40,14 @@ export const AuthProvider = ({ children }) => {
     
     // Save user data to context state
     setUser(userData);
-    // setUserId(userData.userId)
+    setIsAdmin(userData?.role === "ADMIN");
     setIsAuthenticated(true);
   };
 
   const logout = () => {
     // Remove token from localStorage
     localStorage.removeItem("token");
+    localStorage.removeItem("user");
     
     // Clear user data from context
     setUser(null);
@@ -80,6 +80,7 @@ export const AuthProvider = ({ children }) => {
     logout,
     getToken,
     updateUser,
+    isAdmin,
   };
 
   return (
