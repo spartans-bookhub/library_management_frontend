@@ -13,6 +13,7 @@ import { ToastProvider } from "./context/ToastContext";
 import ProtectedRoute from "./components/auth/ProtectedRoute";
 import UserProfile from "./components/user/userprofile";
 import ResetPassword from "./components/user/resetpassword";
+import NotFound from "./pages/OtherPages/NotFound";
 
 function App() {
   const [count, setCount] = useState(0);
@@ -68,6 +69,8 @@ function App() {
                     </ProtectedRoute>
                   }
                 />
+                {/* Fallback Route */}
+                <Route path="*" element={<NotFound />} />
               </Routes>
             </BrowserRouter>
           </CartProvider>
