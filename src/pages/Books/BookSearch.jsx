@@ -1,5 +1,8 @@
 import React, { useState ,useEffect} from "react";
 import axios from 'axios';
+import apiClient from "../../utils/axiosConfig";
+import { API_ENDPOINTS } from "../../constants/apiEndpoints";
+
 
 
 export default function BookSearch() {
@@ -22,7 +25,7 @@ export default function BookSearch() {
 
 useEffect(() => {
     
-    axios.get('http://localhost:9009/api/books/list') 
+    apiClient.get(API_ENDPOINTS.BOOKS.GET_ALL)
     //   .then((res) => setBooks(res.data))
       .then((res) => console.log(setBooks(res.data),"setbooksdata"))
       .catch((err) => console.log('Error fetching books:', err));
