@@ -5,7 +5,7 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import Navbar from "./components/common/navbar";
 import Login from "./pages/Login/Login";
 import Dashboard from "./pages/Dashboard/Dashboard";
-// import BookList from "./pages/Books/BookList";
+import BookList from "./pages/Books/BookList";
 import BookSearch from "./pages/Books/BookSearch";
 import Cart from "./pages/Cart/Cart";
 import { AuthProvider } from "./context/AuthContext";
@@ -19,17 +19,17 @@ function App() {
   const [count, setCount] = useState(0);
 
   const currentUser = {
-  name: 'Jane Doe',
-  email: 'jane.doe@example.com',
-  avatarUrl: 'https://i.pravatar.cc/150?img=5',
-  bio: 'Frontend developer passionate about React and Material UI.',
-};
+    name: "Jane Doe",
+    email: "jane.doe@example.com",
+    avatarUrl: "https://i.pravatar.cc/150?img=5",
+    bio: "Frontend developer passionate about React and Material UI.",
+  };
 
   return (
     <>
       <ToastProvider>
-         <AuthProvider>
-         <CartProvider>
+        <AuthProvider>
+          <CartProvider>
             <BrowserRouter>
               <Navbar />
               <Routes>
@@ -42,39 +42,38 @@ function App() {
                     <ProtectedRoute>
                       <Dashboard />
                     </ProtectedRoute>
-                    
-                  } 
+                  }
                 />
-                <Route 
-                  path="/books" 
+                <Route
+                  path="/books"
                   element={
                     <ProtectedRoute>
-                      {/* <BookList /> */}
-                      <BookSearch />
+                      <BookList />
+                      {/* <BookSearch /> */}
                     </ProtectedRoute>
-                  } 
+                  }
                 />
-                <Route 
-                  path="/cart" 
+                <Route
+                  path="/cart"
                   element={
                     <ProtectedRoute>
                       <Cart />
                     </ProtectedRoute>
-                  } 
+                  }
                 />
-             
-               <Route 
-                  path="/userprofile" 
+
+                <Route
+                  path="/userprofile"
                   element={
                     <ProtectedRoute>
                       <UserProfile user={currentUser} />
                     </ProtectedRoute>
-                  } 
+                  }
                 />
               </Routes>
             </BrowserRouter>
           </CartProvider>
-        </AuthProvider> 
+        </AuthProvider>
       </ToastProvider>
     </>
   );
