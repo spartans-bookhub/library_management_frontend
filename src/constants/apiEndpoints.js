@@ -27,5 +27,7 @@ export const API_ENDPOINTS = {
     RETURN_BOOK: "/library/return",
     GET_ISSUED_BOOKS: "/library/issued",
     BORROW_BOOKS: "/api/v1/transactions/books/borrow",
+    GET_BORROWED_BOOKS: "/api/v1/transactions/borrowed",
+    GET_HISTORY: "/api/v1/transactions/history",
   },
 };

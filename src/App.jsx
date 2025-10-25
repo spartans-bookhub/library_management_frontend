@@ -19,62 +19,61 @@ function App() {
   const [count, setCount] = useState(0);
 
   const currentUser = {
-  name: 'Jane Doe',
-  email: 'jane.doe@example.com',
-  avatarUrl: 'https://i.pravatar.cc/150?img=5',
-  bio: 'Frontend developer passionate about React and Material UI.',
-};
+    name: "Jane Doe",
+    email: "jane.doe@example.com",
+    avatarUrl: "https://i.pravatar.cc/150?img=5",
+    bio: "Frontend developer passionate about React and Material UI.",
+  };
 
   return (
     <>
       <ToastProvider>
-         <AuthProvider>
-         <CartProvider>
+        <AuthProvider>
+          <CartProvider>
             <BrowserRouter>
               <Navbar />
               <Routes>
                 <Route path="/register" element={<Registration />} />
                 <Route path="/login" element={<Login />} />
                 <Route path="/reset-password" element={<ResetPassword />} />
-                <Route 
-                  path="/dashboard" 
+                <Route
+                  path="/dashboard"
                   element={
                     <ProtectedRoute>
                       <Dashboard />
                     </ProtectedRoute>
-                    
-                  } 
+                  }
                 />
-                <Route 
-                  path="/books" 
+                <Route
+                  path="/books"
                   element={
                     <ProtectedRoute>
                       <BookList />
                       {/* <BookSearch /> */}
                     </ProtectedRoute>
-                  } 
+                  }
                 />
-                <Route 
-                  path="/cart" 
+                <Route
+                  path="/cart"
                   element={
                     <ProtectedRoute>
                       <Cart />
                     </ProtectedRoute>
-                  } 
+                  }
                 />
-             
-               <Route 
-                  path="/userprofile" 
+
+                <Route
+                  path="/userprofile"
                   element={
                     <ProtectedRoute>
                       <UserProfile user={currentUser} />
                     </ProtectedRoute>
-                  } 
+                  }
                 />
               </Routes>
             </BrowserRouter>
           </CartProvider>
-        </AuthProvider> 
+        </AuthProvider>
       </ToastProvider>
     </>
   );

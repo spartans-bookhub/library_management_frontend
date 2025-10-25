@@ -13,7 +13,14 @@ import {
   CircularProgress,
   Rating,
   Paper,
+  TextField,
+  InputAdornment,
+  FormControl,
+  InputLabel,
+  Select,
+  MenuItem,
 } from "@mui/material";
+import SearchIcon from "@mui/icons-material/Search";
 import { useNavigate } from "react-router-dom";
 import { libraryService } from "../../services/libraryService";
 import { useAuth } from "../../context/AuthContext";
@@ -22,8 +29,13 @@ import { useToast } from "../../context/ToastContext";
 
 const BookList = () => {
   const [books, setBooks] = useState([]);
+  const [filteredBooks, setFilteredBooks] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
+  const [searchTerm, setSearchTerm] = useState("");
+  const [categoryFilter, setCategoryFilter] = useState("");
+  const [availabilityFilter, setAvailabilityFilter] = useState("");
+  const [sortBy, setSortBy] = useState("");
   const navigate = useNavigate();
   const { user } = useAuth();
   const { addToCart, isInCart, getItemQuantity } = useCart();
@@ -33,15 +45,64 @@ const BookList = () => {
     fetchBooks();
   }, []);
 
+  useEffect(() => {
+    let filtered = [...books];
+
+    if (searchTerm) {
+      filtered = filtered.filter(
+        (book) =>
+          book.bookTitle.toLowerCase().includes(searchTerm.toLowerCase()) ||
+          book.bookAuthor.toLowerCase().includes(searchTerm.toLowerCase())
+      );
+    }
+
+    if (categoryFilter) {
+      filtered = filtered.filter((book) => book.category === categoryFilter);
+    }
+
+    if (availabilityFilter === "available") {
+      filtered = filtered.filter((book) => book.availableCopies > 0);
+    } else if (availabilityFilter === "out_of_stock") {
+      filtered = filtered.filter((book) => book.availableCopies === 0);
+    }
+
+    if (sortBy) {
+      filtered.sort((a, b) => {
+        switch (sortBy) {
+          case "title_asc":
+            return a.bookTitle.localeCompare(b.bookTitle);
+          case "title_desc":
+            return b.bookTitle.localeCompare(a.bookTitle);
+          case "price_asc":
+            return a.price - b.price;
+          case "price_desc":
+            return b.price - a.price;
+          case "rating_asc":
+            return a.rating - b.rating;
+          case "rating_desc":
+            return b.rating - a.rating;
+          default:
+            return 0;
+        }
+      });
+    }
+
+    setFilteredBooks(filtered);
+  }, [books, searchTerm, categoryFilter, availabilityFilter, sortBy]);
+
+  const uniqueCategories = [
+    ...new Set(books.map((book) => book.category)),
+  ].filter(Boolean);
+
   const fetchBooks = async () => {
     try {
       setLoading(true);
       const data = await libraryService.getAllBooks();
       console.log("API Response:", data); // Debug log
 
-      // Ensure data is an array
       const booksArray = Array.isArray(data) ? data : [];
       setBooks(booksArray);
+      setFilteredBooks(booksArray);
     } catch (error) {
       console.error("API Error:", error); // Debug log
       setError(error.message || "Failed to fetch books");
@@ -62,10 +123,6 @@ const BookList = () => {
     } catch (error) {
       setError(error.message || "Failed to add book to cart");
     }
-  };
-
-  const formatDate = (dateString) => {
-    return new Date(dateString).toLocaleDateString();
   };
 
   const getAvailabilityColor = (availableCopies) => {
@@ -103,6 +160,83 @@ const BookList = () => {
           </Typography>
         </Box>
 
+        {/* Search and Filter Controls */}
+        <Box
+          display="flex"
+          justifyContent="space-between"
+          alignItems="center"
+          mb={3}
+          gap={2}
+          flexWrap="wrap"
+        >
+          {/* Search Section - Left */}
+          <Box flex={1} minWidth="300px">
+            <TextField
+              fullWidth
+              placeholder="Search by title or author..."
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+              InputProps={{
+                startAdornment: (
+                  <InputAdornment position="start">
+                    <SearchIcon />
+                  </InputAdornment>
+                ),
+              }}
+              sx={{ maxWidth: "400px" }}
+            />
+          </Box>
+
+          {/* Filter and Sort Section - Right */}
+          <Box display="flex" gap={2} flexWrap="wrap" alignItems="center">
+            <FormControl size="small" sx={{ minWidth: 120 }}>
+              <InputLabel>Category</InputLabel>
+              <Select
+                value={categoryFilter}
+                label="Category"
+                onChange={(e) => setCategoryFilter(e.target.value)}
+              >
+                <MenuItem value="">All Categories</MenuItem>
+                {uniqueCategories.map((category) => (
+                  <MenuItem key={category} value={category}>
+                    {category}
+                  </MenuItem>
+                ))}
+              </Select>
+            </FormControl>
+
+            <FormControl size="small" sx={{ minWidth: 120 }}>
+              <InputLabel>Availability</InputLabel>
+              <Select
+                value={availabilityFilter}
+                label="Availability"
+                onChange={(e) => setAvailabilityFilter(e.target.value)}
+              >
+                <MenuItem value="">All Books</MenuItem>
+                <MenuItem value="available">Available</MenuItem>
+                <MenuItem value="out_of_stock">Out of Stock</MenuItem>
+              </Select>
+            </FormControl>
+
+            <FormControl size="small" sx={{ minWidth: 120 }}>
+              <InputLabel>Sort By</InputLabel>
+              <Select
+                value={sortBy}
+                label="Sort By"
+                onChange={(e) => setSortBy(e.target.value)}
+              >
+                <MenuItem value="">Default</MenuItem>
+                <MenuItem value="title_asc">Title A-Z</MenuItem>
+                <MenuItem value="title_desc">Title Z-A</MenuItem>
+                <MenuItem value="price_asc">Price Low-High</MenuItem>
+                <MenuItem value="price_desc">Price High-Low</MenuItem>
+                <MenuItem value="rating_asc">Rating Low-High</MenuItem>
+                <MenuItem value="rating_desc">Rating High-Low</MenuItem>
+              </Select>
+            </FormControl>
+          </Box>
+        </Box>
+
         {error && (
           <Alert severity="error" sx={{ mb: 3 }}>
             {error}
@@ -110,8 +244,8 @@ const BookList = () => {
         )}
 
         <Grid container spacing={3}>
-          {Array.isArray(books) &&
-            books.map((book) => (
+          {Array.isArray(filteredBooks) &&
+            filteredBooks.map((book) => (
               <Grid
                 item
                 xs={12}
@@ -276,13 +410,16 @@ const BookList = () => {
             ))}
         </Grid>
 
-        {(!Array.isArray(books) || books.length === 0) && !loading && (
-          <Box textAlign="center" py={8}>
-            <Typography variant="h6" color="text.secondary">
-              No books available in the library
-            </Typography>
-          </Box>
-        )}
+        {(!Array.isArray(filteredBooks) || filteredBooks.length === 0) &&
+          !loading && (
+            <Box textAlign="center" py={8}>
+              <Typography variant="h6" color="text.secondary">
+                {searchTerm || categoryFilter || availabilityFilter
+                  ? "No books match your search criteria"
+                  : "No books available in the library"}
+              </Typography>
+            </Box>
+          )}
       </Paper>
     </Container>
   );
