@@ -5,11 +5,14 @@ export const API_ENDPOINTS = {
     LOGIN: "/login",
     REGISTER: "/register",
     LOGOUT: "/logout",
+    FORGOT_PASSWORD: "/forgot-password",
+    RESET_PASSWORD: "/password-reset"
   },
   USER: {
     PROFILE: "/api/user/",
     UPDATE_PROFILE: "/api/user/",
     CHANGE_PASSWORD: "/api/password",
+    
   },
   BOOKS: {
     GET_ALL: "/api/books/list",

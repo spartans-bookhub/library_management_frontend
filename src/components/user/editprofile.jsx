@@ -13,12 +13,14 @@ import { useLocation } from "react-router-dom";
 import axios from "axios";
 import { useAuth } from "../../context/AuthContext";
 import { API_BASE_URL, API_ENDPOINTS } from "../../constants/apiEndpoints";
+import { useToast } from "../../context/ToastContext";
 
 const passwordRegex = /^(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z])(?=.*[@#$%^&+=!]).*$/;
 
 export default function EditProfile({onCancel}) {
     const location = useLocation()
     const {user, getToken, updateUser} = useAuth();
+    const { showSuccess, showError, showWarning, showInfo } = useToast();
     const [formData, setFormData] = useState({
     userId: user.userId || "",
     userName: user?.userName || "",
@@ -114,6 +116,7 @@ if (passwordForm.newPassword !== passwordForm.confirmNewPassword) {
     const data = response.data;
     setFormData(data);
     updateUser(data);
+    showSuccess("Profile updated successfully!")
     setProfileSaveSuccess("Profile updated successfully!");
     } catch (err) {
     console.log(err)

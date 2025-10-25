@@ -13,6 +13,7 @@ import { CartProvider } from "./context/CartContext";
 import { ToastProvider } from "./context/ToastContext";
 import ProtectedRoute from "./components/auth/ProtectedRoute";
 import UserProfile from "./components/user/userprofile";
+import ResetPassword from "./components/user/resetpassword";
 
 function App() {
   const [count, setCount] = useState(0);
@@ -34,8 +35,9 @@ function App() {
               <Routes>
                 <Route path="/register" element={<Registration />} />
                 <Route path="/login" element={<Login />} />
-                <Route
-                  path="/dashboard"
+                <Route path="/reset-password" element={<ResetPassword />} />
+                <Route 
+                  path="/dashboard" 
                   element={
                     <ProtectedRoute>
                       <Dashboard />
