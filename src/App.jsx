@@ -6,7 +6,6 @@ import Navbar from "./components/common/navbar";
 import Login from "./pages/Login/Login";
 import Dashboard from "./pages/Dashboard/Dashboard";
 import BookList from "./pages/Books/BookList";
-import BookSearch from "./pages/Books/BookSearch";
 import Cart from "./pages/Cart/Cart";
 import { AuthProvider } from "./context/AuthContext";
 import { CartProvider } from "./context/CartContext";
@@ -36,8 +35,8 @@ function App() {
                 <Route path="/register" element={<Registration />} />
                 <Route path="/login" element={<Login />} />
                 <Route path="/reset-password" element={<ResetPassword />} />
-                <Route 
-                  path="/dashboard" 
+                <Route
+                  path="/dashboard"
                   element={
                     <ProtectedRoute>
                       <Dashboard />
@@ -49,7 +48,6 @@ function App() {
                   element={
                     <ProtectedRoute>
                       <BookList />
-                      {/* <BookSearch /> */}
                     </ProtectedRoute>
                   }
                 />
