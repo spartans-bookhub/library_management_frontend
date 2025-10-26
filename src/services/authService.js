@@ -9,9 +9,10 @@ export const authService = {
         API_ENDPOINTS.AUTH.LOGIN,
         credentials
       );
+      console.log(response)
       return response.data;
     } catch (error) {
-      throw new Error(error.response?.data?.message || "Login failed");
+      throw new Error(error.response?.data || "Login failed");
     }
   },
 
@@ -39,30 +40,27 @@ export const authService = {
     }
   },
 
-  // Get user profile
-  getProfile: async () => {
+
+  // Forgot password
+  sendResetLink: async ({email}) => {
     try {
-      const response = await apiClient.get(API_ENDPOINTS.USER.PROFILE);
+      const response = await apiClient.post(API_ENDPOINTS.AUTH.FORGOT_PASSWORD, {email});
       return response.data;
     } catch (error) {
-      throw new Error(
-        error.response?.data?.message || "Failed to fetch profile"
-      );
+      console.error(error.response?.data?.message || "Failed to send reset link. Try again.");
+      throw error;
     }
   },
 
-  // Update user profile
-  updateProfile: async (userData) => {
+    // Forgot password
+  resetPassword: async ({ resetToken, newPassword }) => {
     try {
-      const response = await apiClient.put(
-        API_ENDPOINTS.USER.UPDATE_PROFILE,
-        userData
-      );
+      const response = await apiClient.post(API_ENDPOINTS.AUTH.RESET_PASSWORD,{ resetToken, newPassword } );
       return response.data;
     } catch (error) {
-      throw new Error(
-        error.response?.data?.message || "Failed to update profile"
-      );
+      console.error(error.response?.data || "Failed to send reset link. Try again.");
+      throw error;
     }
   },
+
 };

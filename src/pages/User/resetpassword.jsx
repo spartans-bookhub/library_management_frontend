@@ -3,6 +3,7 @@ import axios from "axios";
 import { useLocation, useNavigate } from "react-router-dom";
 import { TextField, Button, Typography, Container, Box, Alert } from "@mui/material";
 import { API_BASE_URL, API_ENDPOINTS } from "../../constants/apiEndpoints";
+import { authService } from "../../services/authService";
 
 const ResetPassword = () => {
   const [newPassword, setNewPassword] = useState("");
@@ -13,7 +14,7 @@ const ResetPassword = () => {
   const location = useLocation();
 
   // Extract token from URL
-  const resetToken = new URLSearchParams(location.search).get("token");
+  const resetToken = new URLSearchParams(location.search).get("token").trim();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -26,17 +27,13 @@ const ResetPassword = () => {
     }
 
     try {
-      const res = await axios.post(`${API_BASE_URL}${API_ENDPOINTS.AUTH.RESET_PASSWORD}`, {
-        resetToken,
-        newPassword,
-      });
-      alert(res.data);
+      const res = await authService.resetPassword({ resetToken, newPassword })
       console.log(res)
-      setMessage(res.data.message || "Password reset successful!");
+      setMessage(res || "Password reset successful!");
       // Redirect to login page after 2 seconds
       setTimeout(() => navigate("/login"), 2000);
     } catch (err) {
-      setError(err.response?.data || "Failed to reset password.");
+      setError(err.response?.data || "Failed to reset password. Try sending rest link again");
     }
   };
 
@@ -72,7 +69,7 @@ const ResetPassword = () => {
             fullWidth
             sx={{ mt: 2 }}
           >
-            Change Password
+            Reset Password
           </Button>
         </form>
         {message && <Alert sx={{ mt: 2 }} severity="success">{message}</Alert>}

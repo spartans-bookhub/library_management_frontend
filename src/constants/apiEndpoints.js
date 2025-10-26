@@ -1,4 +1,4 @@
-export const API_BASE_URL = "http://localhost:9009";
+export const API_BASE_URL = "http://localhost:9007";
 
 export const API_ENDPOINTS = {
   AUTH: {
@@ -9,8 +9,8 @@ export const API_ENDPOINTS = {
     RESET_PASSWORD: "/password-reset"
   },
   USER: {
-    PROFILE: "/api/user/",
-    UPDATE_PROFILE: "/api/user/",
+    PROFILE: "/api/user",
+    UPDATE_PROFILE: "/api/user",
     CHANGE_PASSWORD: "/api/password",
     
   },

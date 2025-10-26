@@ -1,9 +1,9 @@
 import { useState } from "react";
 import "./App.css";
-import Registration from "./components/user/registration";
+import Registration from "./pages/User/registration";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import Navbar from "./components/common/navbar";
-import Login from "./pages/Login/Login";
+import Login from "./pages/User/login";
 import Dashboard from "./pages/Dashboard/Dashboard";
 import BookList from "./pages/Books/BookList";
 import BookSearch from "./pages/Books/BookSearch";
@@ -12,19 +12,12 @@ import { AuthProvider } from "./context/AuthContext";
 import { CartProvider } from "./context/CartContext";
 import { ToastProvider } from "./context/ToastContext";
 import ProtectedRoute from "./components/auth/ProtectedRoute";
-import UserProfile from "./components/user/userprofile";
-import ResetPassword from "./components/user/resetpassword";
+import UserProfile from "./pages/User/userprofile";
+import ResetPassword from "./pages/User/resetpassword";
 import NotFound from "./pages/OtherPages/NotFound";
+import AdminDashboard from "./pages/Dashboard/adminDashboard";
 
 function App() {
-  const [count, setCount] = useState(0);
-
-  const currentUser = {
-    name: "Jane Doe",
-    email: "jane.doe@example.com",
-    avatarUrl: "https://i.pravatar.cc/150?img=5",
-    bio: "Frontend developer passionate about React and Material UI.",
-  };
 
   return (
     <>
@@ -67,7 +60,7 @@ function App() {
                   path="/userprofile"
                   element={
                     <ProtectedRoute>
-                      <UserProfile user={currentUser} />
+                      <UserProfile />
                     </ProtectedRoute>
                   }
                 />
