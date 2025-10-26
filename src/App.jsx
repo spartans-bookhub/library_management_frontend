@@ -6,6 +6,7 @@ import Navbar from "./components/common/navbar";
 import Login from "./pages/Login/Login";
 import Dashboard from "./pages/Dashboard/Dashboard";
 import BookList from "./pages/Books/BookList";
+import BookSearch from "./pages/Books/BookSearch";
 import Cart from "./pages/Cart/Cart";
 import { AuthProvider } from "./context/AuthContext";
 import { CartProvider } from "./context/CartContext";
@@ -13,6 +14,7 @@ import { ToastProvider } from "./context/ToastContext";
 import ProtectedRoute from "./components/auth/ProtectedRoute";
 import UserProfile from "./components/user/userprofile";
 import ResetPassword from "./components/user/resetpassword";
+
 import Home from "./components/Home";
 
 function App() {
@@ -50,6 +52,7 @@ function App() {
                   element={
                     <ProtectedRoute>
                       <BookList />
+                      {/* <BookSearch /> */}
                     </ProtectedRoute>
                   }
                 />
@@ -70,6 +73,9 @@ function App() {
                     </ProtectedRoute>
                   }
                 />
+                {/* Fallback Route */}
+                <Route path="*" element={<NotFound />} />
+                <Route path="/admin" element={ <AdminDashboard/>} />
               </Routes>
             </BrowserRouter>
           </CartProvider>
