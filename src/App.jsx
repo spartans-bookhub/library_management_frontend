@@ -15,6 +15,7 @@ import ProtectedRoute from "./components/auth/ProtectedRoute";
 import UserProfile from "./components/user/userprofile";
 import ResetPassword from "./components/user/resetpassword";
 import NotFound from "./pages/OtherPages/NotFound";
+import AdminDashboard from "./pages/Dashboard/AdminDashboard";
 
 function App() {
   const [count, setCount] = useState(0);
@@ -38,10 +39,13 @@ function App() {
                 <Route path="/login" element={<Login />} />
                 <Route path="/reset-password" element={<ResetPassword />} />
                 <Route
-                  path="/dashboard"
+                  // path="/dashboard"
+                  path="/admin-dashboard"
                   element={
                     <ProtectedRoute>
-                      <Dashboard />
+                      {/* <Dashboard /> */}
+                      <AdminDashboard />
+
                     </ProtectedRoute>
                   }
                 />
@@ -73,7 +77,7 @@ function App() {
                 />
                 {/* Fallback Route */}
                 <Route path="*" element={<NotFound />} />
-                <Route path="/admin" element={ <AdminDashboard/>} />
+                {/* <Route path="/admin" element={ <AdminDashboard/>} /> */}
               </Routes>
             </BrowserRouter>
           </CartProvider>
