@@ -2,7 +2,7 @@ import React, { useState, useEffect} from "react";
 import {
   Table, TableBody, TableCell, TableContainer, TableHead, TableRow,
   Paper, Button, Dialog, DialogActions, DialogContent, DialogTitle,
-  IconButton, TextField, MenuItem
+  IconButton, TextField, MenuItem, Box, Typography
 } from "@mui/material";
 import { Edit, Delete } from "@mui/icons-material";
 import { useFormik } from "formik";
@@ -14,6 +14,7 @@ import { libraryService } from "../../services/libraryService";
 import { useAuth } from "../../context/AuthContext";
 import { useCart } from "../../context/CartContext";
 import { useToast } from "../../context/ToastContext";
+import axios from 'axios';
 
 export default function BookTable () {
 
@@ -21,14 +22,6 @@ export default function BookTable () {
   const [filteredBooks, setFilteredBooks] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
-  const [searchTerm, setSearchTerm] = useState("");
-  const [categoryFilter, setCategoryFilter] = useState("");
-  const [availabilityFilter, setAvailabilityFilter] = useState("");
-  const [sortBy, setSortBy] = useState("");
-  const [currentPage, setCurrentPage] = useState(1);
-
-  const { user,isAuthenticated, isAdmin, } = useAuth();
-  const { addToCart, isInCart, getItemQuantity } = useCart();
   const { showSuccess, showInfo } = useToast();
 
   const [open, setOpen] = useState(false);
@@ -37,23 +30,10 @@ export default function BookTable () {
 
   const booksPerPage = 10;
 
-  useEffect(() => {
-      fetchBooks();
-    }, []);
-
-    const fetchBooks = async () => {
-     try {
-       setLoading(true);
-       const data = await libraryService.getAllBooks();
-       const booksArray = Array.isArray(data) ? data : [];
-       setBooks(booksArray);
-       setFilteredBooks(booksArray);
-     } catch (error) {
-       setError(error.message || "Failed to fetch books");
-     } finally {
-       setLoading(false);
-     }
-   };
+  let url = 'http://localhost:9009/api/v1/transactions'; // get
+  let bookulr ='http://localhost:9009/api/books' ; // post
+  let booklistUrl = 'http://localhost:9009/api/books/list'; // get
+  let API_URL = 'http://localhost:9009/'
 
   // Yup validation schema
   const validationSchema = Yup.object({
@@ -85,8 +65,8 @@ export default function BookTable () {
   // Formik Schemea
   const formik = useFormik({
     initialValues: {
-      book_title: "ank",
-      book_author: "ss",
+      book_title: "",
+      book_author: "",
       ccategory: "Others", 
       isbn: "",
       image_url: "",
@@ -129,16 +109,70 @@ export default function BookTable () {
     formik.resetForm();
   };
 
-  const handleDelete = (index) => {
-    const updatedBooks = books.filter((_, i) => i !== index);
-    setBooks(updatedBooks);
+  // const handleDelete = (index) => {
+  //   const updatedBooks = books.filter((_, i) => i !== index);
+  //   setBooks(updatedBooks);
+  // };
+
+  useEffect(() => {
+      fetchBooks();
+    }, []);
+
+    // get all books from DB
+    const fetchBooks = async () => {
+     try {
+       setLoading(true);
+       const data = await libraryService.getAllBooks();
+       console.log("bokk..",data)
+       const books= Array.isArray(data) ? data : [];
+       setBooks(books);
+     } catch (error) {
+       setError(error.message || "Failed to fetch books");
+     } finally {
+       setLoading(false);
+     }
+   };
+
+  // ✅ Delete book by ID
+  const handleDelete = async (bookId) => {
+    try {
+      const data = await libraryService.deleteBook(bookId);
+      console.log('delet', data)
+      // Remove from UI list
+      const books = books.filter((book) => book.bookId !== bookId);
+      setBooks(books);
+      alert("Book deleted successfully!");
+    } catch (error) {
+      console.error("Failed to delete book:", error);
+      alert("Error deleting book.");
+    }
   };
+
+
+    const addBook = async (bookId) => {
+    try {
+      await axios.post(`${API_URL}/${bookId}`);
+      // Remove from UI list
+      const books = books.filter((book) => book.bookId !== bookId);
+      setBooks(books);
+      alert("Book deleted successfully!");
+    } catch (error) {
+      console.error("Failed to delete book:", error);
+      alert("Error deleting book.");
+    }
+  };
+
+
 
   return (
     <div style={{ padding: "20px" }}>
-      <h2> Book Records System</h2>
+     <Box display="flex" justifyContent="space-between" alignItems="center" mb={3}>
+          <Typography variant="h5" component="h1">
+             Books Records
+          </Typography>
+        </Box>
 
-      <Button variant="contained" color="primary" onClick={() => handleOpen()}>
+      <Button variant="contained" color="secondary" onClick={() => handleOpen()}>
         Add Book
       </Button>
 
@@ -152,10 +186,10 @@ export default function BookTable () {
               <TableCell><b>Category</b></TableCell>
               <TableCell><b>ISBN</b></TableCell>
               <TableCell><b>Publisher</b></TableCell>
-              <TableCell><b>Price</b></TableCell>
-              <TableCell><b>Total Copies</b></TableCell>
+              {/* <TableCell><b>Price</b></TableCell> */}
+              {/* <TableCell><b>Total Copies</b></TableCell> */}
               <TableCell><b>Available</b></TableCell>
-              <TableCell><b>Rating</b></TableCell>
+              {/* <TableCell><b>Rating</b></TableCell> */}
               <TableCell align="center"><b>Actions</b></TableCell>
             </TableRow>
           </TableHead>
@@ -169,16 +203,16 @@ export default function BookTable () {
             ) : (
               books.map((b, index) => (
                 <TableRow key={index}>
-                  <TableCell>{index+1}</TableCell>
-                  <TableCell>{b.book_title}</TableCell>
-                  <TableCell>{b.book_author}</TableCell>
+                  <TableCell>{b.bookId}</TableCell>
+                  <TableCell>{b.bookTitle}</TableCell>
+                  <TableCell>{b.bookAuthor}</TableCell>
                   <TableCell>{b.category}</TableCell>
                   <TableCell>{b.isbn}</TableCell>
-                  <TableCell>{b.publisher_name}</TableCell>
+                  <TableCell>{b.publisherName}</TableCell>
                   <TableCell>{b.price}</TableCell>
-                  <TableCell>{b.total_copies}</TableCell>
-                  <TableCell>{b.available_copies}</TableCell>
-                  <TableCell>{b.rating}</TableCell>
+                  {/* <TableCell>{b.totalCopies}</TableCell> */}
+                  {/* <TableCell>{b.availableCopies}</TableCell> */}
+                  {/* <TableCell>{b.rating}</TableCell> */}
                   <TableCell align="center">
                     <IconButton color="primary" onClick={() => handleOpen(index)}>
                       <Edit />
@@ -309,7 +343,7 @@ export default function BookTable () {
                 error={formik.touched.created_at && Boolean(formik.errors.created_at)}
                 helperText={formik.touched.created_at && formik.errors.created_at}
               />
-              <TextField
+              {/* <TextField
                 label="Total Copies"
                 name="total_copies"
                 type="number"
@@ -330,8 +364,8 @@ export default function BookTable () {
                 onBlur={formik.handleBlur}
                 error={formik.touched.available_copies && Boolean(formik.errors.available_copies)}
                 helperText={formik.touched.available_copies && formik.errors.available_copies}
-              />
-              <TextField
+              /> */}
+              {/* <TextField
                 label="Rating"
                 name="rating"
                 type="number"
@@ -341,7 +375,7 @@ export default function BookTable () {
                 onBlur={formik.handleBlur}
                 error={formik.touched.rating && Boolean(formik.errors.rating)}
                 helperText={formik.touched.rating && formik.errors.rating}
-              />
+              /> */}
             </div>
           </DialogContent>
 

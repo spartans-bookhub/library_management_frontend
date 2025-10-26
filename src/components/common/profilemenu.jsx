@@ -44,7 +44,7 @@ export default function ProfileMenu() {
     navigate("/login");
   };
 
-      const handleProfileClick = () => {
+    const handleProfileClick = () => {
     handleClose();
     navigate("/userprofile");
   };
@@ -64,6 +64,16 @@ export default function ProfileMenu() {
   const handleBookClick =() => {
     handleClose();
     navigate("/books");
+  }
+
+  const handleTransactionClick=()=>{
+     handleClose();
+    navigate("/transactions");
+  }
+
+  const handleBookRecordsClick =() => {
+    handleClose();
+    navigate("/books-records");
   }
 
   return (
@@ -101,6 +111,16 @@ export default function ProfileMenu() {
           <ListItemIcon><Dashboard fontSize="small" /></ListItemIcon>  
           Admin Dashboard
           </MenuItem>
+
+           <MenuItem onClick={handleBookRecordsClick}>
+         <ListItemIcon> <MenuBookIcon fontSize="small" /> </ListItemIcon>
+          Books Record
+        </MenuItem>
+
+          <MenuItem onClick={handleTransactionClick}>
+         <ListItemIcon> <MenuBookIcon fontSize="small" /> </ListItemIcon>
+          Transactions
+        </MenuItem>
           </>
          ) : (
           <>
@@ -119,11 +139,13 @@ export default function ProfileMenu() {
 
         </>
          )}
+
         <MenuItem onClick={handleBookClick}>
          <ListItemIcon> <MenuBookIcon fontSize="small" /> </ListItemIcon>
           Books
         </MenuItem>
- 
+
+
         {/* <MenuItem onClick={() => { toggleTheme(); handleClose(); }}>
           <ListItemIcon>
             {mode === "light" ? <DarkMode fontSize="small" /> : <LightMode fontSize="small" />}

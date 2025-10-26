@@ -4,7 +4,7 @@ import Registration from "./pages/User/registration";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import Navbar from "./components/common/navbar";
 import Login from "./pages/User/login";
-import Dashboard from "./pages/Dashboard/Dashboard";
+import Dashboard from "./pages/Dashboard/StudentDashboard";
 import BookList from "./pages/Books/BookList";
 import BookSearch from "./pages/Books/BookSearch";
 import Cart from "./pages/Cart/Cart";
@@ -17,9 +17,11 @@ import ResetPassword from "./pages/User/resetpassword";
 import NotFound from "./pages/OtherPages/NotFound";
 import Home from "./components/Home";
 import AdminDashboard from "./pages/Dashboard/AdminDashboard";
+// import TransactionTable from "./pages/Dashboard/TransactionTable";
 
 function App() {
-
+  const port = window.location.port;
+  console.log(`Port: ${port}`)
   return (
     <>
       <ToastProvider>
@@ -38,10 +40,17 @@ function App() {
                     <ProtectedRoute>
                       {/* <Dashboard /> */}
                       <AdminDashboard />
-
                     </ProtectedRoute>
                   }
                 />
+                 {/* <Route
+                  path="/transactions"
+                  element={
+                    <ProtectedRoute>
+                      <TransactionTable />
+                    </ProtectedRoute>
+                  }
+                /> */}
                  <Route
                   path="/student-dashboard"
                   element={

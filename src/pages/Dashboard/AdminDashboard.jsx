@@ -32,18 +32,19 @@ const Toggle = ()=>{
   return (
     // Remove this provider when copying and pasting into your project.
     <>
-    {/* <Container maxWidth="lg" sx={{ mt: 0}}>
+    <Container disableGutters={true} maxWidth="lg" sx={{ mt: 1}}>
           <Paper elevation={2} sx={{ p: 3, mb: 2 }}>
             <Box>
                 <Typography variant="h4">
                   Admin Dashboard
                 </Typography>
                 <Typography variant="subtitle1" color="text.secondary">
-                  Welcome, 
-                  {user?.userName || "User"}! ({user?.role || "ADMIN"})
+                  Welcome,  
+                  {/* {user?.userName || "User"} */}
+                  ({user?.role || "ADMIN"})
                 </Typography>
               </Box>
-              <Box sx={{ flexGrow: 1 }}>
+              {/* <Box sx={{ flexGrow: 1 }}>
                 <Grid container spacing={{ xs: 2, md: 3 }} columns={{ xs: 4, sm: 8, md: 12 }}>
                     {Array.from(Array(6)).map((_, index) => (
                       <Grid key={index} size={{ xs: 4, sm: 4, md: 4 }}>
@@ -51,9 +52,9 @@ const Toggle = ()=>{
                       </Grid>
                   ))}
                 </Grid>
-              </Box>
+              </Box> */}
             </Paper >
-      </Container> */}
+      </Container>
 
   <div className="container-fluid bg-secondary min-vh-100" >
       <div className="row">
