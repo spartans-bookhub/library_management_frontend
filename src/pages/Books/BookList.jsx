@@ -139,7 +139,6 @@ const BookList = () => {
   const currentBooks = filteredBooks.slice(indexOfFirstBook, indexOfLastBook);
   const totalPages = Math.ceil(filteredBooks.length / booksPerPage);
 
-  
   if (loading) {
     return (
       <Container maxWidth="lg" sx={{ mt: 4 }}>
@@ -159,14 +158,26 @@ const BookList = () => {
     <Container maxWidth="lg" sx={{ mt: 4 }}>
       <Paper elevation={3} sx={{ p: 4, mb: 4 }}>
         {/* Header */}
-        <Box display="flex" justifyContent="space-between" alignItems="center" mb={3}>
+        <Box
+          display="flex"
+          justifyContent="space-between"
+          alignItems="center"
+          mb={3}
+        >
           <Typography variant="h4" component="h1">
             Library Books
           </Typography>
         </Box>
 
         {/* Search and Filter Controls */}
-        <Box display="flex" justifyContent="space-between" alignItems="center" mb={3} gap={2} flexWrap="wrap">
+        <Box
+          display="flex"
+          justifyContent="space-between"
+          alignItems="center"
+          mb={3}
+          gap={2}
+          flexWrap="wrap"
+        >
           {/* Search */}
           <Box flex={1} minWidth="300px">
             <TextField
@@ -189,19 +200,29 @@ const BookList = () => {
           <Box display="flex" gap={2} flexWrap="wrap" alignItems="center">
             <FormControl size="small" sx={{ minWidth: 120 }}>
               <InputLabel>Category</InputLabel>
-              <Select value={categoryFilter} label="Category" onChange={(e) => setCategoryFilter(e.target.value)}>
+              <Select
+                value={categoryFilter}
+                label="Category"
+                onChange={(e) => setCategoryFilter(e.target.value)}
+              >
                 <MenuItem value="">All Categories</MenuItem>
-                {[...new Set(books.map((b) => b.category))].filter(Boolean).map((category) => (
-                  <MenuItem key={category} value={category}>
-                    {category}
-                  </MenuItem>
-                ))}
+                {[...new Set(books.map((b) => b.category))]
+                  .filter(Boolean)
+                  .map((category) => (
+                    <MenuItem key={category} value={category}>
+                      {category}
+                    </MenuItem>
+                  ))}
               </Select>
             </FormControl>
 
             <FormControl size="small" sx={{ minWidth: 120 }}>
               <InputLabel>Availability</InputLabel>
-              <Select value={availabilityFilter} label="Availability" onChange={(e) => setAvailabilityFilter(e.target.value)}>
+              <Select
+                value={availabilityFilter}
+                label="Availability"
+                onChange={(e) => setAvailabilityFilter(e.target.value)}
+              >
                 <MenuItem value="">All Books</MenuItem>
                 <MenuItem value="available">Available</MenuItem>
                 <MenuItem value="out_of_stock">Out of Stock</MenuItem>
@@ -210,7 +231,11 @@ const BookList = () => {
 
             <FormControl size="small" sx={{ minWidth: 120 }}>
               <InputLabel>Sort By</InputLabel>
-              <Select value={sortBy} label="Sort By" onChange={(e) => setSortBy(e.target.value)}>
+              <Select
+                value={sortBy}
+                label="Sort By"
+                onChange={(e) => setSortBy(e.target.value)}
+              >
                 <MenuItem value="">Default</MenuItem>
                 <MenuItem value="title_asc">Title A-Z</MenuItem>
                 <MenuItem value="title_desc">Title Z-A</MenuItem>
@@ -231,8 +256,8 @@ const BookList = () => {
         )}
 
         <Grid container spacing={3} sx={{ alignItems: "stretch" }}>
-          {Array.isArray(filteredBooks) &&
-            filteredBooks.map((book) => (
+          {Array.isArray(currentBooks) &&
+            currentBooks.map((book) => (
               <Grid
                 item
                 xs={12}
@@ -326,10 +351,9 @@ const BookList = () => {
                       p: 2,
                       overflow: "hidden",
                       "&:last-child": { pb: 2 },
-                      minWidth: 0, // <- critical for ellipses inside flex
+                      minWidth: 0,
                     }}
                   >
-                    {/* TITLE: 2-line clamp with common height */}
                     <Typography
                       variant="h6"
                       component="h2"
@@ -343,16 +367,15 @@ const BookList = () => {
                         WebkitBoxOrient: "vertical",
                         overflow: "hidden",
                         textOverflow: "ellipsis",
-                        minHeight: "calc(1.3em * 2)", // common height
-                        maxHeight: "calc(1.3em * 2)", // enforce 2-line box
-                        minWidth: 0, // prevents pushing width
+                        minHeight: "calc(1.3em * 2)",
+                        maxHeight: "calc(1.3em * 2)",
+                        minWidth: 0,
                       }}
-                      title={book.bookTitle} // tooltip for full title on hover
+                      title={book.bookTitle}
                     >
                       {book.bookTitle}
                     </Typography>
 
-                    {/* AUTHOR: single-line truncate */}
                     <Typography
                       variant="body2"
                       color="text.secondary"
@@ -424,32 +447,10 @@ const BookList = () => {
                           : "Add to Cart"}
                       </Button>
                     </Box>
-                    <Button
-                      variant={book.availableCopies === 0 ? "outlined" : isInCart(book.bookId) ? "outlined" : "contained"}
-                      fullWidth
-                      disabled={book.availableCopies === 0}
-                      onClick={() => handleAddToCart(book)}
-                      sx={{ borderRadius: 1.5, textTransform: "none", fontWeight: 500 }}
-                    >
-                      {book.availableCopies === 0
-                        ? "Out of Stock"
-                        : isInCart(book.bookId)
-                        ? `In Cart (${getItemQuantity(book.bookId)})`
-                        : "Add to Cart"}
-                    </Button>
                   </CardContent>
                 </Card>
               </Grid>
-            ))
-          ) : (
-            <Box textAlign="center" py={8} width="100%">
-              <Typography variant="h6" color="text.secondary">
-                {searchTerm || categoryFilter || availabilityFilter
-                  ? "No books match your search criteria"
-                  : "No books available in the library"}
-              </Typography>
-            </Box>
-          )}
+            ))}
         </Grid>
 
         {/* Pagination */}
@@ -471,5 +472,3 @@ const BookList = () => {
 };
 
 export default BookList;
-
-
