@@ -24,6 +24,11 @@ const Dashboard = () => {
   const [selectedTab, setSelectedTab] = useState(0);
   const [borrowedBooks, setBorrowedBooks] = useState([]);
   const [historyData, setHistoryData] = useState([]);
+  const [dashboardCounts, setDashboardCounts] = useState({
+    currentlyBorrowed: 0,
+    overdue: 0,
+    totalBorrowed: 0,
+  });
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
   const [snackbar, setSnackbar] = useState({
@@ -31,6 +36,63 @@ const Dashboard = () => {
     message: "",
     severity: "success",
   });
+
+  // Calculate dashboard counts from data
+  const calculateCounts = (borrowedBooks, historyData) => {
+    const currentlyBorrowed = borrowedBooks.length;
+
+    // Calculate overdue books (due date passed and still active)
+    const today = new Date();
+    const overdue = borrowedBooks.filter((book) => {
+      const dueDate = new Date(book.dueDate);
+      return dueDate < today;
+    }).length;
+
+    // Total borrowed = currently borrowed + all returned books from history
+    const returnedBooks = historyData.filter((item) => item.returnDate).length;
+    const totalBorrowed = currentlyBorrowed + returnedBooks;
+
+    return {
+      currentlyBorrowed,
+      overdue,
+      totalBorrowed,
+    };
+  };
+
+  // Helper function to check if a book is overdue
+  const isOverdue = (dueDate) => {
+    const today = new Date();
+    const due = new Date(dueDate);
+    return due < today;
+  };
+
+  // Fetch all data needed for dashboard counts
+  const fetchDashboardData = async () => {
+    setLoading(true);
+    setError(null);
+    try {
+      const [borrowedData, historyData] = await Promise.all([
+        libraryService.getBorrowedBooks(),
+        libraryService.getHistory(),
+      ]);
+
+      setBorrowedBooks(borrowedData);
+      setHistoryData(historyData);
+
+      // Calculate and set counts
+      const counts = calculateCounts(borrowedData, historyData);
+      setDashboardCounts(counts);
+    } catch (err) {
+      setError(err.message);
+      setSnackbar({
+        open: true,
+        message: err.message,
+        severity: "error",
+      });
+    } finally {
+      setLoading(false);
+    }
+  };
 
   const fetchBorrowedBooks = async () => {
     if (selectedTab !== 0) return;
@@ -80,7 +142,8 @@ const Dashboard = () => {
         message: "Book returned successfully!",
         severity: "success",
       });
-      fetchBorrowedBooks();
+      // Refresh dashboard data to update counts
+      fetchDashboardData();
     } catch (err) {
       setSnackbar({
         open: true,
@@ -93,6 +156,11 @@ const Dashboard = () => {
   const handleCloseSnackbar = () => {
     setSnackbar({ message: "", severity: "success", open: false });
   };
+
+  // Initial load of dashboard data
+  useEffect(() => {
+    fetchDashboardData();
+  }, []);
 
   useEffect(() => {
     if (selectedTab === 0) {
@@ -129,6 +197,21 @@ const Dashboard = () => {
       width: 150,
       headerAlign: "center",
       align: "center",
+      renderCell: (params) => (
+        <Box
+          sx={{
+            px: 1,
+            py: 0.5,
+            borderRadius: 1,
+            fontSize: "0.875rem",
+            fontWeight: isOverdue(params.value) ? 600 : 400,
+            backgroundColor: isOverdue(params.value) ? "#ffebee" : "transparent",
+            color: isOverdue(params.value) ? "#d32f2f" : "inherit",
+          }}
+        >
+          {params.value}
+        </Box>
+      ),
     },
     {
       field: "action",
@@ -181,6 +264,21 @@ const Dashboard = () => {
       width: 130,
       headerAlign: "center",
       align: "center",
+      renderCell: (params) => (
+        <Box
+          sx={{
+            px: 1,
+            py: 0.5,
+            borderRadius: 1,
+            fontSize: "0.875rem",
+            fontWeight: isOverdue(params.value) && !params.row.returnDate ? 600 : 400,
+            backgroundColor: isOverdue(params.value) && !params.row.returnDate ? "#ffebee" : "transparent",
+            color: isOverdue(params.value) && !params.row.returnDate ? "#d32f2f" : "inherit",
+          }}
+        >
+          {params.value}
+        </Box>
+      ),
     },
     {
       field: "returnDate",
@@ -245,6 +343,9 @@ const Dashboard = () => {
             rows={borrowedBooks}
             columns={activeBorrowedBooksColumns}
             getRowId={(row) => row.transactionId}
+            getRowClassName={(params) => 
+              isOverdue(params.row.dueDate) ? 'overdue-row' : ''
+            }
             pageSize={5}
             rowsPerPageOptions={[5, 10, 25]}
             disableSelectionOnClick
@@ -259,6 +360,15 @@ const Dashboard = () => {
               },
               "& .MuiDataGrid-row:hover": {
                 backgroundColor: "#f9f9f9",
+              },
+              "& .overdue-row": {
+                backgroundColor: "#fff5f5",
+                "& .MuiDataGrid-cell": {
+                  borderColor: "#ffcdd2",
+                },
+                "&:hover": {
+                  backgroundColor: "#ffebee",
+                },
               },
             }}
             initialState={{
@@ -298,6 +408,9 @@ const Dashboard = () => {
             rows={historyData}
             columns={historyColumns}
             getRowId={(row) => row.transactionId}
+            getRowClassName={(params) => 
+              isOverdue(params.row.dueDate) && !params.row.returnDate ? 'overdue-row' : ''
+            }
             pageSize={5}
             rowsPerPageOptions={[5, 10, 25]}
             disableSelectionOnClick
@@ -312,6 +425,15 @@ const Dashboard = () => {
               },
               "& .MuiDataGrid-row:hover": {
                 backgroundColor: "#f9f9f9",
+              },
+              "& .overdue-row": {
+                backgroundColor: "#fff5f5",
+                "& .MuiDataGrid-cell": {
+                  borderColor: "#ffcdd2",
+                },
+                "&:hover": {
+                  backgroundColor: "#ffebee",
+                },
               },
             }}
             initialState={{
@@ -337,10 +459,10 @@ const Dashboard = () => {
         >
           <Box>
             <Typography variant="h4" component="h1">
-              Library Dashboard
+              Welcome, {user?.userName || "User"}!
             </Typography>
             <Typography variant="subtitle1" color="text.secondary">
-              Welcome, {user?.userName || "User"}! ({user?.role || "STUDENT"})
+              {user?.role || "STUDENT"}
             </Typography>
           </Box>
         </Box>
@@ -350,13 +472,45 @@ const Dashboard = () => {
             <Card>
               <CardContent>
                 <Typography variant="h6" gutterBottom>
-                  Books Issued
+                  Currently Borrowed
                 </Typography>
-                <Typography variant="h3" color="warning.main">
-                  {borrowedBooks.length}
+                <Typography variant="h3" color="primary.main">
+                  {dashboardCounts.currentlyBorrowed}
                 </Typography>
                 <Typography variant="body2" color="text.secondary">
-                  Currently borrowed
+                  Active borrowings
+                </Typography>
+              </CardContent>
+            </Card>
+          </Grid>
+
+          <Grid item xs={12} md={4}>
+            <Card>
+              <CardContent>
+                <Typography variant="h6" gutterBottom>
+                  Overdue Books
+                </Typography>
+                <Typography variant="h3" color="error.main">
+                  {dashboardCounts.overdue}
+                </Typography>
+                <Typography variant="body2" color="text.secondary">
+                  Past due date
+                </Typography>
+              </CardContent>
+            </Card>
+          </Grid>
+
+          <Grid item xs={12} md={4}>
+            <Card>
+              <CardContent>
+                <Typography variant="h6" gutterBottom>
+                  Total Borrowed
+                </Typography>
+                <Typography variant="h3" color="success.main">
+                  {dashboardCounts.totalBorrowed}
+                </Typography>
+                <Typography variant="body2" color="text.secondary">
+                  Lifetime borrowings
                 </Typography>
               </CardContent>
             </Card>
