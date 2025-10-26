@@ -111,14 +111,14 @@ const BookList = () => {
     }
   };
 
-  const handleAddToCart = (book) => {
+  const handleAddToCart = async (book) => {
     try {
       if (isInCart(book.bookId)) {
         showInfo("Book is already in your cart");
         return;
       }
 
-      addToCart(book);
+      await addToCart(book);
       showSuccess(`"${book.bookTitle}" added to cart!`);
     } catch (error) {
       setError(error.message || "Failed to add book to cart");
