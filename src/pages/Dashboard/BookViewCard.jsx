@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from "react";
 import {
   Container,
@@ -28,7 +29,7 @@ import { useAuth } from "../../context/AuthContext";
 import { useCart } from "../../context/CartContext";
 import { useToast } from "../../context/ToastContext";
 
-const BookList = () => {
+export default function BookViewCard  ()  {
   const [books, setBooks] = useState([]);
   const [filteredBooks, setFilteredBooks] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -113,18 +114,18 @@ const BookList = () => {
     setFilteredBooks(filtered);
   };
 
-  const handleAddToCart = (book) => {
-    try {
-      if (isInCart(book.bookId)) {
-        showInfo("Book is already in your cart");
-        return;
-      }
-      addToCart(book);
-      showSuccess(`"${book.bookTitle}" added to cart!`);
-    } catch (error) {
-      setError(error.message || "Failed to add book to cart");
-    }
-  };
+//   const handleAddToCart = (book) => {
+//     try {
+//       if (isInCart(book.bookId)) {
+//         showInfo("Book is already in your cart");
+//         return;
+//       }
+//       addToCart(book);
+//       showSuccess(`"${book.bookTitle}" added to cart!`);
+//     } catch (error) {
+//       setError(error.message || "Failed to add book to cart");
+//     }
+//   };
 
   const getAvailabilityColor = (availableCopies) => {
     if (availableCopies === 0) return "error";
@@ -138,7 +139,6 @@ const BookList = () => {
   const currentBooks = filteredBooks.slice(indexOfFirstBook, indexOfLastBook);
   const totalPages = Math.ceil(filteredBooks.length / booksPerPage);
 
-  
   if (loading) {
     return (
       <Container maxWidth="lg" sx={{ mt: 4 }}>
@@ -338,6 +338,6 @@ const BookList = () => {
   );
 };
 
-export default BookList;
+
 
 

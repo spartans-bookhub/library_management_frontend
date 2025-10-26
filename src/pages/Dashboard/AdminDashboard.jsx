@@ -16,6 +16,8 @@ import { useAuth } from "../../context/AuthContext";
 import BookTable from "./BookTable"
 import AdminHome from './AdminHome';
 import FilterSidebar from './FilterSidebar';
+import BookList from '../Books/BookList';
+import BookViewCard from './BookViewCard';
 
 
 export default function AdminDashboard() {
@@ -55,6 +57,10 @@ const Toggle = ()=>{
 
   <div className="container-fluid bg-secondary min-vh-100" >
       <div className="row">
+        {/* <BookList /> */}
+        {/* <BookViewCard /> */}
+           
+              
 
           {toggle && <div className="col-2 bg-white vh-100 position-fixed">
                         <Sidebar />
@@ -68,6 +74,12 @@ const Toggle = ()=>{
              {/* <div className="col-2 bg-white vh-100 float-left top-right">
               <FilterSidebar />
             </div> */}
+
+            {/* <div className="container-fluid">
+                <div className="row">
+                    <BookTable />
+                </div>
+              </div> */}
 
           </div>
         </div>

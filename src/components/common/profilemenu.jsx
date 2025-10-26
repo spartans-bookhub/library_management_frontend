@@ -52,7 +52,15 @@ export default function ProfileMenu() {
     const handleDashboardClick = () => {
     handleClose();
     // navigate("/dashboard");
-    navigate("/admin-dashboard");
+    // navigate("/admin-dashboard");
+
+    if (isAdmin) {
+      navigate("/admin-dashboard");
+    } else if (user) {
+      navigate("/student-dashboard");
+    } else {
+      alert("Invalid role!"); 
+    }
 
   };
 
