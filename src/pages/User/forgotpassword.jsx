@@ -13,6 +13,10 @@ import {
 } from "@mui/material";
 import axios from "axios";
 import { API_BASE_URL, API_ENDPOINTS } from "../../constants/apiEndpoints";
+import apiClient from "../../utils/axiosConfig";
+import { authService } from "../../services/authService";
+
+const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;  
 
 const ForgotPasswordDialog = ({ open, onClose }) => {
   const [email, setEmail] = useState("");
@@ -29,12 +33,18 @@ const ForgotPasswordDialog = ({ open, onClose }) => {
       return;
     }
 
+    if (!emailRegex.test(email)) {
+      setError("Email id must be valid.");
+      return;
+    }
+
     setLoading(true);
     try {
-      const response = await axios.post(`${API_BASE_URL}${API_ENDPOINTS.AUTH.FORGOT_PASSWORD}`, { email });
-      setMessage(response.data.message || "Password reset link sent! Check your email.");
-    } catch (err) {
-      setError(err.response?.data?.message || "Failed to send reset link. Try again.");
+      const response = await authService.sendResetLink({ email })
+      console.log(response)
+      setMessage(response.data || "Password reset link sent! Check your email.");
+    } catch (error) {
+      setError(error.response?.data || "Failed to send reset link. Try again.");
     } finally {
       setLoading(false);
     }

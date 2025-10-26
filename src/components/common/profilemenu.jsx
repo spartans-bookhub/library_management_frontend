@@ -26,7 +26,7 @@ export default function ProfileMenu() {
 
 
   const getUserInitials = (name) => {
-    if (!name) return "U";
+    if (!name) return "A";
     const nameParts = name.split(" ");
     if (nameParts.length >= 2) {
       return `${nameParts[0][0]}${nameParts[1][0]}`.toUpperCase();
@@ -51,7 +51,14 @@ export default function ProfileMenu() {
 
     const handleDashboardClick = () => {
     handleClose();
-    navigate("/dashboard");
+    if (isAdmin) {
+      navigate("/admin-dashboard");
+    } else if (user) {
+      navigate("/student-dashboard");
+    } else {
+      alert("Invalid role!"); 
+    }
+
   };
 
   const handleBookClick =() => {
@@ -77,14 +84,14 @@ export default function ProfileMenu() {
                 }}
                 onClick={handleClick} >
                 {getUserInitials(user?.userName)}
-            </Avatar> 
-      <Menu
-        anchorEl={anchorEl}
-        open={open}
-        onClose={handleClose}
-        transformOrigin={{ horizontal: "right", vertical: "top" }}
-        anchorOrigin={{ horizontal: "right", vertical: "bottom" }}
-      >
+                </Avatar> 
+          <Menu
+            anchorEl={anchorEl}
+            open={open}
+            onClose={handleClose}
+            transformOrigin={{ horizontal: "right", vertical: "top" }}
+            anchorOrigin={{ horizontal: "right", vertical: "bottom" }}
+          >
         
          {isAdmin ? (
           <>
@@ -109,23 +116,20 @@ export default function ProfileMenu() {
           Profile Settings
         </MenuItem>
 
+
+        </>
+         )}
         <MenuItem onClick={handleBookClick}>
          <ListItemIcon> <MenuBookIcon fontSize="small" /> </ListItemIcon>
           Books
         </MenuItem>
-        </>
-         )}
-         
-        
-       
-
-
-        <MenuItem onClick={() => { toggleTheme(); handleClose(); }}>
+ 
+        {/* <MenuItem onClick={() => { toggleTheme(); handleClose(); }}>
           <ListItemIcon>
             {mode === "light" ? <DarkMode fontSize="small" /> : <LightMode fontSize="small" />}
           </ListItemIcon>
           {mode === "light" ? "Dark Mode" : "Light Mode"}
-        </MenuItem>
+        </MenuItem> */}
 
         <Divider />
 

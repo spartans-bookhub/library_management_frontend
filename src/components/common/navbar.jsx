@@ -80,7 +80,7 @@ export default function Navbar() {
             sx={{ 
               fontWeight: 700, 
               letterSpacing: 1,
-              background: "linear-gradient(45deg, #1976d2, #9c27b0)",
+              background: "linear-gradient(45deg, #f8f8f8ff, #ffffffff)",
               WebkitBackgroundClip: "text",
               WebkitTextFillColor: "transparent",
               transition: "0.3s ease",

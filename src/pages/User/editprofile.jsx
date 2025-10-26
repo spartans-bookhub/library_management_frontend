@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   Box,
   Button,
@@ -14,6 +14,8 @@ import axios from "axios";
 import { useAuth } from "../../context/AuthContext";
 import { API_BASE_URL, API_ENDPOINTS } from "../../constants/apiEndpoints";
 import { useToast } from "../../context/ToastContext";
+import { authService } from "../../services/authService";
+import { userService } from "../../services/userService";
 
 const passwordRegex = /^(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z])(?=.*[@#$%^&+=!]).*$/;
 
@@ -38,10 +40,21 @@ export default function EditProfile({onCancel}) {
   const [errors, setErrors] = useState({});
   const [passwordErrors, setPasswordErrors] = useState({});
   const [showPasswordForm, setShowPasswordForm] = useState(false);
-  const [profileSaveSuccess, setProfileSaveSuccess] = useState(null);
-  const [passwordChangeSuccess, setPasswordChangeSuccess] = useState(null);
+  const [profileSaveMessage, setProfileSaveMessage] = useState(null);
+  const [passwordChangeMessage, setPasswordChangeMessage] = useState(null);
   const [loadingProfileSave, setLoadingProfileSave] = useState(false);
   const [loadingPasswordChange, setLoadingPasswordChange] = useState(false);
+
+  useEffect(() => {
+    setFormData({
+      userId: user.userId || "",
+      userName: user.userName || "",
+      contactNumber: user.contactNumber || "",
+      address: user.address || "",
+      email: user.email || "",
+    });
+  }, [user]);
+
 
   const validateProfile = () => {
     let tempErrors = {};
@@ -99,36 +112,20 @@ if (passwordForm.newPassword !== passwordForm.confirmNewPassword) {
     if (!validateProfile()) return;
 
     setLoadingProfileSave(true);
-    setProfileSaveSuccess(null);
-
+    setProfileSaveMessage(null);
     try {
     const token = getToken();
-    const response = await axios.put(
-        `${API_BASE_URL}${API_ENDPOINTS.USER.UPDATE_PROFILE}${formData.userId}`,
-        formData,
-        {
-        headers: {
-            Authorization: `Bearer ${token}`,
-        },
-        }
-    );
-
-    const data = response.data;
-    setFormData(data);
+    const data = await userService.updateProfile(formData) 
     updateUser(data);
     showSuccess("Profile updated successfully!")
-    setProfileSaveSuccess("Profile updated successfully!");
-    } catch (err) {
-    console.log(err)
-    if (err.response?.data?.message) {
-        console.log(err.response.data.message)
-        setProfileSaveSuccess(err.response.data.message);
-    } else {
-        setProfileSaveSuccess("An unknown error occurred.");
-    }
-    } finally {
-    setLoadingProfileSave(false);
-    }
+    setProfileSaveMessage("Profile updated successfully!");
+    } catch (error) {
+        console.log(error)
+        setProfileSaveMessage(error.message || "Failed to update profile");
+        showError("Failed to update profile : "+error.message)
+      } finally {
+      setLoadingProfileSave(false);
+      }
 
   };
 
@@ -136,30 +133,18 @@ if (passwordForm.newPassword !== passwordForm.confirmNewPassword) {
     if (!validatePasswordForm()) return;
 
     setLoadingPasswordChange(true);
-    setPasswordChangeSuccess(null);
+    setPasswordChangeMessage(null);
 
     try {
-       const token = getToken();
-     const response = await axios.post(`${API_BASE_URL}${API_ENDPOINTS.USER.CHANGE_PASSWORD}`, passwordForm,
-            {
-                headers: {
-                    Authorization: `Bearer ${token}`
-                }
-            }
-     );
-
-      setPasswordChangeSuccess("Password changed successfully!");
+      const response = await userService.changePassword(passwordForm)
+      setPasswordChangeMessage("Password changed successfully!");
+      showSuccess("Password changed successfully!");
       setPasswordForm({ oldPassword: "", newPassword: "", confirmNewPassword: "" });
       setShowPasswordForm(false);
     } catch (err) {
         console.log(err)
-        setPasswordChangeSuccess("Failed to change password. "+err.response.data);
-        //  if (err.response?.data) {
-        //     console.log(err.response.data)
-        //     setPasswordChangeSuccess(err.response.data);
-        // }else{
-        //     setPasswordChangeSuccess("Failed to change password.");
-        // }
+        setPasswordChangeMessage("Failed to change password. "+err.response.data);
+  
     } finally {
       setLoadingPasswordChange(false);
     }
@@ -168,13 +153,13 @@ if (passwordForm.newPassword !== passwordForm.confirmNewPassword) {
   return (
     <Container maxWidth="sm" sx={{ mt: 4 }}>
       <Paper elevation={5} sx={{ p: 4 }}>
-        <Typography variant="h6" gutterBottom>
+        <Typography variant="h6" gutterBottom sx={{ mb: 2 }}>
           Edit Profile
         </Typography>
 
-        {profileSaveSuccess && (
-          <Alert severity={profileSaveSuccess.includes("successfully") ? "success" : "error"} sx={{ mb: 2 }}>
-            {profileSaveSuccess}
+        {profileSaveMessage && (
+          <Alert severity={profileSaveMessage.includes("successfully") ? "success" : "error"} sx={{ mb: 2 }}>
+            {profileSaveMessage}
           </Alert>
         )}
 
@@ -238,7 +223,7 @@ if (passwordForm.newPassword !== passwordForm.confirmNewPassword) {
             variant="outlined"
             onClick={() => {
               setShowPasswordForm((prev) => !prev);
-              setPasswordChangeSuccess(null);
+              setPasswordChangeMessage(null);
               setPasswordErrors({});
               setPasswordForm({
                     oldPassword: "",
@@ -252,12 +237,12 @@ if (passwordForm.newPassword !== passwordForm.confirmNewPassword) {
 
           {showPasswordForm && (
             <Box sx={{ mt: 2 }}>
-              {passwordChangeSuccess && (
+              {passwordChangeMessage && (
                 <Alert
-                  severity={passwordChangeSuccess.includes("successfully") ? "success" : "error"}
+                  severity={passwordChangeMessage.includes("successfully") ? "success" : "error"}
                   sx={{ mb: 2 }}
                 >
-                  {passwordChangeSuccess}
+                  {passwordChangeMessage}
                 </Alert>
               )}
 

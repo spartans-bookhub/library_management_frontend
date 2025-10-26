@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from "react";
 import {
   Container,
@@ -28,7 +29,7 @@ import { useAuth } from "../../context/AuthContext";
 import { useCart } from "../../context/CartContext";
 import { useToast } from "../../context/ToastContext";
 
-const BookList = () => {
+export default function BookViewCard  ()  {
   const [books, setBooks] = useState([]);
   const [filteredBooks, setFilteredBooks] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -113,19 +114,18 @@ const BookList = () => {
     setFilteredBooks(filtered);
   };
 
-  const handleAddToCart = async (book) => {
-    try {
-      if (isInCart(book.bookId)) {
-        showInfo("Book is already in your cart");
-        return;
-      }
-
-      await addToCart(book);
-      showSuccess(`"${book.bookTitle}" added to cart!`);
-    } catch (error) {
-      setError(error.message || "Failed to add book to cart");
-    }
-  };
+//   const handleAddToCart = (book) => {
+//     try {
+//       if (isInCart(book.bookId)) {
+//         showInfo("Book is already in your cart");
+//         return;
+//       }
+//       addToCart(book);
+//       showSuccess(`"${book.bookTitle}" added to cart!`);
+//     } catch (error) {
+//       setError(error.message || "Failed to add book to cart");
+//     }
+//   };
 
   const getAvailabilityColor = (availableCopies) => {
     if (availableCopies === 0) return "error";
@@ -139,7 +139,6 @@ const BookList = () => {
   const currentBooks = filteredBooks.slice(indexOfFirstBook, indexOfLastBook);
   const totalPages = Math.ceil(filteredBooks.length / booksPerPage);
 
-  
   if (loading) {
     return (
       <Container maxWidth="lg" sx={{ mt: 4 }}>
@@ -230,141 +229,55 @@ const BookList = () => {
           </Alert>
         )}
 
-        <Grid container spacing={3} sx={{ alignItems: "stretch" }}>
-          {Array.isArray(filteredBooks) &&
-            filteredBooks.map((book) => (
-              <Grid
-                item
-                xs={12}
-                sm={6}
-                md={4}
-                lg={3}
-                key={book.bookId}
-                sx={{
-                  display: "flex",
-                  flexDirection: "column",
-                }}
-              >
+        {/* Book Grid */}
+        <Grid container spacing={3}>
+          {currentBooks.length > 0 ? (
+            currentBooks.map((book) => (
+              <Grid item xs={12} sm={6} md={4} lg={3} key={book.bookId} sx={{ display: "flex" }}>
                 <Card
                   sx={{
+                    height: 420,
+                    width: "100%",
                     display: "flex",
                     flexDirection: "column",
-                    height: "100%",
-                    minHeight: 480,
-                    width: "100%",
-                    maxWidth: "250px",
-                    minWidth: "250px",
                     borderRadius: 2,
-                    overflow: "hidden", // keeps consistent box model
+                    transition: "all 0.3s ease-in-out",
                     "&:hover": {
                       transform: "translateY(-6px)",
                       boxShadow: "0 8px 25px rgba(0,0,0,0.15)",
                     },
                   }}
                 >
-                  {/* IMAGE CONTAINER: fixed size, contain + center */}
                   <Box
                     sx={{
-                      height: 200, // <- same height for all
-                      width: "100%",
-                      bgcolor: book.imageUrl ? "transparent" : "grey.100",
+                      height: 160,
+                      backgroundColor: book.imageUrl ? "transparent" : "grey.100",
                       display: "flex",
                       alignItems: "center",
                       justifyContent: "center",
                       position: "relative",
-                      overflow: "hidden",
-                      // Optional: keep a consistent visual frame
-                      borderBottom: (theme) =>
-                        `1px solid ${theme.palette.divider}`,
                     }}
                   >
                     {book.imageUrl ? (
-                      <CardMedia
-                        component="img"
-                        image={book.imageUrl}
-                        alt={book.bookTitle}
-                        sx={{
-                          width: "100%",
-                          height: "100%",
-                          objectFit: "contain", // <- contain
-                          objectPosition: "center", // <- center
-                        }}
-                      />
+                      <CardMedia component="img" height="160" image={book.imageUrl} alt={book.bookTitle} sx={{ objectFit: "cover" }} />
                     ) : (
                       <Typography variant="body2" color="text.disabled">
                         No Image
                       </Typography>
                     )}
-
-                    {book.category && (
-                      <Chip
-                        label={book.category}
-                        size="small"
-                        color="primary"
-                        sx={{
-                          position: "absolute",
-                          top: 8,
-                          right: 8,
-                          fontSize: "0.75rem",
-                          maxWidth: "70%",
-                          // prevent chip text from stretching layout
-                          ".MuiChip-label": {
-                            overflow: "hidden",
-                            textOverflow: "ellipsis",
-                            whiteSpace: "nowrap",
-                          },
-                        }}
-                      />
-                    )}
+                    <Chip
+                      label={book.category}
+                      size="small"
+                      color="primary"
+                      sx={{ position: "absolute", top: 8, right: 8, fontSize: "0.75rem" }}
+                    />
                   </Box>
 
-                  <CardContent
-                    sx={{
-                      flexGrow: 1,
-                      display: "flex",
-                      flexDirection: "column",
-                      p: 2,
-                      overflow: "hidden",
-                      "&:last-child": { pb: 2 },
-                      minWidth: 0, // <- critical for ellipses inside flex
-                    }}
-                  >
-                    {/* TITLE: 2-line clamp with common height */}
-                    <Typography
-                      variant="h6"
-                      component="h2"
-                      sx={{
-                        fontSize: "1rem",
-                        fontWeight: 600,
-                        mb: 0.75,
-                        lineHeight: 1.3,
-                        display: "-webkit-box",
-                        WebkitLineClamp: 2,
-                        WebkitBoxOrient: "vertical",
-                        overflow: "hidden",
-                        textOverflow: "ellipsis",
-                        minHeight: "calc(1.3em * 2)", // common height
-                        maxHeight: "calc(1.3em * 2)", // enforce 2-line box
-                        minWidth: 0, // prevents pushing width
-                      }}
-                      title={book.bookTitle} // tooltip for full title on hover
-                    >
+                  <CardContent sx={{ flexGrow: 1, display: "flex", flexDirection: "column", p: 2 }}>
+                    <Typography variant="h6" component="h2" sx={{ fontSize: "1rem", fontWeight: 600, mb: 0.5, overflow: "hidden", textOverflow: "ellipsis", display: "-webkit-box", WebkitLineClamp: 2, WebkitBoxOrient: "vertical", lineHeight: 1.3, height: "2.6rem", wordBreak: "break-word" }}>
                       {book.bookTitle}
                     </Typography>
-
-                    {/* AUTHOR: single-line truncate */}
-                    <Typography
-                      variant="body2"
-                      color="text.secondary"
-                      sx={{
-                        mb: 1.5,
-                        overflow: "hidden",
-                        textOverflow: "ellipsis",
-                        whiteSpace: "nowrap",
-                        minWidth: 0,
-                      }}
-                      title={book.bookAuthor}
-                    >
+                    <Typography variant="body2" color="text.secondary" sx={{ mb: 1.5, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
                       by {book.bookAuthor}
                     </Typography>
                     <Box display="flex" alignItems="center" gap={0.5} mb={1.5}>
@@ -373,56 +286,11 @@ const BookList = () => {
                         ({book.rating})
                       </Typography>
                     </Box>
-
-                    <Box
-                      display="flex"
-                      justifyContent="space-between"
-                      alignItems="center"
-                      mb={2}
-                      sx={{ minWidth: 0 }}
-                    >
-                      <Typography
-                        variant="h6"
-                        color="primary"
-                        fontWeight={600}
-                        sx={{ overflow: "hidden", textOverflow: "ellipsis" }}
-                      >
+                    <Box display="flex" justifyContent="space-between" alignItems="center" mb={2}>
+                      <Typography variant="h6" color="primary" fontWeight={600}>
                         ₹{book.price}
                       </Typography>
-                      <Chip
-                        label={`${book.availableCopies}/${book.totalCopies}`}
-                        size="small"
-                        color={getAvailabilityColor(book.availableCopies)}
-                        variant="outlined"
-                        sx={{ ml: 1, flexShrink: 0 }}
-                      />
-                    </Box>
-
-                    <Box mt="auto">
-                      <Button
-                        variant={
-                          book.availableCopies === 0
-                            ? "outlined"
-                            : isInCart(book.bookId)
-                            ? "outlined"
-                            : "contained"
-                        }
-                        fullWidth
-                        disabled={book.availableCopies === 0}
-                        onClick={() => handleAddToCart(book)}
-                        sx={{
-                          borderRadius: 1.5,
-                          textTransform: "none",
-                          fontWeight: 500,
-                          whiteSpace: "nowrap",
-                        }}
-                      >
-                        {book.availableCopies === 0
-                          ? "Out of Stock"
-                          : isInCart(book.bookId)
-                          ? `In Cart (${getItemQuantity(book.bookId)})`
-                          : "Add to Cart"}
-                      </Button>
+                      <Chip label={`${book.availableCopies}/${book.totalCopies}`} size="small" color={getAvailabilityColor(book.availableCopies)} variant="outlined" />
                     </Box>
                     <Button
                       variant={book.availableCopies === 0 ? "outlined" : isInCart(book.bookId) ? "outlined" : "contained"}
@@ -470,6 +338,6 @@ const BookList = () => {
   );
 };
 
-export default BookList;
+
 
 
