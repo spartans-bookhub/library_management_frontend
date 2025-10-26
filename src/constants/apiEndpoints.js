@@ -6,13 +6,12 @@ export const API_ENDPOINTS = {
     REGISTER: "/register",
     LOGOUT: "/logout",
     FORGOT_PASSWORD: "/forgot-password",
-    RESET_PASSWORD: "/password-reset"
+    RESET_PASSWORD: "/password-reset",
   },
   USER: {
     PROFILE: "/api/user/",
     UPDATE_PROFILE: "/api/user/",
     CHANGE_PASSWORD: "/api/password",
-    
   },
   BOOKS: {
     GET_ALL: "/api/books/list",
@@ -29,5 +28,14 @@ export const API_ENDPOINTS = {
     BORROW_BOOKS: "/api/v1/transactions/books/borrow",
     GET_BORROWED_BOOKS: "/api/v1/transactions/borrowed",
     GET_HISTORY: "/api/v1/transactions/history",
+  },
+  NOTIFICATIONS: {
+    GET_ALL: "/api/notifications",
+  },
+  CART: {
+    GET: "/api/cart",
+    ADD: "/api/cart/add/:id",
+    REMOVE: "/api/cart/remove/:id",
+    CLEAR: "/api/cart/clear",
   },
 };
