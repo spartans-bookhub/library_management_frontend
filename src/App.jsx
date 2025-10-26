@@ -15,6 +15,7 @@ import ProtectedRoute from "./components/auth/ProtectedRoute";
 import UserProfile from "./components/user/userprofile";
 import ResetPassword from "./components/user/resetpassword";
 import NotFound from "./pages/OtherPages/NotFound";
+import Home from "./components/Home";
 import AdminDashboard from "./pages/Dashboard/AdminDashboard";
 
 function App() {
@@ -35,6 +36,7 @@ function App() {
             <BrowserRouter>
               <Navbar />
               <Routes>
+                <Route path="/" element={<Home />} />
                 <Route path="/register" element={<Registration />} />
                 <Route path="/login" element={<Login />} />
                 <Route path="/reset-password" element={<ResetPassword />} />
