@@ -176,7 +176,7 @@ const Cart = () => {
                     </Grid>
 
                     {/* Remove Button */}
-                    <Grid item xs={2} sm={2}>
+                    <Grid item xs={2} sm={2} style={{ marginLeft: "auto" }}>
                       <Box textAlign="center">
                         <IconButton
                           color="error"

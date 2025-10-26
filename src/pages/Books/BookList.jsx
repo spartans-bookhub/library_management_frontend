@@ -243,7 +243,7 @@ const BookList = () => {
           </Alert>
         )}
 
-        <Grid container spacing={3}>
+        <Grid container spacing={3} sx={{ alignItems: "stretch" }}>
           {Array.isArray(filteredBooks) &&
             filteredBooks.map((book) => (
               <Grid
@@ -253,62 +253,82 @@ const BookList = () => {
                 md={4}
                 lg={3}
                 key={book.bookId}
-                sx={{ display: "flex" }}
+                sx={{
+                  display: "flex",
+                  flexDirection: "column",
+                }}
               >
                 <Card
                   sx={{
-                    height: 420,
-                    minHeight: 420,
-                    maxHeight: 420,
-                    width: "100%",
                     display: "flex",
                     flexDirection: "column",
+                    height: "100%",
+                    minHeight: 480,
+                    width: "100%",
+                    maxWidth: "250px",
+                    minWidth: "250px",
                     borderRadius: 2,
-                    transition: "all 0.3s ease-in-out",
+                    overflow: "hidden", // keeps consistent box model
                     "&:hover": {
                       transform: "translateY(-6px)",
                       boxShadow: "0 8px 25px rgba(0,0,0,0.15)",
                     },
                   }}
                 >
+                  {/* IMAGE CONTAINER: fixed size, contain + center */}
                   <Box
                     sx={{
-                      height: 160,
-                      minHeight: 160,
-                      maxHeight: 160,
-                      backgroundColor: book.imageUrl
-                        ? "transparent"
-                        : "grey.100",
+                      height: 200, // <- same height for all
+                      width: "100%",
+                      bgcolor: book.imageUrl ? "transparent" : "grey.100",
                       display: "flex",
                       alignItems: "center",
                       justifyContent: "center",
                       position: "relative",
+                      overflow: "hidden",
+                      // Optional: keep a consistent visual frame
+                      borderBottom: (theme) =>
+                        `1px solid ${theme.palette.divider}`,
                     }}
                   >
                     {book.imageUrl ? (
                       <CardMedia
                         component="img"
-                        height="160"
                         image={book.imageUrl}
                         alt={book.bookTitle}
-                        sx={{ objectFit: "cover" }}
+                        sx={{
+                          width: "100%",
+                          height: "100%",
+                          objectFit: "contain", // <- contain
+                          objectPosition: "center", // <- center
+                        }}
                       />
                     ) : (
                       <Typography variant="body2" color="text.disabled">
                         No Image
                       </Typography>
                     )}
-                    <Chip
-                      label={book.category}
-                      size="small"
-                      color="primary"
-                      sx={{
-                        position: "absolute",
-                        top: 8,
-                        right: 8,
-                        fontSize: "0.75rem",
-                      }}
-                    />
+
+                    {book.category && (
+                      <Chip
+                        label={book.category}
+                        size="small"
+                        color="primary"
+                        sx={{
+                          position: "absolute",
+                          top: 8,
+                          right: 8,
+                          fontSize: "0.75rem",
+                          maxWidth: "70%",
+                          // prevent chip text from stretching layout
+                          ".MuiChip-label": {
+                            overflow: "hidden",
+                            textOverflow: "ellipsis",
+                            whiteSpace: "nowrap",
+                          },
+                        }}
+                      />
+                    )}
                   </Box>
 
                   <CardContent
@@ -317,31 +337,35 @@ const BookList = () => {
                       display: "flex",
                       flexDirection: "column",
                       p: 2,
-                      height: 260, // Remaining height after image (420 - 160 = 260)
                       overflow: "hidden",
                       "&:last-child": { pb: 2 },
+                      minWidth: 0, // <- critical for ellipses inside flex
                     }}
                   >
+                    {/* TITLE: 2-line clamp with common height */}
                     <Typography
                       variant="h6"
                       component="h2"
                       sx={{
                         fontSize: "1rem",
                         fontWeight: 600,
-                        mb: 0.5,
-                        overflow: "hidden",
-                        textOverflow: "ellipsis",
+                        mb: 0.75,
+                        lineHeight: 1.3,
                         display: "-webkit-box",
                         WebkitLineClamp: 2,
                         WebkitBoxOrient: "vertical",
-                        lineHeight: 1.3,
-                        height: "2.6rem", // Fixed height for exactly 2 lines
-                        wordBreak: "break-word",
+                        overflow: "hidden",
+                        textOverflow: "ellipsis",
+                        minHeight: "calc(1.3em * 2)", // common height
+                        maxHeight: "calc(1.3em * 2)", // enforce 2-line box
+                        minWidth: 0, // prevents pushing width
                       }}
+                      title={book.bookTitle} // tooltip for full title on hover
                     >
                       {book.bookTitle}
                     </Typography>
 
+                    {/* AUTHOR: single-line truncate */}
                     <Typography
                       variant="body2"
                       color="text.secondary"
@@ -350,7 +374,9 @@ const BookList = () => {
                         overflow: "hidden",
                         textOverflow: "ellipsis",
                         whiteSpace: "nowrap",
+                        minWidth: 0,
                       }}
+                      title={book.bookAuthor}
                     >
                       by {book.bookAuthor}
                     </Typography>
@@ -367,8 +393,14 @@ const BookList = () => {
                       justifyContent="space-between"
                       alignItems="center"
                       mb={2}
+                      sx={{ minWidth: 0 }}
                     >
-                      <Typography variant="h6" color="primary" fontWeight={600}>
+                      <Typography
+                        variant="h6"
+                        color="primary"
+                        fontWeight={600}
+                        sx={{ overflow: "hidden", textOverflow: "ellipsis" }}
+                      >
                         ₹{book.price}
                       </Typography>
                       <Chip
@@ -376,6 +408,7 @@ const BookList = () => {
                         size="small"
                         color={getAvailabilityColor(book.availableCopies)}
                         variant="outlined"
+                        sx={{ ml: 1, flexShrink: 0 }}
                       />
                     </Box>
 
@@ -395,6 +428,7 @@ const BookList = () => {
                           borderRadius: 1.5,
                           textTransform: "none",
                           fontWeight: 500,
+                          whiteSpace: "nowrap",
                         }}
                       >
                         {book.availableCopies === 0
