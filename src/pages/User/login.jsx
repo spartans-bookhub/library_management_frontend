@@ -35,7 +35,6 @@ const Login = () => {
   const [openForgot, setOpenForgot] = useState(false);
 
   function validate(data) {
-    alert("validate")
     const err = {};
 
     if (!data.email) {
@@ -66,7 +65,6 @@ const Login = () => {
     try {
       const data = await authService.login(formData);
       console.log(data)
-      alert(data)
       const { token, userId, userName, email, role, address, contactNumber } = data;
       
       
