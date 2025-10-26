@@ -14,7 +14,7 @@ import { ToastProvider } from "./context/ToastContext";
 import ProtectedRoute from "./components/auth/ProtectedRoute";
 import UserProfile from "./components/user/userprofile";
 import ResetPassword from "./components/user/resetpassword";
-
+import NotFound from "./pages/OtherPages/NotFound";
 import Home from "./components/Home";
 
 function App() {
@@ -75,7 +75,7 @@ function App() {
                 />
                 {/* Fallback Route */}
                 <Route path="*" element={<NotFound />} />
-                <Route path="/admin" element={ <AdminDashboard/>} />
+                {/* <Route path="/admin" element={ <AdminDashboard/>} /> */}
               </Routes>
             </BrowserRouter>
           </CartProvider>
