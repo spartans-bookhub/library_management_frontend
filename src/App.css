@@ -23,3 +23,15 @@
     --sidebar-ring: oklch(0.439 0 0);
   }
 }
+
+.fixed-content {
+  position: fixed; /* Makes the element fixed relative to the viewport */
+  top: 0;          /* Positions it at the top of the viewport */
+  right: 0;        /* Positions it at the right of the viewport */
+  width: 25%;      /* Adjust width to match the md={3} column size (3/12 = 25%) */
+  height: 100vh;   /* Makes it span the full viewport height */
+  background-color: #f8f9fa; /* Example background color */
+  padding: 15px;
+  box-shadow: -2px 0 5px rgba(0, 0, 0, 0.1); /* Optional shadow */
+  z-index: 1000; /* Ensure it stays above other content */
+}

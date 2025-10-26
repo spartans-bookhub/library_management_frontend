@@ -73,6 +73,7 @@ function App() {
                 />
                 {/* Fallback Route */}
                 <Route path="*" element={<NotFound />} />
+                <Route path="/admin" element={ <AdminDashboard/>} />
               </Routes>
             </BrowserRouter>
           </CartProvider>
