@@ -28,6 +28,7 @@ apiClient.interceptors.response.use(
     return response;
   },
   (error) => {
+    const originalRequest = error.config;
     if (error.response?.status === 401 &&
       !originalRequest.url.includes("/login")) {
       localStorage.removeItem("token");
