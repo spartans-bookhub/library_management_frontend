@@ -17,7 +17,7 @@ import {
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../../context/AuthContext";
 import { authService } from "../../services/authService";
-import ForgotPasswordDialog from "../../components/user/forgotpassword";
+import ForgotPasswordDialog from "./forgotpassword";
 
 const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
@@ -64,7 +64,9 @@ const Login = () => {
 
     try {
       const data = await authService.login(formData);
+      console.log(data)
       const { token, userId, userName, email, role, address, contactNumber } = data;
+      
       
       // Use AuthContext login method
       login({
@@ -78,7 +80,7 @@ const Login = () => {
       
       navigate("/books");
     } catch (error) {
-      setApiError(error.message || "Invalid email or password. Please try again.");
+      setApiError("Invalid email or password. Please try again.");
     }
   }
 
