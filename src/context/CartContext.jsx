@@ -1,4 +1,6 @@
 import React, { createContext, useContext, useState, useEffect } from "react";
+import { cartService } from "../services/cartService";
+import { useAuth } from "./AuthContext";
 
 const CartContext = createContext();
 
@@ -12,44 +14,79 @@ export const useCart = () => {
 
 export const CartProvider = ({ children }) => {
   const [cartItems, setCartItems] = useState([]);
+  const [loading, setLoading] = useState(false);
+  const { isAuthenticated } = useAuth();
 
-  // Load cart from localStorage on app startup
-  useEffect(() => {
-    const savedCart = localStorage.getItem("cartItems");
-    if (savedCart) {
-      try {
-        setCartItems(JSON.parse(savedCart));
-      } catch (error) {
-        console.error("Error loading cart from localStorage:", error);
-      }
+  // Fetch cart from API when user is authenticated
+  const fetchCart = async () => {
+    if (!isAuthenticated) {
+      setCartItems([]);
+      return;
     }
-  }, []);
 
-  // Save cart to localStorage whenever it changes
+    try {
+      setLoading(true);
+      const data = await cartService.getCart();
+      setCartItems(Array.isArray(data) ? data : []);
+    } catch (error) {
+      console.error("Error fetching cart:", error);
+      setCartItems([]);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // Load cart when authentication status changes
   useEffect(() => {
-    localStorage.setItem("cartItems", JSON.stringify(cartItems));
-  }, [cartItems]);
+    fetchCart();
+  }, [isAuthenticated]);
 
-  const addToCart = (book) => {
-    setCartItems((prevItems) => {
-      const existingItem = prevItems.find(item => item.bookId === book.bookId);
-      
+  const addToCart = async (book) => {
+    if (!isAuthenticated) {
+      throw new Error("Please login to add items to cart");
+    }
+
+    try {
+      // Check if book is already in cart
+      const existingItem = cartItems.find(item => item.bookId === book.bookId);
       if (existingItem) {
-        // Book already in cart - no change (only 1 copy can be borrowed)
-        return prevItems;
-      } else {
-        // Add new book to cart with quantity 1 (fixed for library borrowing)
-        return [...prevItems, { ...book, quantity: 1 }];
+        throw new Error("Book is already in your cart");
       }
-    });
+
+      await cartService.addToCart(book.bookId);
+      // Refresh cart from API to get updated data
+      await fetchCart();
+    } catch (error) {
+      throw error;
+    }
   };
 
-  const removeFromCart = (bookId) => {
-    setCartItems((prevItems) => prevItems.filter(item => item.bookId !== bookId));
+  const removeFromCart = async (bookId) => {
+    if (!isAuthenticated) {
+      throw new Error("Please login to remove items from cart");
+    }
+
+    try {
+      await cartService.removeFromCart(bookId);
+      // Refresh cart from API to get updated data
+      await fetchCart();
+    } catch (error) {
+      throw error;
+    }
   };
 
-  const clearCart = () => {
-    setCartItems([]);
+  const clearCart = async () => {
+    if (!isAuthenticated) {
+      throw new Error("Please login to clear cart");
+    }
+
+    try {
+      await cartService.clearCart();
+      // Refresh cart from API to get updated data
+      await fetchCart();
+    } catch (error) {
+      throw error;
+    }
   };
 
   const getCartItemCount = () => {
@@ -67,12 +104,14 @@ export const CartProvider = ({ children }) => {
 
   const value = {
     cartItems,
+    loading,
     addToCart,
     removeFromCart,
     clearCart,
     getCartItemCount,
     isInCart,
     getItemQuantity,
+    fetchCart,
   };
 
   return (
