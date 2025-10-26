@@ -10,7 +10,7 @@ export const userService = {
       return response.data;
     } catch (error) {
       throw new Error(
-        error.response?.data?.message || "Failed to fetch profile"
+        error.response?.data || "Failed to fetch profile"
       );
     }
   },
@@ -25,7 +25,7 @@ export const userService = {
       return response.data;
     } catch (error) {
       throw new Error(
-        error.response?.data?.message || "Failed to update profile"
+        error.response?.data || "Failed to update profile"
       );
     }
   },
@@ -40,7 +40,7 @@ export const userService = {
       return response.data;
     } catch (error) {
       throw new Error(
-        error.response?.data?.message || "Failed to update profile"
+        error.response?.data || "Failed to update profile"
       );
     }
   },

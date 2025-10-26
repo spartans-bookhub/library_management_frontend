@@ -119,15 +119,10 @@ if (passwordForm.newPassword !== passwordForm.confirmNewPassword) {
     updateUser(data);
     showSuccess("Profile updated successfully!")
     setProfileSaveMessage("Profile updated successfully!");
-    } catch (err) {
-      console.log(err)
-      if (err.response?.data?.message) {
-          console.log(err.response.data.message)
-          setProfileSaveMessage(err.response.data.message);
-          showError("Failed to update profile")
-      } else {
-          setProfileSaveMessage("An unknown error occurred.");
-      }
+    } catch (error) {
+        console.log(error)
+        setProfileSaveMessage(error.message || "Failed to update profile");
+        showError("Failed to update profile : "+error.message)
       } finally {
       setLoadingProfileSave(false);
       }

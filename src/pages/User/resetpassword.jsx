@@ -32,8 +32,8 @@ const ResetPassword = () => {
       setMessage(res || "Password reset successful!");
       // Redirect to login page after 2 seconds
       setTimeout(() => navigate("/login"), 2000);
-    } catch (err) {
-      setError(err.response?.data || "Failed to reset password. Try sending rest link again");
+    } catch (error) {
+      setError(error.message || "Failed to reset password. Try sending rest link again");
     }
   };
 

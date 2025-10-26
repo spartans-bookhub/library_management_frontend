@@ -80,7 +80,7 @@ const Login = () => {
       
       navigate("/books");
     } catch (error) {
-      setApiError("Invalid email or password. Please try again.");
+      setApiError(error.message || "Invalid email or password. Please try again.");
     }
   }
 
