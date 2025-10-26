@@ -51,7 +51,9 @@ export default function ProfileMenu() {
 
     const handleDashboardClick = () => {
     handleClose();
-    navigate("/dashboard");
+    // navigate("/dashboard");
+    navigate("/admin-dashboard");
+
   };
 
   const handleBookClick =() => {
