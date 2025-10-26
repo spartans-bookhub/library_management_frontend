@@ -13,6 +13,7 @@ import { ToastProvider } from "./context/ToastContext";
 import ProtectedRoute from "./components/auth/ProtectedRoute";
 import UserProfile from "./components/user/userprofile";
 import ResetPassword from "./components/user/resetpassword";
+import Home from "./components/Home";
 
 function App() {
   const [count, setCount] = useState(0);
@@ -32,6 +33,7 @@ function App() {
             <BrowserRouter>
               <Navbar />
               <Routes>
+                <Route path="/" element={<Home />} />
                 <Route path="/register" element={<Registration />} />
                 <Route path="/login" element={<Login />} />
                 <Route path="/reset-password" element={<ResetPassword />} />
