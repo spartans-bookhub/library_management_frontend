@@ -16,6 +16,8 @@ import { API_BASE_URL, API_ENDPOINTS } from "../../constants/apiEndpoints";
 import apiClient from "../../utils/axiosConfig";
 import { authService } from "../../services/authService";
 
+const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;  
+
 const ForgotPasswordDialog = ({ open, onClose }) => {
   const [email, setEmail] = useState("");
   const [loading, setLoading] = useState(false);
@@ -31,13 +33,18 @@ const ForgotPasswordDialog = ({ open, onClose }) => {
       return;
     }
 
+    if (!emailRegex.test(email)) {
+      setError("Email id must be valid.");
+      return;
+    }
+
     setLoading(true);
     try {
       const response = await authService.sendResetLink({ email })
       console.log(response)
       setMessage(response.data || "Password reset link sent! Check your email.");
-    } catch (err) {
-      setError(err.response?.data || "Failed to send reset link. Try again.");
+    } catch (error) {
+      setError(error.response?.data || "Failed to send reset link. Try again.");
     } finally {
       setLoading(false);
     }

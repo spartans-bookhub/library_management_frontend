@@ -23,9 +23,11 @@ export const authService = {
         API_ENDPOINTS.AUTH.REGISTER,
         userData
       );
+     
       return response.data;
     } catch (error) {
-      throw new Error(error.response?.data?.message || "Registration failed");
+       console.log(error)
+      throw new Error(error.response?.data || "Registration failed");
     }
   },
 
@@ -47,7 +49,7 @@ export const authService = {
       const response = await apiClient.post(API_ENDPOINTS.AUTH.FORGOT_PASSWORD, {email});
       return response.data;
     } catch (error) {
-      console.error(error.response?.data?.message || "Failed to send reset link. Try again.");
+      console.error(error.response?.data || "Failed to send reset link. Try again.");
       throw error;
     }
   },
@@ -57,7 +59,7 @@ export const authService = {
     try {
       const response = await apiClient.post(API_ENDPOINTS.AUTH.RESET_PASSWORD,{ resetToken, newPassword } );
       return response.data;
-    } catch (error) {
+    } catch (error) {     
       console.error(error.response?.data || "Failed to send reset link. Try again.");
       throw error;
     }

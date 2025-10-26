@@ -51,9 +51,6 @@ export default function ProfileMenu() {
 
     const handleDashboardClick = () => {
     handleClose();
-    // navigate("/dashboard");
-    // navigate("/admin-dashboard");
-
     if (isAdmin) {
       navigate("/admin-dashboard");
     } else if (user) {
@@ -87,14 +84,14 @@ export default function ProfileMenu() {
                 }}
                 onClick={handleClick} >
                 {getUserInitials(user?.userName)}
-            </Avatar> 
-      <Menu
-        anchorEl={anchorEl}
-        open={open}
-        onClose={handleClose}
-        transformOrigin={{ horizontal: "right", vertical: "top" }}
-        anchorOrigin={{ horizontal: "right", vertical: "bottom" }}
-      >
+                </Avatar> 
+          <Menu
+            anchorEl={anchorEl}
+            open={open}
+            onClose={handleClose}
+            transformOrigin={{ horizontal: "right", vertical: "top" }}
+            anchorOrigin={{ horizontal: "right", vertical: "bottom" }}
+          >
         
          {isAdmin ? (
           <>
@@ -119,16 +116,13 @@ export default function ProfileMenu() {
           Profile Settings
         </MenuItem>
 
-          <MenuItem onClick={handleBookClick}>
+
+        </>
+         )}
+        <MenuItem onClick={handleBookClick}>
          <ListItemIcon> <MenuBookIcon fontSize="small" /> </ListItemIcon>
           Books
         </MenuItem>
-        </>
-         )}
-         
-        
-       
-
  
         <MenuItem onClick={() => { toggleTheme(); handleClose(); }}>
           <ListItemIcon>
