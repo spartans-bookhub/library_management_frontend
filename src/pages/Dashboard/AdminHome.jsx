@@ -38,9 +38,9 @@ export default function AdminHome({ Toggle }) {
 
   return (
     <div className="px-3">
-      <AdminNavbar Toggle={Toggle} />
+      {/* <AdminNavbar Toggle={Toggle} /> */}
 
-      <ViewCard />
+      {/* <ViewCard /> */}
    
       <div className="container-fluid">
         <div className="row">

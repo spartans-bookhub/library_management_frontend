@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect} from "react";
 import {
   Table, TableBody, TableCell, TableContainer, TableHead, TableRow,
   Paper, Button, Dialog, DialogActions, DialogContent, DialogTitle,
@@ -8,10 +8,52 @@ import { Edit, Delete } from "@mui/icons-material";
 import { useFormik } from "formik";
 import * as Yup from "yup";
 
+import SearchIcon from "@mui/icons-material/Search";
+import { useNavigate } from "react-router-dom";
+import { libraryService } from "../../services/libraryService";
+import { useAuth } from "../../context/AuthContext";
+import { useCart } from "../../context/CartContext";
+import { useToast } from "../../context/ToastContext";
+
 export default function BookTable () {
+
   const [books, setBooks] = useState([]);
+  const [filteredBooks, setFilteredBooks] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState("");
+  const [searchTerm, setSearchTerm] = useState("");
+  const [categoryFilter, setCategoryFilter] = useState("");
+  const [availabilityFilter, setAvailabilityFilter] = useState("");
+  const [sortBy, setSortBy] = useState("");
+  const [currentPage, setCurrentPage] = useState(1);
+
+  const { user,isAuthenticated, isAdmin, } = useAuth();
+  const { addToCart, isInCart, getItemQuantity } = useCart();
+  const { showSuccess, showInfo } = useToast();
+
   const [open, setOpen] = useState(false);
   const [editingIndex, setEditingIndex] = useState(null);
+  const navigate = useNavigate();
+
+  const booksPerPage = 10;
+
+  useEffect(() => {
+      fetchBooks();
+    }, []);
+
+    const fetchBooks = async () => {
+     try {
+       setLoading(true);
+       const data = await libraryService.getAllBooks();
+       const booksArray = Array.isArray(data) ? data : [];
+       setBooks(booksArray);
+       setFilteredBooks(booksArray);
+     } catch (error) {
+       setError(error.message || "Failed to fetch books");
+     } finally {
+       setLoading(false);
+     }
+   };
 
   // Yup validation schema
   const validationSchema = Yup.object({
@@ -43,18 +85,18 @@ export default function BookTable () {
   // Formik Schemea
   const formik = useFormik({
     initialValues: {
-      book_title: "",
-      book_author: "",
-      category: "",
+      book_title: "ank",
+      book_author: "ss",
+      ccategory: "Others", 
       isbn: "",
       image_url: "",
       publisher_name: "",
       publication_date: "",
       price: "",
       created_at: "",
-      total_copies: "",
+      total_copies: "0",
       available_copies: "",
-      rating: "",
+      rating: "3",
     },
     validationSchema,
     onSubmit: (values) => {
@@ -104,6 +146,7 @@ export default function BookTable () {
         <Table>
           <TableHead sx={{ backgroundColor: "#f5f5f5" }}>
             <TableRow>
+              <TableCell><b>S.No</b></TableCell>
               <TableCell><b>Title</b></TableCell>
               <TableCell><b>Author</b></TableCell>
               <TableCell><b>Category</b></TableCell>
@@ -126,6 +169,7 @@ export default function BookTable () {
             ) : (
               books.map((b, index) => (
                 <TableRow key={index}>
+                  <TableCell>{index+1}</TableCell>
                   <TableCell>{b.book_title}</TableCell>
                   <TableCell>{b.book_author}</TableCell>
                   <TableCell>{b.category}</TableCell>
@@ -198,6 +242,7 @@ export default function BookTable () {
                 <MenuItem value="Technology">Technology</MenuItem>
                 <MenuItem value="History">History</MenuItem>
                 <MenuItem value="Others">Others</MenuItem>
+
               </TextField>
               <TextField
                 label="ISBN"
@@ -209,7 +254,7 @@ export default function BookTable () {
                 error={formik.touched.isbn && Boolean(formik.errors.isbn)}
                 helperText={formik.touched.isbn && formik.errors.isbn}
               />
-              <TextField
+              {/* <TextField
                 label="Image URL"
                 name="image_url"
                 fullWidth
@@ -218,7 +263,7 @@ export default function BookTable () {
                 onBlur={formik.handleBlur}
                 error={formik.touched.image_url && Boolean(formik.errors.image_url)}
                 helperText={formik.touched.image_url && formik.errors.image_url}
-              />
+              /> */}
               <TextField
                 label="Publisher Name"
                 name="publisher_name"

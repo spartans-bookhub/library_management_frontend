@@ -20,7 +20,7 @@ import { useAuth } from "../../context/AuthContext";
 import { libraryService } from "../../services/libraryService";
 
 const Dashboard = () => {
-  const { user } = useAuth();
+  const { user , admin } = useAuth();
   const [selectedTab, setSelectedTab] = useState(0);
   const [borrowedBooks, setBorrowedBooks] = useState([]);
   const [historyData, setHistoryData] = useState([]);
