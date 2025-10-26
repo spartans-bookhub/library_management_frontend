@@ -153,7 +153,7 @@ if (passwordForm.newPassword !== passwordForm.confirmNewPassword) {
   return (
     <Container maxWidth="sm" sx={{ mt: 4 }}>
       <Paper elevation={5} sx={{ p: 4 }}>
-        <Typography variant="h6" gutterBottom>
+        <Typography variant="h6" gutterBottom sx={{ mb: 2 }}>
           Edit Profile
         </Typography>
 

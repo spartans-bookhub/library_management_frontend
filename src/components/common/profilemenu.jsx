@@ -26,7 +26,7 @@ export default function ProfileMenu() {
 
 
   const getUserInitials = (name) => {
-    if (!name) return "U";
+    if (!name) return "A";
     const nameParts = name.split(" ");
     if (nameParts.length >= 2) {
       return `${nameParts[0][0]}${nameParts[1][0]}`.toUpperCase();
@@ -124,12 +124,12 @@ export default function ProfileMenu() {
           Books
         </MenuItem>
  
-        <MenuItem onClick={() => { toggleTheme(); handleClose(); }}>
+        {/* <MenuItem onClick={() => { toggleTheme(); handleClose(); }}>
           <ListItemIcon>
             {mode === "light" ? <DarkMode fontSize="small" /> : <LightMode fontSize="small" />}
           </ListItemIcon>
           {mode === "light" ? "Dark Mode" : "Light Mode"}
-        </MenuItem>
+        </MenuItem> */}
 
         <Divider />
 
