@@ -3,6 +3,16 @@ import AdminNavbar from "./AdminNavbar";
 import BookTable from "./BookTable";
 import ViewCard from "./ViewCard";
 import { useNavigate } from "react-router-dom";
+import {
+  Box,
+  Container,
+  Typography,
+  Paper,
+  Grid,
+  Card,
+  CardContent,
+  Button,
+} from "@mui/material";
 
 export default function AdminHome({ Toggle }) {
 
@@ -37,16 +47,25 @@ export default function AdminHome({ Toggle }) {
   
 
   return (
-    <div className="px-3">
+    <div >
       {/* <AdminNavbar Toggle={Toggle} /> */}
 
       {/* <ViewCard /> */}
-   
-      <div className="container-fluid">
-        <div className="row">
-            <BookTable />
-        </div>
-      </div>
+   <Container maxWidth="lg" sx={{ mt: 4 }}>
+      <Paper elevation={3} sx={{ p: 4, mb: 4 }}>
+        {/* Header */}
+        {/* <Box display="flex" justifyContent="space-between" alignItems="center" mb={3}> */}
+          <Grid>
+              <BookTable />
+           </Grid>
+        {/* </Box> */}
+
+        </Paper>
+        </Container>
+
+        {/* <Container>
+          
+        </Container> */}
     </div>
   );
 }

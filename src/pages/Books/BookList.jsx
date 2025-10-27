@@ -113,13 +113,14 @@ const BookList = () => {
     setFilteredBooks(filtered);
   };
 
-  const handleAddToCart = (book) => {
+  const handleAddToCart = async (book) => {
     try {
       if (isInCart(book.bookId)) {
         showInfo("Book is already in your cart");
         return;
       }
-      addToCart(book);
+
+      await addToCart(book);
       showSuccess(`"${book.bookTitle}" added to cart!`);
     } catch (error) {
       setError(error.message || "Failed to add book to cart");
@@ -138,7 +139,6 @@ const BookList = () => {
   const currentBooks = filteredBooks.slice(indexOfFirstBook, indexOfLastBook);
   const totalPages = Math.ceil(filteredBooks.length / booksPerPage);
 
-  
   if (loading) {
     return (
       <Container maxWidth="lg" sx={{ mt: 4 }}>
@@ -158,14 +158,26 @@ const BookList = () => {
     <Container maxWidth="lg" sx={{ mt: 4 }}>
       <Paper elevation={3} sx={{ p: 4, mb: 4 }}>
         {/* Header */}
-        <Box display="flex" justifyContent="space-between" alignItems="center" mb={3}>
+        <Box
+          display="flex"
+          justifyContent="space-between"
+          alignItems="center"
+          mb={3}
+        >
           <Typography variant="h4" component="h1">
             Library Books
           </Typography>
         </Box>
 
         {/* Search and Filter Controls */}
-        <Box display="flex" justifyContent="space-between" alignItems="center" mb={3} gap={2} flexWrap="wrap">
+        <Box
+          display="flex"
+          justifyContent="space-between"
+          alignItems="center"
+          mb={3}
+          gap={2}
+          flexWrap="wrap"
+        >
           {/* Search */}
           <Box flex={1} minWidth="300px">
             <TextField
@@ -188,19 +200,29 @@ const BookList = () => {
           <Box display="flex" gap={2} flexWrap="wrap" alignItems="center">
             <FormControl size="small" sx={{ minWidth: 120 }}>
               <InputLabel>Category</InputLabel>
-              <Select value={categoryFilter} label="Category" onChange={(e) => setCategoryFilter(e.target.value)}>
+              <Select
+                value={categoryFilter}
+                label="Category"
+                onChange={(e) => setCategoryFilter(e.target.value)}
+              >
                 <MenuItem value="">All Categories</MenuItem>
-                {[...new Set(books.map((b) => b.category))].filter(Boolean).map((category) => (
-                  <MenuItem key={category} value={category}>
-                    {category}
-                  </MenuItem>
-                ))}
+                {[...new Set(books.map((b) => b.category))]
+                  .filter(Boolean)
+                  .map((category) => (
+                    <MenuItem key={category} value={category}>
+                      {category}
+                    </MenuItem>
+                  ))}
               </Select>
             </FormControl>
 
             <FormControl size="small" sx={{ minWidth: 120 }}>
               <InputLabel>Availability</InputLabel>
-              <Select value={availabilityFilter} label="Availability" onChange={(e) => setAvailabilityFilter(e.target.value)}>
+              <Select
+                value={availabilityFilter}
+                label="Availability"
+                onChange={(e) => setAvailabilityFilter(e.target.value)}
+              >
                 <MenuItem value="">All Books</MenuItem>
                 <MenuItem value="available">Available</MenuItem>
                 <MenuItem value="out_of_stock">Out of Stock</MenuItem>
@@ -209,7 +231,11 @@ const BookList = () => {
 
             <FormControl size="small" sx={{ minWidth: 120 }}>
               <InputLabel>Sort By</InputLabel>
-              <Select value={sortBy} label="Sort By" onChange={(e) => setSortBy(e.target.value)}>
+              <Select
+                value={sortBy}
+                label="Sort By"
+                onChange={(e) => setSortBy(e.target.value)}
+              >
                 <MenuItem value="">Default</MenuItem>
                 <MenuItem value="title_asc">Title A-Z</MenuItem>
                 <MenuItem value="title_desc">Title Z-A</MenuItem>
@@ -229,55 +255,139 @@ const BookList = () => {
           </Alert>
         )}
 
-        {/* Book Grid */}
-        <Grid container spacing={3}>
-          {currentBooks.length > 0 ? (
+        <Grid container spacing={3} sx={{ alignItems: "stretch" }}>
+          {Array.isArray(currentBooks) &&
             currentBooks.map((book) => (
-              <Grid item xs={12} sm={6} md={4} lg={3} key={book.bookId} sx={{ display: "flex" }}>
+              <Grid
+                item
+                xs={12}
+                sm={6}
+                md={4}
+                lg={3}
+                key={book.bookId}
+                sx={{
+                  display: "flex",
+                  flexDirection: "column",
+                }}
+              >
                 <Card
                   sx={{
-                    height: 420,
-                    width: "100%",
                     display: "flex",
                     flexDirection: "column",
+                    height: "100%",
+                    minHeight: 480,
+                    width: "100%",
+                    maxWidth: "250px",
+                    minWidth: "250px",
                     borderRadius: 2,
-                    transition: "all 0.3s ease-in-out",
+                    overflow: "hidden", // keeps consistent box model
                     "&:hover": {
                       transform: "translateY(-6px)",
                       boxShadow: "0 8px 25px rgba(0,0,0,0.15)",
                     },
                   }}
                 >
+                  {/* IMAGE CONTAINER: fixed size, contain + center */}
                   <Box
                     sx={{
-                      height: 160,
-                      backgroundColor: book.imageUrl ? "transparent" : "grey.100",
+                      height: 200, // <- same height for all
+                      width: "100%",
+                      bgcolor: book.imageUrl ? "transparent" : "grey.100",
                       display: "flex",
                       alignItems: "center",
                       justifyContent: "center",
                       position: "relative",
+                      overflow: "hidden",
+                      // Optional: keep a consistent visual frame
+                      borderBottom: (theme) =>
+                        `1px solid ${theme.palette.divider}`,
                     }}
                   >
                     {book.imageUrl ? (
-                      <CardMedia component="img" height="160" image={book.imageUrl} alt={book.bookTitle} sx={{ objectFit: "cover" }} />
+                      <CardMedia
+                        component="img"
+                        image={book.imageUrl}
+                        alt={book.bookTitle}
+                        sx={{
+                          width: "100%",
+                          height: "100%",
+                          objectFit: "contain", // <- contain
+                          objectPosition: "center", // <- center
+                        }}
+                      />
                     ) : (
                       <Typography variant="body2" color="text.disabled">
                         No Image
                       </Typography>
                     )}
-                    <Chip
-                      label={book.category}
-                      size="small"
-                      color="primary"
-                      sx={{ position: "absolute", top: 8, right: 8, fontSize: "0.75rem" }}
-                    />
+
+                    {book.category && (
+                      <Chip
+                        label={book.category}
+                        size="small"
+                        color="primary"
+                        sx={{
+                          position: "absolute",
+                          top: 8,
+                          right: 8,
+                          fontSize: "0.75rem",
+                          maxWidth: "70%",
+                          // prevent chip text from stretching layout
+                          ".MuiChip-label": {
+                            overflow: "hidden",
+                            textOverflow: "ellipsis",
+                            whiteSpace: "nowrap",
+                          },
+                        }}
+                      />
+                    )}
                   </Box>
 
-                  <CardContent sx={{ flexGrow: 1, display: "flex", flexDirection: "column", p: 2 }}>
-                    <Typography variant="h6" component="h2" sx={{ fontSize: "1rem", fontWeight: 600, mb: 0.5, overflow: "hidden", textOverflow: "ellipsis", display: "-webkit-box", WebkitLineClamp: 2, WebkitBoxOrient: "vertical", lineHeight: 1.3, height: "2.6rem", wordBreak: "break-word" }}>
+                  <CardContent
+                    sx={{
+                      flexGrow: 1,
+                      display: "flex",
+                      flexDirection: "column",
+                      p: 2,
+                      overflow: "hidden",
+                      "&:last-child": { pb: 2 },
+                      minWidth: 0,
+                    }}
+                  >
+                    <Typography
+                      variant="h6"
+                      component="h2"
+                      sx={{
+                        fontSize: "1rem",
+                        fontWeight: 600,
+                        mb: 0.75,
+                        lineHeight: 1.3,
+                        display: "-webkit-box",
+                        WebkitLineClamp: 2,
+                        WebkitBoxOrient: "vertical",
+                        overflow: "hidden",
+                        textOverflow: "ellipsis",
+                        minHeight: "calc(1.3em * 2)",
+                        maxHeight: "calc(1.3em * 2)",
+                        minWidth: 0,
+                      }}
+                      title={book.bookTitle}
+                    >
                       {book.bookTitle}
                     </Typography>
-                    <Typography variant="body2" color="text.secondary" sx={{ mb: 1.5, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
+
+                    <Typography
+                      variant="body2"
+                      color="text.secondary"
+                      sx={{
+                        mb: 1.5,
+                        overflow: "hidden",
+                        textOverflow: "ellipsis",
+                        whiteSpace: "nowrap",
+                        minWidth: 0,
+                      }}
+                      title={book.bookAuthor}
+                    >
                       by {book.bookAuthor}
                     </Typography>
                     <Box display="flex" alignItems="center" gap={0.5} mb={1.5}>
@@ -286,38 +396,61 @@ const BookList = () => {
                         ({book.rating})
                       </Typography>
                     </Box>
-                    <Box display="flex" justifyContent="space-between" alignItems="center" mb={2}>
-                      <Typography variant="h6" color="primary" fontWeight={600}>
+
+                    <Box
+                      display="flex"
+                      justifyContent="space-between"
+                      alignItems="center"
+                      mb={2}
+                      sx={{ minWidth: 0 }}
+                    >
+                      <Typography
+                        variant="h6"
+                        color="primary"
+                        fontWeight={600}
+                        sx={{ overflow: "hidden", textOverflow: "ellipsis" }}
+                      >
                         ₹{book.price}
                       </Typography>
-                      <Chip label={`${book.availableCopies}/${book.totalCopies}`} size="small" color={getAvailabilityColor(book.availableCopies)} variant="outlined" />
+                      <Chip
+                        label={`${book.availableCopies}/${book.totalCopies}`}
+                        size="small"
+                        color={getAvailabilityColor(book.availableCopies)}
+                        variant="outlined"
+                        sx={{ ml: 1, flexShrink: 0 }}
+                      />
                     </Box>
-                    <Button
-                      variant={book.availableCopies === 0 ? "outlined" : isInCart(book.bookId) ? "outlined" : "contained"}
-                      fullWidth
-                      disabled={book.availableCopies === 0}
-                      onClick={() => handleAddToCart(book)}
-                      sx={{ borderRadius: 1.5, textTransform: "none", fontWeight: 500 }}
-                    >
-                      {book.availableCopies === 0
-                        ? "Out of Stock"
-                        : isInCart(book.bookId)
-                        ? `In Cart (${getItemQuantity(book.bookId)})`
-                        : "Add to Cart"}
-                    </Button>
+
+                    <Box mt="auto">
+                      <Button
+                        variant={
+                          book.availableCopies === 0
+                            ? "outlined"
+                            : isInCart(book.bookId)
+                            ? "outlined"
+                            : "contained"
+                        }
+                        fullWidth
+                        disabled={book.availableCopies === 0}
+                        onClick={() => handleAddToCart(book)}
+                        sx={{
+                          borderRadius: 1.5,
+                          textTransform: "none",
+                          fontWeight: 500,
+                          whiteSpace: "nowrap",
+                        }}
+                      >
+                        {book.availableCopies === 0
+                          ? "Out of Stock"
+                          : isInCart(book.bookId)
+                          ? `In Cart (${getItemQuantity(book.bookId)})`
+                          : "Add to Cart"}
+                      </Button>
+                    </Box>
                   </CardContent>
                 </Card>
               </Grid>
-            ))
-          ) : (
-            <Box textAlign="center" py={8} width="100%">
-              <Typography variant="h6" color="text.secondary">
-                {searchTerm || categoryFilter || availabilityFilter
-                  ? "No books match your search criteria"
-                  : "No books available in the library"}
-              </Typography>
-            </Box>
-          )}
+            ))}
         </Grid>
 
         {/* Pagination */}
@@ -339,5 +472,3 @@ const BookList = () => {
 };
 
 export default BookList;
-
-

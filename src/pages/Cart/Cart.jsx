@@ -25,12 +25,22 @@ const Cart = () => {
 
   const { showSuccess, showError } = useToast();
 
-  const handleRemoveItem = (bookId) => {
-    removeFromCart(bookId);
+  const handleRemoveItem = async (bookId) => {
+    try {
+      await removeFromCart(bookId);
+      showSuccess("Book removed from cart");
+    } catch (error) {
+      showError(error.message || "Failed to remove book from cart");
+    }
   };
 
-  const handleClearCart = () => {
-    clearCart();
+  const handleClearCart = async () => {
+    try {
+      await clearCart();
+      showSuccess("Cart cleared successfully");
+    } catch (error) {
+      showError(error.message || "Failed to clear cart");
+    }
   };
 
   const handleBorrowBooks = async () => {
@@ -46,12 +56,11 @@ const Cart = () => {
       }!`;
       showSuccess(message);
 
-      clearCart();
+      await clearCart();
 
       // Redirect to dashboard after 2 seconds
-      setTimeout(() => {
-        navigate("/dashboard");
-      }, 2000);
+
+      navigate("/dashboard");
     } catch (error) {
       showError(error.message || "Failed to borrow books. Please try again.");
     } finally {
@@ -112,7 +121,11 @@ const Cart = () => {
           {/* Book Items */}
           <Grid item xs={12} md={8}>
             {cartItems.map((item) => (
-              <Card key={item.bookId} sx={{ mb: 2 }}>
+              <Card
+                key={item.bookId}
+                sx={{ mb: 2 }}
+                style={{ maxWidth: "400px" }}
+              >
                 <CardContent>
                   <Grid container spacing={2} alignItems="center">
                     {/* Book Image */}
@@ -176,7 +189,7 @@ const Cart = () => {
                     </Grid>
 
                     {/* Remove Button */}
-                    <Grid item xs={2} sm={2}>
+                    <Grid item xs={2} sm={2} style={{ marginLeft: "auto" }}>
                       <Box textAlign="center">
                         <IconButton
                           color="error"

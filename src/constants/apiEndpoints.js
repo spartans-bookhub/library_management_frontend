@@ -1,4 +1,4 @@
-export const API_BASE_URL = "http://localhost:9007";
+export const API_BASE_URL = "http://localhost:9111";
 
 export const API_ENDPOINTS = {
   AUTH: {
@@ -6,13 +6,12 @@ export const API_ENDPOINTS = {
     REGISTER: "/register",
     LOGOUT: "/logout",
     FORGOT_PASSWORD: "/forgot-password",
-    RESET_PASSWORD: "/password-reset"
+    RESET_PASSWORD: "/password-reset",
   },
   USER: {
     PROFILE: "/api/user",
     UPDATE_PROFILE: "/api/user",
     CHANGE_PASSWORD: "/api/password",
-    
   },
   BOOKS: {
     GET_ALL: "/api/books/list",
@@ -31,5 +30,14 @@ export const API_ENDPOINTS = {
     GET_HISTORY: "/api/v1/transactions/history",
     GET_ALL_TRANSACTIONS: "/api/v1/transactions",
     GET_HIGH_FINE: "/api/v1/transactions/high-fines",
+  },
+  NOTIFICATIONS: {
+    GET_ALL: "/api/notifications",
+  },
+  CART: {
+    GET: "/api/cart",
+    ADD: "/api/cart/add/:id",
+    REMOVE: "/api/cart/remove/:id",
+    CLEAR: "/api/cart/clear",
   },
 };
