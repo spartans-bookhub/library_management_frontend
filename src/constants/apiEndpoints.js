@@ -17,9 +17,9 @@ export const API_ENDPOINTS = {
   BOOKS: {
     GET_ALL: "/api/books/list",
     GET_BY_ID: "/books/:id",
-    CREATE: "/books",
+    CREATE: "/api/books/",
     UPDATE: "/books/:id",
-    DELETE: "/books/:id",
+    DELETE: "/api/books/:id",
     SEARCH: "/books/search",
   },
   LIBRARY: {
@@ -29,5 +29,7 @@ export const API_ENDPOINTS = {
     BORROW_BOOKS: "/api/v1/transactions/books/borrow",
     GET_BORROWED_BOOKS: "/api/v1/transactions/borrowed",
     GET_HISTORY: "/api/v1/transactions/history",
+    GET_ALL_TRANSACTIONS: "/api/v1/transactions",
+    GET_HIGH_FINE: "/api/v1/transactions/high-fines",
   },
 };
