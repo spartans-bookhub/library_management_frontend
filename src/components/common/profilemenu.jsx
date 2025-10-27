@@ -110,15 +110,15 @@ export default function ProfileMenu() {
           Admin Dashboard
           </MenuItem>
 
-           <MenuItem onClick={handleBookRecordsClick}>
+           {/* <MenuItem onClick={handleBookRecordsClick}>
          <ListItemIcon> <MenuBookIcon fontSize="small" /> </ListItemIcon>
           Books Record
-        </MenuItem>
+        </MenuItem> */}
 
-          <MenuItem onClick={handleTransactionClick}>
+          {/* <MenuItem onClick={handleTransactionClick}>
          <ListItemIcon> <MenuBookIcon fontSize="small" /> </ListItemIcon>
           Transactions
-        </MenuItem>
+        </MenuItem> */}
           </>
          ) : (
           <>
@@ -134,14 +134,16 @@ export default function ProfileMenu() {
           Profile Settings
         </MenuItem>
 
-
-        </>
-         )}
-
         <MenuItem onClick={handleBookClick}>
          <ListItemIcon> <MenuBookIcon fontSize="small" /> </ListItemIcon>
           Books
         </MenuItem>
+
+
+        </>
+         )}
+
+        
 
 
         {/* <MenuItem onClick={() => { toggleTheme(); handleClose(); }}>

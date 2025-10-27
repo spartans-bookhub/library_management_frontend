@@ -23,7 +23,7 @@ const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
 const Login = () => {
   const navigate = useNavigate();
-  const { login } = useAuth();
+  const { login, isAdmin } = useAuth();
 
   const [formData, setFormData] = useState({
     email: "",
@@ -77,8 +77,11 @@ const Login = () => {
         address,
         contactNumber
       }, token);
-      
+      if(isAdmin){
+         navigate("/admin-dashboard");
+      }else{
       navigate("/books");
+      }
     } catch (error) {
       setApiError(error.message || "Invalid email or password. Please try again.");
     }
