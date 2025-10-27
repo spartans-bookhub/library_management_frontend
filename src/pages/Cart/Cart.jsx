@@ -60,7 +60,7 @@ const Cart = () => {
 
       // Redirect to dashboard after 2 seconds
 
-      navigate("/dashboard");
+      navigate("/student-dashboard");
     } catch (error) {
       showError(error.message || "Failed to borrow books. Please try again.");
     } finally {
