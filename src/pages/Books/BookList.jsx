@@ -453,6 +453,20 @@ const BookList = () => {
             ))}
         </Grid>
 
+       {/* If no books found */}
+{!loading && filteredBooks.length === 0 && (
+  <Box
+    display="flex"
+    justifyContent="center"
+    alignItems="center"
+    minHeight="30vh"
+  >
+    <Typography variant="h6" color="text.secondary">
+      This book is not available.
+    </Typography>
+  </Box>
+)}
+
         {/* Pagination */}
         {filteredBooks.length > booksPerPage && (
           <Box display="flex" justifyContent="center" mt={4}>
