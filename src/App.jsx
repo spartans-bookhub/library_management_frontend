@@ -22,8 +22,6 @@ import AdminDashboardLayout from "./pages/Dashboard/adminDashboardLayout";
 // import TransactionTable from "./pages/Dashboard/TransactionTable";
 
 function App() {
-  const port = window.location.port;
-  console.log(`Port: ${port}`)
   return (
     <>
       <ToastProvider>

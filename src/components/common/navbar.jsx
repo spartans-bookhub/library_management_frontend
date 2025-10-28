@@ -76,7 +76,7 @@ export default function Navbar() {
           sx={{ cursor: "pointer" }}
           onClick={() => navigate(isAuthenticated ? "/dashboard" : "/")}
   >
-          <MenuBookIcon sx={{ color: "warning.main", fontSize: 35,  color: "#ffffffff" }} />
+          <MenuBookIcon sx={{ color: "warning.main", fontSize: 30,  color: "#ffffffff" }} />
   
           {/* <img 
             src={logoImg}    // path to your image
