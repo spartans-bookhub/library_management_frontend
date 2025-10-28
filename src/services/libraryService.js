@@ -183,6 +183,30 @@ export const libraryService = {
     }
   },
 
+  // Get borrowing trend for admin
+  getBorrowingTrend: async () => {
+    try {
+      const response = await apiClient.get(API_ENDPOINTS.LIBRARY.GET_BORROWING_TREND);
+      console.log(response.data)
+      return response.data;
+    } catch (error) {
+      throw new Error(
+        error.response?.data?.message || "Failed to borrowing trend"
+      );
+    }
+  },
 
+     // Get category trend for admin
+  getCategoryTrend: async () => {
+    try {
+      const response = await apiClient.get(API_ENDPOINTS.LIBRARY.GET_CATEGORY_TREND);
+      console.log(response.data)
+      return response.data;
+    } catch (error) {
+      throw new Error(
+        error.response?.data?.message || "Failed to fetch category trend"
+      );
+    }
+  },
   
 };

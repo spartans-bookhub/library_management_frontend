@@ -30,6 +30,8 @@ export const API_ENDPOINTS = {
     GET_HISTORY: "/api/v1/transactions/history",
     GET_ALL_TRANSACTIONS: "/api/v1/transactions",
     GET_HIGH_FINE: "/api/v1/transactions/high-fines",
+    GET_BORROWING_TREND: "api/v1/transactions/borrowing-trends",
+    GET_CATEGORY_TREND: "api/v1/transactions/popular-categories"
   },
   NOTIFICATIONS: {
     GET_ALL: "/api/notifications",
