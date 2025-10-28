@@ -185,7 +185,7 @@ const AdminDashboard = () => {
   return (
     <Box sx={{ p: 4, bgcolor: "#f5f7fa", minHeight: "100vh" }}>
       <Typography variant="h4" align="center" gutterBottom color="primary">
-        📚 Library Admin Dashboard
+         📚 Library Admin Dashboard
       </Typography>
 
       {/* ADD BOOK */}
