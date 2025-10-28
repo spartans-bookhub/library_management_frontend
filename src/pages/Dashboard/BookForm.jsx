@@ -60,6 +60,7 @@ const BookForm = ({ editingBook, setEditingBook, onBookAdded, onBookUpdated, set
       try {
         if (editingBook) {
           const updated = await libraryService.updateBook(editingBook.bookId || editingBook.id, values);
+          console.log("Updated Book form:", updated);
           onBookUpdated(updated);
           setSnackbar({ open: true, message: "Book updated successfully", severity: "success" });
         } else {
@@ -140,7 +141,7 @@ const BookForm = ({ editingBook, setEditingBook, onBookAdded, onBookUpdated, set
             onChange={formik.handleChange}
             error={formik.touched.isbn && Boolean(formik.errors.isbn)}
             helperText={formik.touched.isbn && formik.errors.isbn}
-             sx={{ minWidth: 170 }}
+             sx={{ minWidth: 170, marginTop: '2rem'}}
           />
 
           <TextField
@@ -151,7 +152,7 @@ const BookForm = ({ editingBook, setEditingBook, onBookAdded, onBookUpdated, set
             onChange={formik.handleChange}
             error={formik.touched.category && Boolean(formik.errors.category)}
             helperText={formik.touched.category && formik.errors.category}
-           sx={{ width: { xs: '100%', sm: 170 } }}
+           sx={{ width: { xs: '100%', sm: 170, marginTop: '2rem' } }}
           >
             <MenuItem value="Fiction">Fiction</MenuItem>
             <MenuItem value="Science">Science</MenuItem>
@@ -168,7 +169,7 @@ const BookForm = ({ editingBook, setEditingBook, onBookAdded, onBookUpdated, set
             onChange={formik.handleChange}
             error={formik.touched.totalCopies && Boolean(formik.errors.totalCopies)}
             helperText={formik.touched.totalCopies && formik.errors.totalCopies}
-             sx={{ width: { xs: '100%', sm: 170 , md: 160 } }}
+             sx={{ width: { xs: '100%', sm: 170 , md: 160, marginTop: '2rem' } }}
               slotProps={{ input: { min: 1 } }}
           />
 

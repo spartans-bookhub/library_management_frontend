@@ -48,7 +48,7 @@
                   <TableCell>{book.bookAuthor}</TableCell>
                   <TableCell>{book.category}</TableCell>
                   <TableCell>{book.isbn}</TableCell>
-                  <TableCell>{book.totalCopies || book.total_copies}</TableCell>
+                  <TableCell>{book.totalCopies}</TableCell>
                   <TableCell>
                     <IconButton color="primary" onClick={() => onEdit(book)}>
                       <EditIcon />

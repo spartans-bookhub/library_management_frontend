@@ -17,7 +17,7 @@ export const API_ENDPOINTS = {
     GET_ALL: "/api/books/list",
     GET_BY_ID: "/books/:id",
     CREATE: "/api/books/",
-    UPDATE: "/books/:id",
+    UPDATE: "/api/books/:id",
     DELETE: "/api/books/:id",
     SEARCH: "/books/search",
   },

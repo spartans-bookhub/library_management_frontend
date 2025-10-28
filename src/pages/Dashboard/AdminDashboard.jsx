@@ -40,20 +40,33 @@ const AdminDashboard = () => {
     setBooks((prev) => [book, ...prev]);
   };
 
-  const handleUpdateBook = (updatedBook) => {
-    setBooks((prev) =>
-      prev.map((b) =>
-        b.id === updatedBook.id || b.bookId === updatedBook.bookId
-          ? { ...updatedBook }
-          : b
-      )
-    );
+  const handleUpdateBook = async (updatedBook) => {
+     setLoading(true);
+    try {
+      const data = await libraryService.updateBook(updatedBook.id, updatedBook);
+      console.log("Updated Book Data from admin:", data);
+      setBooks((prev) =>
+        prev.map((b) => (b.bookId === data.bookId ? { ...data } : b))
+      );
+    } catch (error) {
+      console.error("Error fetching books:", error);
+      // setSnackbar({ open: true, message: "Failed to update book" });
+    } finally {
+      setLoading(false);
+    }
+    // setBooks((prev) =>
+    //   prev.map((b) =>
+    //     b.id === updatedBook.id || b.bookId === updatedBook.bookId
+    //       ? { ...updatedBook }
+    //       : b
+    //   )
+    // );
   };
 
   const handleDeleteBook = async (id) => {
     try {
       await libraryService.deleteBook(id);
-      setBooks((prev) => prev.filter((b) => b.id !== id && b.bookId !== id));
+      setBooks((prev) => prev.filter((b) => b.bookId !== id && b.id !== id));
       setSnackbar({ open: true, message: "Book deleted successfully", severity: "success" });
     } catch (error) {
       console.error("Failed to delete book:", error);
