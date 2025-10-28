@@ -25,6 +25,8 @@ import { useCart } from "../../context/CartContext";
 import { notificationService } from "../../services/notificationService";
 import ProfileMenu from "./profilemenu";
 import MenuBookIcon from "@mui/icons-material/MenuBook";
+// import logoImg from "../../assets/images/logobg.png";
+import {logoImg } from '../../assets/images/webpage.jpg';
 
 export default function Navbar() {
   const { isAuthenticated } = useAuth();
@@ -74,13 +76,19 @@ export default function Navbar() {
           sx={{ cursor: "pointer" }}
           onClick={() => navigate(isAuthenticated ? "/dashboard" : "/")}
   >
-          <MenuBookIcon sx={{ color: "secondary.main", fontSize: 28 }} />
+          <MenuBookIcon sx={{ color: "secondary.main", fontSize: 28, bgcolor: "yellow" }} />
+          {/* <img 
+            src={logoImg}    // path to your image
+            alt="Logo" 
+            style={{ height: 60, marginRight: 0 ,color: "secondary.main", background: "linear-gradient(45deg, #f9f9f9ff, #cdcdcdff)",}} 
+          /> */}
           <Typography 
             variant="h6" 
             sx={{ 
               fontWeight: 700, 
+              fontSize: 30,
               letterSpacing: 1,
-              background: "linear-gradient(45deg, #f8f8f8ff, #ffffffff)",
+              background: "linear-gradient(45deg, #ffff04ff, #ff763bff)",
               WebkitBackgroundClip: "text",
               WebkitTextFillColor: "transparent",
               transition: "0.3s ease",
@@ -89,7 +97,7 @@ export default function Navbar() {
               }
             }}
           >
-          BookNest
+          <span className="bookHeading" style={{ color: "#ffcc00 !important" }}>BookNest</span>
         </Typography>
         </Box>             
 

@@ -10,7 +10,8 @@ import {
 } from "@mui/material";
 import { libraryService } from "../../services/libraryService";
 import BookForm from "./BookForm";
-import BookTable from "./BookTable";
+// import BookTable from "./BookTable";
+import BokTable from "./BokTable";
 
 const AdminDashboard = () => {
   const [books, setBooks] = useState([]);
@@ -107,7 +108,7 @@ const AdminDashboard = () => {
             <CircularProgress />
           </Box>
         ) : (
-          <BookTable
+          <BokTable
             books={books}
             onEdit={setEditingBook}
             onDelete={handleDeleteBook}

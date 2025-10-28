@@ -32,7 +32,9 @@ export default function LandingPage() {
    <Box
      sx={{
        height: "100vh",
-       backgroundImage: "url('src/assets/images/library.jpg')",
+      //  backgroundImage: "url('src/assets/images/library.jpg')",
+       backgroundImage: "url('src/assets/images/webappimg.jpg')",
+
        backgroundSize: "cover",
        backgroundPosition: "center",
        position: "relative",
@@ -48,7 +50,8 @@ export default function LandingPage() {
          left: 0,
          width: "100%",
          height: "100%",
-         bgcolor: "rgba(0,0,0,0.6)",
+        //  bgcolor: "rgba(229, 229, 229, 0.6)",
+         bgcolor: "rgb(229 229 229 / 0%)"
        }}
      />
 
@@ -57,7 +60,7 @@ export default function LandingPage() {
      <Box
        sx={{
          position: "absolute",
-         top: "50%",
+         top: "43%",
          left: "50%",
          transform: "translate(-50%, -50%)",
          textAlign: "center",
