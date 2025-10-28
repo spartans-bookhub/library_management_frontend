@@ -3,7 +3,8 @@ import "./App.css";
 import Registration from "./pages/User/registration";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import Navbar from "./components/common/navbar";
-import Login from "./pages/User/login";
+import Login from "./pages/User/Login";
+import Dashboard from "./pages/Dashboard/StudentDashboard";
 import StudentDashboard from "./pages/Dashboard/StudentDashboard";
 import BookList from "./pages/Books/BookList";
 import BookSearch from "./pages/Books/BookSearch";
@@ -18,7 +19,7 @@ import NotFound from "./pages/OtherPages/NotFound";
 import Home from "./components/Home";
 import AdminDashboard from "./pages/Dashboard/AdminDashboard";
 import BorrowReturnHistory from "./pages/Dashboard/BorrowReturnHistory";
-import AdminDashboardLayout from "./pages/Dashboard/adminDashboardLayout";
+import AdminDashboardLayout from "./pages/Dashboard/AdminDashboardLayout;
 // import TransactionTable from "./pages/Dashboard/TransactionTable";
 
 function App() {
@@ -42,6 +43,7 @@ function App() {
                     <ProtectedRoute>
                       {/* <Dashboard /> */}
                       <AdminDashboard />
+                      {/* <AdminDashboardLayout/> */}
                     </ProtectedRoute>
                   }
                 />
@@ -91,7 +93,6 @@ function App() {
                 {/* Fallback Route */}
                 <Route path="*" element={<NotFound />} />
                 <Route path="/admin" element={<AdminDashboard />} />
-                {/* <Route path="/admin" element={ <AdminDashboard/>} /> */}
               </Routes>
             </BrowserRouter>
           </CartProvider>

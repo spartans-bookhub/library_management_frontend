@@ -12,20 +12,19 @@ import {
   CircularProgress,
   Box,
 } from "@mui/material";
+import { libraryService } from "../../services/libraryService";
 
 const TransactionTable = () => {
   const [transactions, setTransactions] = useState([]);
   const [loading, setLoading] = useState(true);
 
-  // ✅ Replace with your real backend API endpoint
-  const API_URL = 'http://localhost:9111/api/v1/transactions'; // get
-  // const deleteUrl = ''
 
   useEffect(() => {
     const fetchTransactions = async () => {
       try {
-        const response = await axios.get(API_URL);
-        setTransactions(response.data); // assuming API returns array of transactions
+        const response = await libraryService.getAllTransaction();
+        console.log(response);
+        setTransactions(response); 
       } catch (error) {
         console.error("Error fetching transactions:", error);
       } finally {
@@ -68,16 +67,14 @@ const TransactionTable = () => {
   return (
     <TableContainer component={Paper} sx={{ mt: 4, p: 2 }}>
       <Typography variant="h6" gutterBottom align="center">
-        Transaction Details
+        
       </Typography>
       <Table sx={{ minWidth: 650 }} aria-label="transaction table">
         <TableHead>
           <TableRow sx={{ backgroundColor: "#1976d2" }}>
-            <TableCell sx={{ color: "white", fontWeight: "bold" }}>S.No</TableCell>
-            <TableCell sx={{ color: "white", fontWeight: "bold" }}>Transaction ID</TableCell>
-            <TableCell sx={{ color: "white", fontWeight: "bold" }}>Book ID</TableCell>
+            <TableCell sx={{ color: "white", fontWeight: "bold" }}>S.No</TableCell>            
             <TableCell sx={{ color: "white", fontWeight: "bold" }}>Book Title</TableCell>
-            <TableCell sx={{ color: "white", fontWeight: "bold" }}>User ID</TableCell>
+            <TableCell sx={{ color: "white", fontWeight: "bold" }}>User</TableCell>
             <TableCell sx={{ color: "white", fontWeight: "bold" }}>Borrow Date</TableCell>
             <TableCell sx={{ color: "white", fontWeight: "bold" }}>Due Date</TableCell>
             <TableCell sx={{ color: "white", fontWeight: "bold" }}>Return Date</TableCell>
@@ -88,10 +85,8 @@ const TransactionTable = () => {
           {transactions.map((row, index) => (
             <TableRow key={row.transactionId} hover>
               <TableCell>{index + 1}</TableCell>
-              <TableCell>{row.transactionId}</TableCell>
-              <TableCell>{row.bookId}</TableCell>
               <TableCell>{row.bookTitle}</TableCell>
-              <TableCell>{row.userId}</TableCell>
+              <TableCell>{row.userName}</TableCell>
               <TableCell>{row.borrowDate}</TableCell>
               <TableCell>{row.dueDate}</TableCell>
               <TableCell>

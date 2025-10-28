@@ -75,9 +75,11 @@ const Login = () => {
         email,
         role,
         address,
-        contactNumber
+        contactNumber,
+
       }, token);
-      if(isAdmin){
+      
+    if(role === 'ADMIN'){
          navigate("/admin-dashboard");
       }else{
       navigate("/books");

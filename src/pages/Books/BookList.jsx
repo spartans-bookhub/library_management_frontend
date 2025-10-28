@@ -38,7 +38,7 @@ const BookList = () => {
   const [availabilityFilter, setAvailabilityFilter] = useState("");
   const [sortBy, setSortBy] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
-  const booksPerPage = 10;
+  const booksPerPage = 12;
 
   const navigate = useNavigate();
   const { user } = useAuth();

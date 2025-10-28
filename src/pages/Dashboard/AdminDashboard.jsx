@@ -409,16 +409,22 @@ import BokTable from "./BokTable";
 
 const AdminDashboard = () => {
   const [books, setBooks] = useState([]);
+<<<<<<< HEAD
 <<<<<<< Updated upstream
   const [newBook, setNewBook] = useState({
     bookTitle: "",
+=======
+  const intialValues = {
+     bookTitle: "",
+>>>>>>> d88f1a9a5f6340173c6de41a9ec08e71bd9c604d
     bookAuthor: "",
     category: "",
     isbn: "",
     bookId: "",
     imageUrl: "",
     totalCopies: "",
-  });
+  }
+  const [newBook, setNewBook] = useState({...intialValues});
   const [errors, setErrors] = useState({});
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [apiError, setApiError] = useState(null);
@@ -428,6 +434,15 @@ const AdminDashboard = () => {
 
   const [uploading, setUploading] = useState(false);
   const [uploadProgress, setUploadProgress] = useState(0);
+  // const [transactions, setTransactions] = useState([]);
+
+    // Fetch all books
+  useEffect(() => {
+    fetchBooks();
+  }, []);
+
+
+// Validate inputs
 
 // ...existing code...
   const validateFields = () => {
@@ -488,6 +503,7 @@ const AdminDashboard = () => {
 
 
   // Fetch books from API
+<<<<<<< HEAD
 =======
   const [editingBook, setEditingBook] = useState(null);
   const [snackbar, setSnackbar] = useState({ open: false, message: "", severity: "success" });
@@ -499,6 +515,8 @@ const AdminDashboard = () => {
   }, []);
 
 >>>>>>> Stashed changes
+=======
+>>>>>>> d88f1a9a5f6340173c6de41a9ec08e71bd9c604d
   const fetchBooks = async () => {
     setLoading(true);
     try {
@@ -512,10 +530,13 @@ const AdminDashboard = () => {
     }
   };
 
+<<<<<<< HEAD
 <<<<<<< Updated upstream
   useEffect(() => {
     fetchBooks();
   }, []);
+=======
+>>>>>>> d88f1a9a5f6340173c6de41a9ec08e71bd9c604d
 
   const handleInputChange = (e) => {
     const { name, value, type } = e.target;
@@ -524,31 +545,6 @@ const AdminDashboard = () => {
       ...prev,
       [name]: parsedValue,
     }));
-  };
-
-  const handleFileChange = (file) => {
-    if (!file) return;
-    const reader = new FileReader();
-    reader.onload = () => {
-      const dataUrl = reader.result;
-      setUploading(true);
-      setUploadProgress(0);
-      let progress = 0;
-      const interval = setInterval(() => {
-        progress += Math.floor(Math.random() * 20) + 10;
-        if (progress >= 100) {
-          progress = 100;
-          clearInterval(interval);
-          setNewBook((prev) => ({
-            ...prev,
-            imageUrl: dataUrl,
-          }));
-          setUploading(false);
-        }
-        setUploadProgress(progress);
-      }, 200);
-    };
-    reader.readAsDataURL(file);
   };
 
   const addBook = async () => {
@@ -612,8 +608,6 @@ const AdminDashboard = () => {
         setBooks(prevBooks);
         setApiError("Failed to update book. Please try again.");
         console.error(error);
-      } finally {
-        setIsSubmitting(false);
       }
     } else {
       const tempId = `temp-${Date.now()}`;
@@ -640,10 +634,34 @@ const AdminDashboard = () => {
         setBooks((prev) => prev.filter((b) => b.tempId !== tempId));
         setApiError("Failed to add book. Please try again.");
         console.error(error);
-      } finally {
-        setIsSubmitting(false);
       }
     }
+    setIsSubmitting(false);
+  };
+
+  const handleFileChange = (file) => {
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = () => {
+      const dataUrl = reader.result;
+      setUploading(true);
+      setUploadProgress(0);
+      let progress = 0;
+      const interval = setInterval(() => {
+        progress += Math.floor(Math.random() * 20) + 10;
+        if (progress >= 100) {
+          progress = 100;
+          clearInterval(interval);
+          setNewBook((prev) => ({
+            ...prev,
+            imageUrl: dataUrl,
+          }));
+          setUploading(false);
+        }
+        setUploadProgress(progress);
+      }, 200);
+    };
+    reader.readAsDataURL(file);
   };
 
   const handleEdit = (book) => {
@@ -716,11 +734,15 @@ const AdminDashboard = () => {
     <Box sx={{ p: 4, bgcolor: "#f5f7fa", minHeight: "100vh" }}>
 <<<<<<< Updated upstream
       <Typography variant="h4" align="center" gutterBottom color="primary">
+<<<<<<< HEAD
         Library Admin Dashboard
 =======
       <Typography variant="h4" align="center" color="primary" gutterBottom>
         📘 Library Admin Dashboard
 >>>>>>> Stashed changes
+=======
+          Library Admin Dashboard
+>>>>>>> d88f1a9a5f6340173c6de41a9ec08e71bd9c604d
       </Typography>
 
       {/* Summary Cards */}
@@ -780,6 +802,18 @@ const AdminDashboard = () => {
             error={!!errors.bookTitle}
             helperText={errors.bookTitle}
             disabled={isSubmitting}
+            fullWidth
+          />
+          <TextField
+            label="ISBN"
+            name="isbn"
+            value={newBook.isbn}
+            onChange={handleInputChange}
+            error={!!errors.isbn}
+            helperText={errors.isbn}
+            disabled={isSubmitting}
+            placeholder="e.g., 978-0-123456-78-9"
+            fullWidth
             sx={{ minWidth: 240 }}
           />
           <TextField
@@ -790,19 +824,9 @@ const AdminDashboard = () => {
             error={!!errors.bookAuthor}
             helperText={errors.bookAuthor}
             disabled={isSubmitting}
-            sx={{ minWidth: 220 }}
+            fullWidth
           />
-          <TextField
-            label="ISBN"
-            name="isbn"
-            value={newBook.isbn}
-            onChange={handleInputChange}
-            error={!!errors.isbn}
-            helperText={errors.isbn}
-            disabled={isSubmitting}
-            placeholder="xxxxxx"
-            sx={{ minWidth: 160 }}
-          />
+          {/* Removed duplicate TextField components */}
           <TextField
             select
             label="Category"
@@ -812,7 +836,8 @@ const AdminDashboard = () => {
             error={!!errors.category}
             helperText={errors.category}
             disabled={isSubmitting}
-            sx={{ minWidth: 180 }}
+            fullWidth
+             sx={{ minWidth: 180 }}
           >
             <MenuItem value="Fiction">Fiction</MenuItem>
             <MenuItem value="Science">Science</MenuItem>
@@ -821,9 +846,20 @@ const AdminDashboard = () => {
             <MenuItem value="Others">Others</MenuItem>
           </TextField>
 
-          {/* ✅ Total Copies */}
+          <Button 
+            variant="contained" 
+            color="primary" 
+            onClick={addBook} 
+            disabled={isSubmitting}
+            sx={{ height: "56px" }}
+            
+          >
+            {isSubmitting ? "Adding..." : "Add"}
+          </Button>
+          
+          {/*  Total Copies */}
           <TextField
-            label="Total Copies"
+            label="Total No. of Copies"
             name="totalCopies"
             type="number"
             value={newBook.totalCopies}
@@ -832,7 +868,7 @@ const AdminDashboard = () => {
             helperText={errors.totalCopies}
             disabled={isSubmitting}
             sx={{ minWidth: 140 }}
-            inputProps={{ min: 1 }}
+            // inputProps={{ min: 1 }}
           />
 
           {/* Upload Image */}
@@ -974,5 +1010,6 @@ const AdminDashboard = () => {
     </Box>
   );
 };
+
 
 export default AdminDashboard;

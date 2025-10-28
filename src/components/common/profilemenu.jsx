@@ -10,14 +10,12 @@ import {
 import { Logout, Settings, Dashboard, DarkMode, LightMode } from "@mui/icons-material";
 import { useAuth } from "../../context/AuthContext";
 import { useNavigate } from "react-router-dom";
-import { useThemeMode } from "../../context/ThemeContext";
 import MenuBookIcon from '@mui/icons-material/MenuBook';
 
 
 export default function ProfileMenu() {
   const [anchorEl, setAnchorEl] = useState(null);
   const {user, isAdmin, logout} = useAuth();
-   const { mode, toggleTheme } = useThemeMode();
   const navigate = useNavigate();
   const open = Boolean(anchorEl);
 
