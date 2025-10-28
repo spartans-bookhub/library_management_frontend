@@ -8,9 +8,12 @@ import {
   Paper,
   Stack,
   Alert,
+  Link,
+  ThemeProvider,
 } from "@mui/material";
 import { useNavigate } from "react-router-dom";
 import { authService } from "../../services/authService";
+import { typographyTheme } from "../../styles/typography";
 
 const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 const passwordRegex =
@@ -94,19 +97,55 @@ export default function Registration() {
   }
 
   return (
-    <Container maxWidth="sm" sx={{ mt: 4 }}>
-      <Paper elevation={3} sx={{ p: 4 }}>
-        <Typography variant="h5" component="h1" gutterBottom sx={{ mb: 3 }}>
+    <ThemeProvider theme={typographyTheme}>
+      <Container maxWidth="sm" sx={{ mt: 6, mb: 4 }}>
+        <Paper elevation={3} sx={{ p: { xs: 3, sm: 5 }, borderRadius: 2 }}>
+        <Typography 
+          variant="h4" 
+          component="h1" 
+          gutterBottom 
+          sx={{ 
+            fontWeight: 600,
+            textAlign: 'center',
+            mb: 2,
+            color: 'text.primary'
+          }}
+        >
           Create Account
+        </Typography>
+        <Typography 
+          variant="body2" 
+          sx={{ 
+            textAlign: 'center',
+            color: 'text.secondary',
+            mb: 4,
+            fontWeight: 500
+          }}
+        >
+          Join us and start your journey today
         </Typography>
 
         {apiError && (
-          <Alert severity="error" sx={{ mb: 2 }}>
+          <Alert 
+            severity="error" 
+            sx={{ 
+              mb: 3,
+              borderRadius: 1.5,
+              fontWeight: 500
+            }}
+          >
             {apiError}
           </Alert>
         )}
         {apiSuccess && (
-          <Alert severity="success" sx={{ mb: 2 }}>
+          <Alert 
+            severity="success" 
+            sx={{ 
+              mb: 3,
+              borderRadius: 1.5,
+              fontWeight: 500
+            }}
+          >
             {apiSuccess}
           </Alert>
         )}
@@ -114,7 +153,26 @@ export default function Registration() {
         <Box component="form" onSubmit={handleSubmit} noValidate>
           <Stack spacing={3}>
             <TextField
-              label="Email"
+              label="Full Name"
+              name="name"
+              value={formData.name}
+              onChange={handleChange}
+              error={!!errors.name}
+              helperText={errors.name}
+              required
+              fullWidth
+              sx={{
+                '& .MuiInputLabel-root': {
+                  fontWeight: 500,
+                },
+                '& .MuiOutlinedInput-root': {
+                  borderRadius: 1.5,
+                },
+              }}
+            />
+
+            <TextField
+              label="Email Address"
               name="email"
               type="email"
               value={formData.email}
@@ -123,6 +181,14 @@ export default function Registration() {
               helperText={errors.email}
               required
               fullWidth
+              sx={{
+                '& .MuiInputLabel-root': {
+                  fontWeight: 500,
+                },
+                '& .MuiOutlinedInput-root': {
+                  borderRadius: 1.5,
+                },
+              }}
             />
 
             <TextField
@@ -135,17 +201,14 @@ export default function Registration() {
               helperText={errors.password}
               required
               fullWidth
-            />
-
-            <TextField
-              label="Name"
-              name="name"
-              value={formData.name}
-              onChange={handleChange}
-              error={!!errors.name}
-              helperText={errors.name}
-              required
-              fullWidth
+              sx={{
+                '& .MuiInputLabel-root': {
+                  fontWeight: 500,
+                },
+                '& .MuiOutlinedInput-root': {
+                  borderRadius: 1.5,
+                },
+              }}
             />
 
             <TextField
@@ -157,6 +220,14 @@ export default function Registration() {
               helperText={errors.contactNumber}
               required
               fullWidth
+              sx={{
+                '& .MuiInputLabel-root': {
+                  fontWeight: 500,
+                },
+                '& .MuiOutlinedInput-root': {
+                  borderRadius: 1.5,
+                },
+              }}
             />
 
             <TextField
@@ -169,14 +240,64 @@ export default function Registration() {
               multiline
               rows={3}
               fullWidth
+              sx={{
+                '& .MuiInputLabel-root': {
+                  fontWeight: 500,
+                },
+                '& .MuiOutlinedInput-root': {
+                  borderRadius: 1.5,
+                },
+              }}
             />
 
-            <Button variant="contained" type="submit" fullWidth>
-              Register
+            <Button 
+              variant="contained" 
+              type="submit" 
+              fullWidth
+              size="large"
+              sx={{
+                py: 1.5,
+                borderRadius: 1.5,
+                fontWeight: 600,
+                fontSize: '1rem',
+                textTransform: 'none',
+                boxShadow: 2,
+                '&:hover': {
+                  boxShadow: 3,
+                },
+              }}
+            >
+              Create Account
             </Button>
           </Stack>
         </Box>
-      </Paper>
-    </Container>
+
+        <Typography 
+          variant="body2" 
+          align="center"
+          sx={{ 
+            mt: 3,
+            color: 'text.secondary'
+          }}
+        >
+          Already have an account?{" "}
+          <Link
+            component="button"
+            variant="body2"
+            onClick={() => navigate("/login")}
+            sx={{
+              fontWeight: 600,
+              textDecoration: 'none',
+              '&:hover': {
+                textDecoration: 'underline',
+              },
+            }}
+          >
+            Sign In
+          </Link>
+        </Typography>
+        </Paper>
+      </Container>
+    </ThemeProvider>
   );
 }
