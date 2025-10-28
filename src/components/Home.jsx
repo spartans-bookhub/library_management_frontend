@@ -32,8 +32,8 @@ export default function LandingPage() {
    <Box
      sx={{
        height: "100vh",
-      //  backgroundImage: "url('src/assets/images/library.jpg')",
-       backgroundImage: "url('src/assets/images/webappimg.jpg')",
+       backgroundImage: "url('src/assets/images/library.jpg')",
+      //  backgroundImage: "url('src/assets/images/webappimg.jpg')",
 
        backgroundSize: "cover",
        backgroundPosition: "center",

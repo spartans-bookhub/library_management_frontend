@@ -26,7 +26,7 @@ import { notificationService } from "../../services/notificationService";
 import ProfileMenu from "./profilemenu";
 import MenuBookIcon from "@mui/icons-material/MenuBook";
 // import logoImg from "../../assets/images/logobg.png";
-import {logoImg } from '../../assets/images/webpage.jpg';
+// import {logoImg } from '../../assets/images/webpage.jpg';
 
 export default function Navbar() {
   const { isAuthenticated } = useAuth();
@@ -76,7 +76,8 @@ export default function Navbar() {
           sx={{ cursor: "pointer" }}
           onClick={() => navigate(isAuthenticated ? "/dashboard" : "/")}
   >
-          <MenuBookIcon sx={{ color: "secondary.main", fontSize: 28, bgcolor: "yellow" }} />
+          <MenuBookIcon sx={{ color: "warning.main", fontSize: 35,  color: "#ffffffff" }} />
+  
           {/* <img 
             src={logoImg}    // path to your image
             alt="Logo" 
