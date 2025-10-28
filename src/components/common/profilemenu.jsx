@@ -101,26 +101,7 @@ export default function ProfileMenu() {
             anchorOrigin={{ horizontal: "right", vertical: "bottom" }}
           >
         
-         {isAdmin ? (
-          <>
-          <Typography sx={{ px: 2, py: 1.2, fontWeight: 500, textAlign: "center" }}>ADMIN</Typography>
-          <Divider />
-          <MenuItem onClick={handleDashboardClick}>
-          <ListItemIcon><Dashboard fontSize="small" /></ListItemIcon>  
-          Admin Dashboard
-          </MenuItem>
-
-           {/* <MenuItem onClick={handleBookRecordsClick}>
-         <ListItemIcon> <MenuBookIcon fontSize="small" /> </ListItemIcon>
-          Books Record
-        </MenuItem> */}
-
-          {/* <MenuItem onClick={handleTransactionClick}>
-         <ListItemIcon> <MenuBookIcon fontSize="small" /> </ListItemIcon>
-          Transactions
-        </MenuItem> */}
-          </>
-         ) : (
+          {!isAdmin &&
           <>
           <Typography sx={{ px: 2, py: 1.2, fontWeight: 500 }}>{user?.userName}</Typography>
          <Divider />
@@ -139,9 +120,9 @@ export default function ProfileMenu() {
           Books
         </MenuItem>
 
-
+        
         </>
-         )}
+}
 
         
 
