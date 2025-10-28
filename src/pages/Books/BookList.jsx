@@ -38,7 +38,7 @@ const BookList = () => {
   const [availabilityFilter, setAvailabilityFilter] = useState("");
   const [sortBy, setSortBy] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
-  const booksPerPage = 10;
+  const booksPerPage = 12;
 
   const navigate = useNavigate();
   const { user } = useAuth();
@@ -452,6 +452,20 @@ const BookList = () => {
               </Grid>
             ))}
         </Grid>
+
+       {/* If no books found */}
+{!loading && filteredBooks.length === 0 && (
+  <Box
+    display="flex"
+    justifyContent="center"
+    alignItems="center"
+    minHeight="30vh"
+  >
+    <Typography variant="h6" color="text.secondary">
+      This book is not available.
+    </Typography>
+  </Box>
+)}
 
         {/* Pagination */}
         {filteredBooks.length > booksPerPage && (
