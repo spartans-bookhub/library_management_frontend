@@ -18,20 +18,21 @@ import {
   TextField,
 } from "@mui/material";
 import {
-  MenuBook,
   People,
   TrendingUp,
   ErrorOutline,
   Search,
   Settings,
-  SwapHoriz,
+  SwapHoriz
 } from "@mui/icons-material";
+import LibraryBooksIcon from '@mui/icons-material/LibraryBooks';
 import { Line } from "react-chartjs-2";
 import "bootstrap/dist/css/bootstrap.min.css";
 import { useState } from "react";
 import Analytics from "./Analytics";
 import AdminDashboard from "./AdminDashboard";
 import TransactionTable from "./TransactionTable";
+import { GridMenuIcon } from "@mui/x-data-grid";
 
 export default function AdminDashboardLayout() {
  
@@ -70,15 +71,15 @@ export default function AdminDashboardLayout() {
               color: "#1976d2",
             }}
           >
-            Library System
+            Admin 
           </Typography>
           <ListGroup variant="flush">
           <ListGroup.Item action onClick={() => setActivePanel("analytics-dashboard")}>
-            📊 Dashboard
+            <GridMenuIcon></GridMenuIcon> Dashboard
           </ListGroup.Item>
           <ListGroup.Item action onClick={() => setActivePanel("books")}>
-            📚 Books
-          </ListGroup.Item>
+            <LibraryBooksIcon /> Books
+            </ListGroup.Item>
           <ListGroup.Item action onClick={() => setActivePanel("transactions")}>
             <SwapHoriz/> Transactions
           </ListGroup.Item> 

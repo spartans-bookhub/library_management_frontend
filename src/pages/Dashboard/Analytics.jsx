@@ -6,25 +6,10 @@ import {
   Col,
   Card,
   Navbar,
-  Nav,
-  ListGroup,
 } from "react-bootstrap";
 import {
-  Box,
-  Typography,
-  Grid,
-  Paper,
-  IconButton,
-  TextField,
+  Box
 } from "@mui/material";
-import {
-  MenuBook,
-  People,
-  TrendingUp,
-  ErrorOutline,
-  Search,
-  Settings,
-} from "@mui/icons-material";
 import {
   Chart as ChartJS,
   CategoryScale,

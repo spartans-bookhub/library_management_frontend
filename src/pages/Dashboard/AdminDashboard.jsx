@@ -67,7 +67,7 @@ const AdminDashboard = () => {
   return (
     <Box sx={{ p: 4, bgcolor: "#f5f7fa", minHeight: "100vh" }}>
       <Typography variant="h4" align="center" color="primary" gutterBottom>
-        📘 Library Admin Dashboard
+        {/* 📘 Library Admin Dashboard */}
       </Typography>
 
       {/* Summary Cards */}
