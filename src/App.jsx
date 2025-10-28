@@ -3,7 +3,7 @@ import "./App.css";
 import Registration from "./pages/User/registration";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import Navbar from "./components/common/navbar";
-import Login from "./pages/User/login";
+import Login from "./pages/User/Login";
 import Dashboard from "./pages/Dashboard/StudentDashboard";
 import BookList from "./pages/Books/BookList";
 import BookSearch from "./pages/Books/BookSearch";
@@ -16,7 +16,8 @@ import UserProfile from "./pages/User/userprofile";
 import ResetPassword from "./pages/User/resetpassword";
 import NotFound from "./pages/OtherPages/NotFound";
 import Home from "./components/Home";
-import AdminDashboard from "./pages/Dashboard/AdminDashboard";
+import AdminDashboard from "./pages/Dashboard/adminDashboard";
+import AdminDashboardLayout from "./pages/Dashboard/adminDashboardLayout";
 // import TransactionTable from "./pages/Dashboard/TransactionTable";
 
 function App() {
@@ -39,7 +40,8 @@ function App() {
                   element={
                     <ProtectedRoute>
                       {/* <Dashboard /> */}
-                      <AdminDashboard />
+                      {/* <AdminDashboard /> */}
+                      <AdminDashboardLayout/>
                     </ProtectedRoute>
                   }
                 />

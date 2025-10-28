@@ -62,7 +62,10 @@ export default function Registration() {
       err.contactNumber = "Invalid mobile number.";
     }
 
-    // address is optional, no validation
+    if (!data.address) {
+      err.address = "Address is required.";
+    }
+
     return err;
   }
 
@@ -93,8 +96,8 @@ export default function Registration() {
   return (
     <Container maxWidth="sm" sx={{ mt: 4 }}>
       <Paper elevation={3} sx={{ p: 4 }}>
-        <Typography variant="h4" component="h1" gutterBottom>
-          Register
+        <Typography variant="h5" component="h1" gutterBottom sx={{ mb: 3 }}>
+          Create Account
         </Typography>
 
         {apiError && (
@@ -161,6 +164,8 @@ export default function Registration() {
               name="address"
               value={formData.address}
               onChange={handleChange}
+              error={!!errors.address}
+              helperText={errors.address}
               multiline
               rows={3}
               fullWidth

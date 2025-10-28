@@ -170,4 +170,19 @@ export const libraryService = {
       );
     }
   },
+
+  // Get all transactions for admin
+  getAllTransaction: async () => {
+    try {
+      const response = await apiClient.get(API_ENDPOINTS.LIBRARY.GET_ALL_TRANSACTIONS);
+      return response.data;
+    } catch (error) {
+      throw new Error(
+        error.response?.data?.message || "Failed to fetch history"
+      );
+    }
+  },
+
+
+  
 };
