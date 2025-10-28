@@ -92,7 +92,7 @@
 //   );
 // }
 
-
+////////////////////////////////////////////////////////////////////////////////////////////////
 import React, { useState, useEffect } from "react";
 import {
   Box,
@@ -111,11 +111,12 @@ import {
 } from "@mui/material";
 import DeleteIcon from "@mui/icons-material/Delete";
 import { libraryService } from "../../services/libraryService";
+import { ReportChart } from "./ReportChart";
 
 const AdminDashboard = () => {
   const [books, setBooks] = useState([]);
   const [newBook, setNewBook] = useState({ bookTitle: "", bookAuthor: "", category: "", isbn: "", bookId: "" });
-   const [errors, setErrors] = useState({}); // check validation errors
+  const [errors, setErrors] = useState({}); // check validation errors
   // const [transactions, setTransactions] = useState([]);
 
 // Validate inputs
@@ -165,29 +166,12 @@ const AdminDashboard = () => {
   const fetchBooks = async () => {
     try {
       const data = await libraryService.getAllBooks();
-      console.log("data==="+JSON.stringify(data))
+      console.log("data===", data)
       setBooks(Array.isArray(data) ? data : []);
     } catch (error) {
       console.log("Failed to fetch books:", error);
     }
   };
-
-    // Fetch all transactions
-  // const fetchTransactions = async () => {
-  //   try {
-  //     const data = await libraryService.getHighFine();
-  //     console.log("data==="+JSON.stringify(data))
-  //     setTransactions(Array.isArray(data) ? data : []);
-  //   } catch (error) {
-  //     console.log("Failed to fetch books:", error);
-  //   }
-  // };
-
-  // useEffect(() => {
-  //   fetchTransactions();
-  // }, []);
-
-
 
   // Fetch all books
   useEffect(() => {
@@ -283,7 +267,7 @@ const AdminDashboard = () => {
             error={!!errors.isbn}
             helperText={errors.isbn}
             disabled={isSubmitting}
-            placeholder="e.g., 978-0-123456-78-9"
+            placeholder="xxxxxx"
             fullWidth
           />
           <TextField
@@ -345,7 +329,7 @@ const AdminDashboard = () => {
               ) : (
                 books.map((book) => (
                   <TableRow key={book.bookId}>
-                    <TableCell>{book.bookTitle}{book.bookId}</TableCell>
+                    <TableCell>{book.bookTitle}</TableCell>
                     <TableCell>{book.bookAuthor}</TableCell>
                     <TableCell>{book.category}</TableCell>
                      <TableCell>{book.isbn}</TableCell>
@@ -362,50 +346,10 @@ const AdminDashboard = () => {
             </TableBody>
           </Table>
         </TableContainer>
-      </Paper>
-
-      {/* TRANSACTION TABLE */}
-      {/* <Paper sx={{ p: 3 }}>
-        <Typography variant="h6" gutterBottom>
-          Transaction Data
-        </Typography>
-
-        <TableContainer>
-          <Table>
-            <TableHead>
-              <TableRow sx={{ backgroundColor: "#e3f2fd" }}>
-                <TableCell><strong>ID</strong></TableCell>
-                <TableCell><strong>User</strong></TableCell>
-                <TableCell><strong>Book</strong></TableCell>
-                <TableCell><strong>Type</strong></TableCell>
-                <TableCell><strong>Date</strong></TableCell>
-              </TableRow>
-            </TableHead>
-            <TableBody>
-              {transactions.map((t) => ( 
-                <TableRow key={t.id}>
-                  <TableCell>{t.userName}</TableCell>
-                  <TableCell>{t.contactNumber}</TableCell>
-                  <TableCell>{t.totalFine}</TableCell>
-                  <TableCell
-                    sx={{
-                      color: t.type === "Issued" ? "error.main" : "success.main",
-                      fontWeight: "bold",
-                    }}
-                  >
-                    {t.type}
-                  </TableCell>
-                  <TableCell>{t.date}</TableCell>
-                </TableRow>
-              ))}
-            </TableBody>
-          </Table>
-        </TableContainer>
-      </Paper> */}
+      </Paper>           
     </Box>
   );
 };
 
 export default AdminDashboard;
-
 

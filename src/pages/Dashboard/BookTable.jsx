@@ -133,7 +133,7 @@ export default function BookTable () {
      }
    };
 
-  // ✅ Delete book by ID
+  // Delete book by ID
   const handleDelete = async (bookId) => {
     try {
       const data = await libraryService.deleteBook(bookId);
@@ -210,8 +210,8 @@ export default function BookTable () {
                   <TableCell>{b.isbn}</TableCell>
                   <TableCell>{b.publisherName}</TableCell>
                   <TableCell>{b.price}</TableCell>
-                  {/* <TableCell>{b.totalCopies}</TableCell> */}
-                  {/* <TableCell>{b.availableCopies}</TableCell> */}
+                  <TableCell>{b.totalCopies}</TableCell>
+                  <TableCell>{b.availableCopies}</TableCell>
                   {/* <TableCell>{b.rating}</TableCell> */}
                   <TableCell align="center">
                     <IconButton color="primary" onClick={() => handleOpen(index)}>
@@ -288,7 +288,7 @@ export default function BookTable () {
                 error={formik.touched.isbn && Boolean(formik.errors.isbn)}
                 helperText={formik.touched.isbn && formik.errors.isbn}
               />
-              {/* <TextField
+              <TextField
                 label="Image URL"
                 name="image_url"
                 fullWidth
@@ -297,7 +297,7 @@ export default function BookTable () {
                 onBlur={formik.handleBlur}
                 error={formik.touched.image_url && Boolean(formik.errors.image_url)}
                 helperText={formik.touched.image_url && formik.errors.image_url}
-              /> */}
+              />
               <TextField
                 label="Publisher Name"
                 name="publisher_name"

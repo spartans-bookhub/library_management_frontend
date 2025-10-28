@@ -49,6 +49,22 @@ const TransactionTable = () => {
     );
   }
 
+// Fetch all transactions
+  // const fetchTransactions = async () => {
+  //   try {
+  //     const data = await libraryService.getHighFine();
+  //     console.log("data==="+JSON.stringify(data))
+  //     setTransactions(Array.isArray(data) ? data : []);
+  //   } catch (error) {
+  //     console.log("Failed to fetch books:", error);
+  //   }
+  // };
+
+  // useEffect(() => {
+  //   fetchTransactions();
+  // }, []);
+
+
   return (
     <TableContainer component={Paper} sx={{ mt: 4, p: 2 }}>
       <Typography variant="h6" gutterBottom align="center">
@@ -91,3 +107,44 @@ const TransactionTable = () => {
 };
 
 export default TransactionTable;
+
+
+
+  {/* TRANSACTION TABLE */}
+      {/* <Paper sx={{ p: 3 }}>
+        <Typography variant="h6" gutterBottom>
+          Transaction Data
+        </Typography>
+
+        <TableContainer>
+          <Table>
+            <TableHead>
+              <TableRow sx={{ backgroundColor: "#e3f2fd" }}>
+                <TableCell><strong>ID</strong></TableCell>
+                <TableCell><strong>User</strong></TableCell>
+                <TableCell><strong>Book</strong></TableCell>
+                <TableCell><strong>Type</strong></TableCell>
+                <TableCell><strong>Date</strong></TableCell>
+              </TableRow>
+            </TableHead>
+            <TableBody>
+              {transactions.map((t) => ( 
+                <TableRow key={t.id}>
+                  <TableCell>{t.userName}</TableCell>
+                  <TableCell>{t.contactNumber}</TableCell>
+                  <TableCell>{t.totalFine}</TableCell>
+                  <TableCell
+                    sx={{
+                      color: t.type === "Issued" ? "error.main" : "success.main",
+                      fontWeight: "bold",
+                    }}
+                  >
+                    {t.type}
+                  </TableCell>
+                  <TableCell>{t.date}</TableCell>
+                </TableRow>
+              ))}
+            </TableBody>
+          </Table>
+        </TableContainer>
+      </Paper> */}
