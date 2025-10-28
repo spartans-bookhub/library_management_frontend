@@ -18,6 +18,7 @@ import NotFound from "./pages/OtherPages/NotFound";
 import Home from "./components/Home";
 import AdminDashboard from "./pages/Dashboard/AdminDashboard";
 import BorrowReturnHistory from "./pages/Dashboard/BorrowReturnHistory";
+import AdminDashboardLayout from "./pages/Dashboard/adminDashboardLayout";
 // import TransactionTable from "./pages/Dashboard/TransactionTable";
 
 function App() {
