@@ -30,7 +30,7 @@ import { Line } from "react-chartjs-2";
 import "bootstrap/dist/css/bootstrap.min.css";
 import { useState } from "react";
 import Analytics from "./Analytics";
-import AdminDashboard from "./adminDashboard";
+import AdminDashboard from "./AdminDashboard";
 import TransactionTable from "./TransactionTable";
 
 export default function AdminDashboardLayout() {
