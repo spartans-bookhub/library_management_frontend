@@ -69,6 +69,7 @@ export const libraryService = {
       const response = await apiClient.delete(
         API_ENDPOINTS.BOOKS.DELETE.replace(":id", id)
       );
+      console.log("Delete Book Response:", response.data);
       return response.data;
     } catch (error) {
       throw new Error(error.response?.data?.message || "Failed to delete book");

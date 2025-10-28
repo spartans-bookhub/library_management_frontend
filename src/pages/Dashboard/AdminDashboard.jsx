@@ -64,14 +64,16 @@ const AdminDashboard = () => {
   };
 
   const handleDeleteBook = async (id) => {
+    console.log("Deleting Book ID:", id);
     try {
-      await libraryService.deleteBook(id);
-      setBooks((prev) => prev.filter((b) => b.bookId !== id && b.id !== id));
+      let deletedId = await libraryService.deleteBook(id);
+      console.log("Deleted Book ID:", deletedId);
+      setBooks((prev) => prev.filter((b) => b.bookId !== deletedId && b.id !== deletedId));
       setSnackbar({ open: true, message: "Book deleted successfully", severity: "success" });
     } catch (error) {
       console.error("Failed to delete book:", error);
       setSnackbar({ open: true, message: "Failed to delete book", severity: "error" });
-    }
+    } 
   };
 
   const uniqueAuthors = new Set(books.map((b) => b.bookAuthor)).size;

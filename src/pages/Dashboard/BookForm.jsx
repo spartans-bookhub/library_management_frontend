@@ -139,6 +139,7 @@ const BookForm = ({ editingBook, setEditingBook, onBookAdded, onBookUpdated, set
             name="isbn"
             value={formik.values.isbn}
             onChange={formik.handleChange}
+            disabled={!!editingBook} 
             error={formik.touched.isbn && Boolean(formik.errors.isbn)}
             helperText={formik.touched.isbn && formik.errors.isbn}
              sx={{ minWidth: 170, marginTop: '2rem'}}
