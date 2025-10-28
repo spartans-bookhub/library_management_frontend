@@ -1,39 +1,97 @@
 import React, { useEffect, useState } from "react";
-import axios from "axios";
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableContainer,
-  TableHead,
-  TableRow,
-  Paper,
-  Typography,
-  CircularProgress,
-  Box,
-} from "@mui/material";
+import { Box, CircularProgress, TextField, Button } from "@mui/material";
+import { DataGrid } from "@mui/x-data-grid";
 import { libraryService } from "../../services/libraryService";
+import { saveAs } from "file-saver";
+import * as XLSX from "xlsx";
 
 const TransactionTable = () => {
   const [transactions, setTransactions] = useState([]);
   const [loading, setLoading] = useState(true);
-
+  const [searchTerm, setSearchTerm] = useState("");
 
   useEffect(() => {
     const fetchTransactions = async () => {
       try {
         const response = await libraryService.getAllTransaction();
-        console.log(response);
-        setTransactions(response); 
+        const dataWithId = response.map((row, index) => ({
+          id: row.transactionId || index,
+          ...row,
+        }));
+        setTransactions(dataWithId);
       } catch (error) {
         console.error("Error fetching transactions:", error);
       } finally {
         setLoading(false);
       }
     };
-
     fetchTransactions();
   }, []);
+
+  // Filter transactions for search
+  const filteredTransactions = transactions.filter((t) => {
+    const lowerSearch = searchTerm.toLowerCase();
+    return (
+      t.bookTitle.toLowerCase().includes(lowerSearch) ||
+      t.userName.toLowerCase().includes(lowerSearch) ||
+      (t.borrowDate && t.borrowDate.toString().toLowerCase().includes(lowerSearch)) ||
+      (t.dueDate && t.dueDate.toString().toLowerCase().includes(lowerSearch)) ||
+      (t.returnDate && t.returnDate.toString().toLowerCase().includes(lowerSearch)) ||
+      (t.fineAmount !== null && t.fineAmount.toString().includes(lowerSearch))
+    );
+  });
+
+  // Define columns
+  const columns = [
+    {
+      field: "bookTitle",
+      headerName: "Book Title",
+      flex: 1,
+      disableColumnMenu: true, // remove menu but keep sorting
+      headerClassName: "custom-header",
+    },
+    {
+      field: "userName",
+      headerName: "User",
+      flex: 1,
+      disableColumnMenu: true,
+       headerClassName: "custom-header",
+    },
+    {
+      field: "borrowDate",
+      headerName: "Borrow Date",
+      flex: 1,
+      disableColumnMenu: true,
+       headerClassName: "custom-header",
+    },
+    {
+      field: "dueDate",
+      headerName: "Due Date",
+      flex: 1,
+      disableColumnMenu: true,
+       headerClassName: "custom-header",
+    },
+    {
+      field: "returnDate",
+      headerName: "Return Date",
+      flex: 1,
+      disableColumnMenu: true,
+      renderCell: (params) => (params.value ? params.value : <em>Not Returned</em>),
+       headerClassName: "custom-header",
+    },
+    {
+      field: "fineAmount",
+      headerName: "Fine (₹)",
+      flex: 1,
+      type: "number",
+      disableColumnMenu: true,
+      valueFormatter: (params) =>
+        params.value !== null && params.value !== undefined
+          ? Number(params.value).toFixed(2)
+          : "0.00",
+        headerClassName: "custom-header",
+    },
+  ];
 
   if (loading) {
     return (
@@ -41,105 +99,91 @@ const TransactionTable = () => {
         display="flex"
         justifyContent="center"
         alignItems="center"
-        minHeight="60vh"
+        minHeight="100vh"
       >
         <CircularProgress />
       </Box>
     );
   }
 
-// Fetch all transactions
-  // const fetchTransactions = async () => {
-  //   try {
-  //     const data = await libraryService.getHighFine();
-  //     console.log("data==="+JSON.stringify(data))
-  //     setTransactions(Array.isArray(data) ? data : []);
-  //   } catch (error) {
-  //     console.log("Failed to fetch books:", error);
-  //   }
-  // };
+  const exportToExcel = () => {
+  if (!transactions || transactions.length === 0) return;
 
-  // useEffect(() => {
-  //   fetchTransactions();
-  // }, []);
+  // Excel data
+  const dataToExport = filteredTransactions.map((t) => ({
+    "Book Title": t.bookTitle,
+    "User": t.userName,
+    "Borrow Date": t.borrowDate,
+    "Due Date": t.dueDate,
+    "Return Date": t.returnDate || "Not Returned",
+    "Fine (₹)": t.fineAmount !== null ? Number(t.fineAmount).toFixed(2) : "0.00",
+  }));
 
+  const worksheet = XLSX.utils.json_to_sheet(dataToExport);
+  const workbook = XLSX.utils.book_new();
+  XLSX.utils.book_append_sheet(workbook, worksheet, "Transactions");
+
+  const excelBuffer = XLSX.write(workbook, { bookType: "xlsx", type: "array" });
+  const data = new Blob([excelBuffer], { type: "application/octet-stream" });
+  saveAs(data, "TransactionReport.xlsx");
+};
 
   return (
-    <TableContainer component={Paper} sx={{ mt: 4, p: 2 }}>
-      <Typography variant="h6" gutterBottom align="center">
-        
-      </Typography>
-      <Table sx={{ minWidth: 650 }} aria-label="transaction table">
-        <TableHead>
-          <TableRow sx={{ backgroundColor: "#1976d2" }}>
-            <TableCell sx={{ color: "white", fontWeight: "bold" }}>S.No</TableCell>            
-            <TableCell sx={{ color: "white", fontWeight: "bold" }}>Book Title</TableCell>
-            <TableCell sx={{ color: "white", fontWeight: "bold" }}>User</TableCell>
-            <TableCell sx={{ color: "white", fontWeight: "bold" }}>Borrow Date</TableCell>
-            <TableCell sx={{ color: "white", fontWeight: "bold" }}>Due Date</TableCell>
-            <TableCell sx={{ color: "white", fontWeight: "bold" }}>Return Date</TableCell>
-            <TableCell sx={{ color: "white", fontWeight: "bold" }}>Fine (₹)</TableCell>
-          </TableRow>
-        </TableHead>
-        <TableBody>
-          {transactions.map((row, index) => (
-            <TableRow key={row.transactionId} hover>
-              <TableCell>{index + 1}</TableCell>
-              <TableCell>{row.bookTitle}</TableCell>
-              <TableCell>{row.userName}</TableCell>
-              <TableCell>{row.borrowDate}</TableCell>
-              <TableCell>{row.dueDate}</TableCell>
-              <TableCell>
-                {row.returnDate ? row.returnDate : <em>Not Returned</em>}
-              </TableCell>
-              <TableCell>{row.fineAmount.toFixed(2)}</TableCell>
-            </TableRow>
-          ))}
-        </TableBody>
-      </Table>
-    </TableContainer>
+    <Box sx={{ height: "100vh", width: "100%", p: 2, display: "flex", flexDirection: "column" }}>
+      {/* Search Box */}
+      <Box sx={{ mb: 2, display: "flex", justifyContent: "flex-end", alignItems: "center", gap: 2 }}>
+        <TextField
+          label="Search"
+          variant="outlined"
+          size="small"
+          value={searchTerm}
+          onChange={(e) => setSearchTerm(e.target.value)}
+        />
+         <Button variant="contained" color="primary" onClick={exportToExcel}>
+          Download Excel
+        </Button>
+      </Box>
+
+      {/* DataGrid */}
+      <Box sx={{ flexGrow: 1, ml: 2 }}>
+        <DataGrid
+          rows={filteredTransactions}
+          columns={columns}
+          pageSize={10}
+          rowsPerPageOptions={[]}   
+          disableSelectionOnClick
+          pagination
+          sx={{
+            "& .custom-header": {
+              backgroundColor: "#1976d2",
+              color: "white",
+              fontWeight: "bold",
+              fontSize: 16,
+            },
+            "& .MuiDataGrid-columnHeaders": {
+                backgroundColor: "#1976d2 !important",
+                color: "black",
+                fontSize: 14,
+                fontWeight: "bold",
+              },
+            "& .MuiDataGrid-footerContainer .MuiDataGrid-selectedRowCount": {
+              display: "none", // hides row count
+            },
+            "& .MuiDataGrid-footerContainer .MuiDataGrid-pagination": {
+              justifyContent: "flex-end",
+            },
+            "& .MuiDataGrid-footerContainer .MuiTablePagination-selectLabel": {
+              display: "none", // hides 'Rows per page' label
+            },
+            "& .MuiDataGrid-footerContainer .MuiTablePagination-select": {
+              display: "none", // hides the dropdown itself
+            },
+          }}
+/>
+
+      </Box>
+    </Box>
   );
 };
 
 export default TransactionTable;
-
-
-
-  {/* TRANSACTION TABLE */}
-      {/* <Paper sx={{ p: 3 }}>
-        <Typography variant="h6" gutterBottom>
-          Transaction Data
-        </Typography>
-
-        <TableContainer>
-          <Table>
-            <TableHead>
-              <TableRow sx={{ backgroundColor: "#e3f2fd" }}>
-                <TableCell><strong>ID</strong></TableCell>
-                <TableCell><strong>User</strong></TableCell>
-                <TableCell><strong>Book</strong></TableCell>
-                <TableCell><strong>Type</strong></TableCell>
-                <TableCell><strong>Date</strong></TableCell>
-              </TableRow>
-            </TableHead>
-            <TableBody>
-              {transactions.map((t) => ( 
-                <TableRow key={t.id}>
-                  <TableCell>{t.userName}</TableCell>
-                  <TableCell>{t.contactNumber}</TableCell>
-                  <TableCell>{t.totalFine}</TableCell>
-                  <TableCell
-                    sx={{
-                      color: t.type === "Issued" ? "error.main" : "success.main",
-                      fontWeight: "bold",
-                    }}
-                  >
-                    {t.type}
-                  </TableCell>
-                  <TableCell>{t.date}</TableCell>
-                </TableRow>
-              ))}
-            </TableBody>
-          </Table>
-        </TableContainer>
-      </Paper> */}
