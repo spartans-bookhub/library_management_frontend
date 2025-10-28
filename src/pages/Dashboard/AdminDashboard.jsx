@@ -35,7 +35,7 @@ const AdminDashboard = () => {
     totalCopies: "",
   });
   const [errors, setErrors] = useState({});
-  const [isSubmitting, setIsSubmitting] = useState(false);``
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const [apiError, setApiError] = useState(null);
   const [isEditing, setIsEditing] = useState(false);
   const [editingBookId, setEditingBookId] = useState(null);
@@ -44,7 +44,7 @@ const AdminDashboard = () => {
   const [uploading, setUploading] = useState(false);
   const [uploadProgress, setUploadProgress] = useState(0);
 
-  // ✅ Validation (updated to disallow negative total copies)
+// ...existing code...
   const validateFields = () => {
     const newErrors = {};
 
@@ -64,13 +64,25 @@ const AdminDashboard = () => {
 
     if (!newBook.isbn || !newBook.isbn.trim()) {
       newErrors.isbn = "ISBN is required.";
-    } else if (!/^[0-9\-]+$/.test(newBook.isbn)) {
-      newErrors.isbn = "ISBN must contain only numbers or dashes.";
-    } else if (newBook.isbn.replace(/-/g, "").length !== 6) {
-      newErrors.isbn = "ISBN must be 6 digits long (excluding dashes).";
+    } else {
+      const isbnTrim = newBook.isbn.trim();
+      // allow letters, numbers and dashes only
+      if (!/^[A-Za-z0-9-]+$/.test(isbnTrim)) {
+        newErrors.isbn = "ISBN must contain only letters, numbers or dashes.";
+      } else {
+        const cleaned = isbnTrim.replace(/-/g, "");
+        // ensure there is at least something besides dashes
+        if (cleaned.length === 0) {
+          newErrors.isbn = "ISBN must contain letters or numbers (dashes alone are not allowed).";
+        } else if (cleaned.length !== 8) {
+          newErrors.isbn = "ISBN must be 8 characters long (excluding dashes).";
+        } else if (!/^[A-Za-z0-9]+$/.test(cleaned)) {
+          newErrors.isbn = "ISBN must contain only letters and numbers (excluding dashes).";
+        }
+      }
     }
 
-    // ✅ Total copies validation — no negatives
+    //  Total copies validation — no negatives
     if (newBook.totalCopies === "" || newBook.totalCopies === null) {
       newErrors.totalCopies = "Total copies is required.";
     } else {
@@ -81,14 +93,16 @@ const AdminDashboard = () => {
     }
 
     // Image validation
-    if (!newBook.imageUrl || !newBook.imageUrl.trim()) {
-      newErrors.imageUrl = "Image is required.";
-    }
+    // if (!newBook?.imageUrl || !newBook.imageUrl.trim()) {
+    //   newErrors.imageUrl = "Image is required.";
+    // }
 
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
 
+
+  // Fetch books from API
   const fetchBooks = async () => {
     try {
       const data = await libraryService.getAllBooks();
@@ -428,7 +442,7 @@ const AdminDashboard = () => {
                 <TableCell><strong>Category</strong></TableCell>
                 <TableCell><strong>ISBN</strong></TableCell>
                 <TableCell><strong>Total Copies</strong></TableCell>
-                <TableCell><strong>Available</strong></TableCell>
+                {/* <TableCell><strong>Available</strong></TableCell> */}
                 <TableCell><strong>Action</strong></TableCell>
               </TableRow>
             </TableHead>
@@ -456,7 +470,7 @@ const AdminDashboard = () => {
                     <TableCell>{book.category}</TableCell>
                     <TableCell>{book.isbn}</TableCell>
                     <TableCell>{book.total_copies ?? book.totalCopies ?? "-"}</TableCell>
-                    <TableCell>{book.availableCopies ?? "-"}</TableCell>
+                    {/* <TableCell>{book.availableCopies ?? "-"}</TableCell> */}
                     <TableCell>
                       <IconButton color="primary" onClick={() => handleEdit(book)}>
                         <EditIcon />
