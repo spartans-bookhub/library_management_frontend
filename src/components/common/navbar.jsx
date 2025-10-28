@@ -89,7 +89,7 @@ export default function Navbar() {
               }
             }}
           >
-          Book Nest
+          BookNest
         </Typography>
         </Box>             
 

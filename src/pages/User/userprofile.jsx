@@ -1,73 +1,80 @@
+// UserProfile.jsx
 import { useAuth } from "../../context/AuthContext";
-import { Box, Paper, Typography, Avatar } from "@mui/material";
-import { useEffect, useState } from "react";
-import Button from '@mui/material/Button';
-import EditProfile from "./editprofile";
+import { Box, Grid, Paper, Typography, Avatar, Container } from "@mui/material";
+import EditProfile from "./EditProfile";
+import PhoneIcon from "@mui/icons-material/Phone";
+import LocationOnIcon from "@mui/icons-material/LocationOn";
 
-export default function UserProfile(){
-  const { user, loading } = useAuth()
-  const [isEditing, setIsEditing] = useState(false);
+export default function UserProfile() {
+  const { user, loading } = useAuth();
 
-    if (loading) {
-    return <Typography>Loading user profile...</Typography>;
+  if (loading) {
+    return <Typography textAlign="center" sx={{ mt: 4 }}>Loading user profile...</Typography>;
   }
-    if (!user) {
-      return <p>Loading user data...</p>;
-    }
 
-    const handleEditClick = () => {
-      setIsEditing(true)
-    }
+  if (!user) {
+    return <Typography textAlign="center" sx={{ mt: 4 }}>No user data available.</Typography>;
+  }
 
-       
-    const handleCancel = () =>{
-        setIsEditing(false);
-    }
+  const avatarContent = user.avatarUrl ? (
+    <Avatar alt={user.userName} src={user.avatarUrl} sx={{ width: 100, height: 100, mx: "auto", mb: 2 }} />
+  ) : (
+    <Avatar sx={{ width: 100, height: 100, mx: "auto", mb: 2 }}>
+      {user.userName ? user.userName.charAt(0).toUpperCase() : "A"}
+    </Avatar>
+  );
 
-    const avatarContent = user.avatarUrl ? (
-        <Avatar alt={user.userName} src={user.avatarUrl} sx={{ width: 80, height: 80 }} />
-          ) : (
-            <Avatar sx={{ width: 80, height: 80 }}>
-              {user.userName ? user.userName.charAt(0).toUpperCase() : "A"}
-            </Avatar>
-    );
+  return (
+    <Box sx={{ backgroundColor: "grey.100", minHeight: "100vh", py: 6 }}>
+      <Container maxWidth="md">
+        <Grid container spacing={4} justifyContent="center">
+          
+          {/* PROFILE */}
+          <Grid item xs={12} md={4}>
+            <Paper
+              elevation={3}
+              sx={{
+                p: 4,
+                textAlign: "center",
+                display: "flex",
+                flexDirection: "column",
+                alignItems: "center",
+              }}
+            >
+              {avatarContent}
+              <Typography variant="h6" fontWeight="bold">
+                {user.userName}
+              </Typography>
+              <Typography variant="body2" color="text.secondary">
+                {user.email}
+              </Typography>
 
+              <Box sx={{ mt: 3, textAlign: "left", width: "100%" }}>
+                <Typography variant="body1" sx={{ mb: 1 }}>
+                   <PhoneIcon color="primary" fontSize="small" /> {user.contactNumber || "N/A"}
+                </Typography>
+                <Typography variant="body1">
+                    <LocationOnIcon color="error" fontSize="small" /> {user.address || "No address provided"}
+                </Typography>
+              </Box>
+            </Paper>
+          </Grid>
 
-  return(
-    <>
-    <Paper elevation={3} sx={{ p: 3, maxWidth: 600, mx: 'auto', mt: 5, textAlign: 'center' }}>
-     <Box sx={{ display: "flex", alignItems: "center", mb: 2 }}>
-          {avatarContent}
-          <Box sx={{ ml: 2, textAlign: "left" }}>
-          <Typography variant="h6" component="h6" gutterBottom>
-              {user.userName}
-          </Typography>
-          <Typography variant="body2" color="textSecondary" gutterBottom>
-              {user.email}
-          </Typography>
-          <Typography  variant="body1" sx={{ mt: 1 }}>
-              {user.contactNumber}
-          </Typography>
-            <Typography  variant="body1" sx={{ mt: 1 }}>
-              {user.address}
-          </Typography>
-          </Box>
-      </Box>
-       <Button variant="outlined" sx={{ mt: 3 }} onClick={handleEditClick}>
-         Edit Profile 
-        </Button>
-        </Paper>
-        
-       <Box sx={{  mx: 'auto',
-                width: '90vw',
-                maxWidth: 600,
-                mb: 5,
-                p: 3,  
-                }}>
-        {isEditing && <EditProfile onCancel={handleCancel}/>}
-        </Box>
-    
-    </>
-  )
+          {/* RIGHT: EDIT PROFILE */}
+          <Grid item xs={12} md={8}>
+            <Paper elevation={3} sx={{ p: { xs: 3, sm: 4 } }}>
+              <Typography
+                variant="h6"
+                sx={{ mb: 2, fontWeight: "bold", textAlign: "center" }}
+              >
+                {/* Edit Profile */}
+              </Typography>
+              <EditProfile />
+            </Paper>
+          </Grid>
+
+        </Grid>
+      </Container>
+    </Box>
+  );
 }
-
