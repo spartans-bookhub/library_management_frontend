@@ -77,7 +77,8 @@ const Login = () => {
         address,
         contactNumber
       }, token);
-      if(isAdmin){
+      
+      if(role === 'ADMIN'){
          navigate("/admin-dashboard");
       }else{
       navigate("/books");
