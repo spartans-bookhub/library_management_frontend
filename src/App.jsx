@@ -42,8 +42,8 @@ function App() {
                   element={
                     <ProtectedRoute>
                       {/* <Dashboard /> */}
-                      <AdminDashboard />
-                      {/* <AdminDashboardLayout/> */}
+                      {/* <AdminDashboard /> */}
+                      <AdminDashboardLayout/>
                     </ProtectedRoute>
                   }
                 />

@@ -51,6 +51,8 @@ ChartJS.register(
 import { Line } from "react-chartjs-2";
 import "bootstrap/dist/css/bootstrap.min.css";
 import { useState } from "react";
+import { BorrowingChart } from './borrowChart';
+import PopularCategoryChart from './popularCategoryChart';
 
 export default function Analytics() {
 
@@ -58,9 +60,9 @@ export default function Analytics() {
 
   return (
     <div>
-         {/* 🌐 Main Content */}
+
       <Box sx={{ flexGrow: 1, p: 3 }}>
-        {/* 🔝 Navbar */}
+
         <Navbar
           bg="white"
           expand="lg"
@@ -68,41 +70,35 @@ export default function Analytics() {
           style={{ padding: "0.8rem 1.5rem" }}
         >
           <Navbar.Brand>Dashboard</Navbar.Brand>
-          <Nav className="ms-auto d-flex align-items-center">
-            <TextField
-              size="small"
-              placeholder="Search..."
-              InputProps={{
-                startAdornment: <Search sx={{ color: "gray", mr: 1 }} />,
-              }}
-            />
-            <IconButton sx={{ ml: 2 }}>
-              <Settings />
-            </IconButton>
-          </Nav>
+         
         </Navbar>
 
        
 
         {/* Chart */}
-        <Row>
-          <Col md={6}>
-            <Card className="mb-3 shadow-sm">
-              <Card.Header>Recent Activity</Card.Header>
-              <ListGroup variant="flush">
-              
-              </ListGroup>
-            </Card>
-          </Col>
-          <Col md={6}>
-            {/* <Card className="mb-3 shadow-sm">
-              <Card.Header>Borrowing Trends</Card.Header>
-              <Card.Body>
-                <Line data={chartData} />
-              </Card.Body>
-            </Card> */}
-          </Col>
-        </Row>
+      <Row>
+  <Col xs={12} md={6} lg={6}>
+    <Card className="mb-3 shadow-sm">
+      <Card.Header>Popular Category</Card.Header>
+      <Card.Body>
+        <div style={{ height: "400px" }}>
+          <PopularCategoryChart />
+        </div>
+      </Card.Body>
+    </Card>
+  </Col>
+
+  <Col xs={12} md={6} lg={6}>
+    <Card className="mb-3 shadow-sm">
+      <Card.Header>Borrowing Trends</Card.Header>
+      <Card.Body>
+        <div style={{ height: "400px" }}>
+          <BorrowingChart />
+        </div>
+      </Card.Body>
+    </Card>
+  </Col>
+</Row>
 
       </Box>
     </div>
