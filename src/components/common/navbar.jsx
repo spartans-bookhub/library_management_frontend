@@ -16,7 +16,7 @@ import {
   Alert,
   ThemeProvider,
 } from "@mui/material";
-import { Link as RouterLink, useNavigate } from "react-router-dom";
+import { Link as RouterLink, useNavigate, useLocation } from "react-router-dom";
 import {
   Notifications as NotificationsIcon,
 } from "@mui/icons-material";
@@ -28,6 +28,8 @@ import { typographyTheme } from "../../styles/typography";
 export default function Navbar() {
   const { isAuthenticated } = useAuth();
   const navigate = useNavigate();
+  const location = useLocation();
+  const isHomePage = location.pathname === "/";
   const [notificationAnchorEl, setNotificationAnchorEl] = useState(null);
   const [notifications, setNotifications] = useState([]);
   const [notificationLoading, setNotificationLoading] = useState(false);
@@ -101,7 +103,7 @@ export default function Navbar() {
           </Box>
 
           <Box display="flex" alignItems="center" gap={1.5}>
-            {isAuthenticated ? (
+            {isAuthenticated && !isHomePage ? (
               <>
                 <IconButton
                   color="inherit"
@@ -118,6 +120,32 @@ export default function Navbar() {
                     <NotificationsIcon sx={{ fontSize: 24 }} />
                   </Badge>
                 </IconButton>
+              </>
+            ) : isAuthenticated && isHomePage ? (
+              <>
+                <Button
+                  color="inherit"
+                  component={RouterLink}
+                  to="/books"
+                  variant="contained"
+                  sx={{
+                    backgroundColor: "rgba(255, 255, 255, 0.9)",
+                    color: "primary.main",
+                    fontWeight: 600,
+                    textTransform: "none",
+                    px: 3,
+                    py: 1,
+                    boxShadow: "none",
+                    transition: "all 0.2s ease-in-out",
+                    "&:hover": {
+                      backgroundColor: "white",
+                      boxShadow: 2,
+                      transform: "translateY(-1px)",
+                    },
+                  }}
+                >
+                  Browse Books
+                </Button>
               </>
             ) : (
               <>

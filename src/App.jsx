@@ -3,6 +3,7 @@ import "./App.css";
 import Registration from "./pages/User/registration";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import Navbar from "./components/common/navbar";
+import Footer from "./components/common/footer";
 import Login from "./pages/User/Login";
 import Dashboard from "./pages/Dashboard/StudentDashboard";
 import StudentDashboard from "./pages/Dashboard/StudentDashboard";
@@ -94,6 +95,7 @@ function App() {
                 <Route path="*" element={<NotFound />} />
                 <Route path="/admin" element={<AdminDashboard />} />
               </Routes>
+              <Footer />
             </BrowserRouter>
           </CartProvider>
         </AuthProvider>
