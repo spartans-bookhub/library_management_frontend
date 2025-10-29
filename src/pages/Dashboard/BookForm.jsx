@@ -182,11 +182,11 @@ import React, { useEffect, useState } from "react";
                 style={{ display: "none" }}
                 onChange={(e) => handleFileChange(e.target.files?.[0])}
               />
-              <label htmlFor="upload-img">
+              {/* <label htmlFor="upload-img">
                 <Button variant="outlined" component="span" disabled={uploading}>
                   {uploading ? "Uploading..." : "Upload"}
                 </Button>
-              </label>
+              </label> */}
               {uploading && <LinearProgress variant="determinate" value={uploadProgress} sx={{ width: 70 }} />}
               {/* <Avatar src={formik.values.imageUrl} variant="rounded" sx={{ width: 56, height: 56 }} /> */}
             </Box>
