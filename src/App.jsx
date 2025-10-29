@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { Box } from "@mui/material";
 import "./App.css";
 import Registration from "./pages/User/registration";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
@@ -32,8 +33,16 @@ function App() {
         <AuthProvider>
           <CartProvider>
             <BrowserRouter>
-              <Navbar />
-              <Routes>
+              <Box 
+                sx={{ 
+                  display: "flex", 
+                  flexDirection: "column", 
+                  minHeight: "100vh" 
+                }}
+              >
+                <Navbar />
+                <Box sx={{ flexGrow: 1 }}>
+                  <Routes>
                 <Route path="/" element={<Home />} />
                 <Route path="/register" element={<Registration />} />
                 <Route path="/login" element={<Login />} />
@@ -91,11 +100,13 @@ function App() {
                     </ProtectedRoute>
                   }
                 />
-                {/* Fallback Route */}
-                <Route path="*" element={<NotFound />} />
-                <Route path="/admin" element={<AdminDashboard />} />
-              </Routes>
-              <Footer />
+                  {/* Fallback Route */}
+                  <Route path="*" element={<NotFound />} />
+                  <Route path="/admin" element={<AdminDashboard />} />
+                  </Routes>
+                </Box>
+                <Footer />
+              </Box>
             </BrowserRouter>
           </CartProvider>
         </AuthProvider>

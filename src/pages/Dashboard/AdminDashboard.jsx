@@ -9,9 +9,12 @@ import {
   CircularProgress,
 } from "@mui/material";
 import { libraryService } from "../../services/libraryService";
+import {  ThemeProvider } from "@mui/material";
+import { typographyTheme } from "../../styles/typography";
 import BookForm from "./BookForm";
 // import BookTable from "./BookTable";
 import BokTable from "./BokTable";
+
 
 const AdminDashboard = () => {
   const [books, setBooks] = useState([]);
@@ -82,9 +85,11 @@ const AdminDashboard = () => {
   const uniqueCategories = new Set(books.map((b) => b.category)).size;
 
   return (
-    <Box sx={{ p: 4, bgcolor: "#f5f7fa", minHeight: "100vh" }}>
+
+    <ThemeProvider theme={typographyTheme}>
+      <Box sx={{ p: 4, bgcolor: "#f5f7fa", minHeight: "100vh" }}>
       <Typography variant="h4" align="center" color="primary" gutterBottom>
-        {/* 📘 Library Admin Dashboard */}
+       <Typography variant="h6">Book Management</Typography>
       </Typography>
 
       {/* Summary Cards */}
@@ -148,6 +153,7 @@ const AdminDashboard = () => {
         </Alert>
       </Snackbar>
     </Box>
+    </ThemeProvider>
   );
 };
 

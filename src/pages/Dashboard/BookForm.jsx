@@ -52,19 +52,23 @@ import React, { useEffect, useState } from "react";
         bookAuthor: "",
         category: "",
         isbn: "",
-        totalCopies: "",
+        totalCopies: 0,
         imageUrl: "",
+        availableCopies: 0,
       },
       validationSchema,
       onSubmit: async (values, { resetForm }) => {
         try {
           if (editingBook) {
             const updated = await libraryService.updateBook(editingBook.bookId || editingBook.id, values);
+            fetchBooks();
             console.log("Updated Book form:", updated);
             onBookUpdated(updated);
             setSnackbar({ open: true, message: "Book updated successfully", severity: "success" });
           } else {
+            values.availableCopies = values.totalCopies;
             const created = await libraryService.createBook(values);
+            console.log("Created Book form:", values);
             onBookAdded(created);
             setSnackbar({ open: true, message: "Book added successfully", severity: "success" });
           }
@@ -173,7 +177,7 @@ import React, { useEffect, useState } from "react";
               sx={{ width: { xs: '100%', sm: 170 , md: 160, marginTop: '2rem' } }}
                 slotProps={{ input: { min: 1 } }}
             />
-
+{/* 
             <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
               <input
                 accept="image/*"
@@ -189,7 +193,7 @@ import React, { useEffect, useState } from "react";
               </label> */}
               {uploading && <LinearProgress variant="determinate" value={uploadProgress} sx={{ width: 70 }} />}
               {/* <Avatar src={formik.values.imageUrl} variant="rounded" sx={{ width: 56, height: 56 }} /> */}
-            </Box>
+            {/* </Box> */} 
 
             <Box>
               <Button type="submit" variant="contained" color="primary">
