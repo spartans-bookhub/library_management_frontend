@@ -88,17 +88,7 @@ export default function AdminDashboardLayout() {
   }}
       >
         <Box sx={{ display: { xs: "none", sm: "block" } }}>
-          <Typography
-            variant="h5"
-            sx={{
-              p: 2,
-              fontWeight: "bold",
-              borderBottom: "1px solid #e0e0e0",
-              color: "#1976d2",
-            }}
-          >
-            Library System
-          </Typography>
+           <Typography variant="h5">Library System</Typography>
           <ListGroup variant="flush">
           <ListGroup.Item action onClick={() => setActivePanel("analytics-dashboard")}>
             📊 Dashboard

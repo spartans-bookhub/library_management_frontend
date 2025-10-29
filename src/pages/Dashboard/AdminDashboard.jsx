@@ -89,7 +89,7 @@ const AdminDashboard = () => {
     <ThemeProvider theme={typographyTheme}>
       <Box sx={{ p: 4, bgcolor: "#f5f7fa", minHeight: "100vh" }}>
       <Typography variant="h4" align="center" color="primary" gutterBottom>
-        {/* 📘 Library Admin Dashboard */}
+       <Typography variant="h6">Book Management</Typography>
       </Typography>
 
       {/* Summary Cards */}
