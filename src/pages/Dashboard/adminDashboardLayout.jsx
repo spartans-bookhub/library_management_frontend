@@ -17,9 +17,10 @@ import {
   IconButton,
   TextField,
   ListItem,
-  ListItemIcon,
+  ListItemIcon
   
 } from "@mui/material";
+import { Menu as MenuIcon } from "@mui/icons-material";
 import {
   MenuBook,
   People,
@@ -78,7 +79,7 @@ export default function AdminDashboardLayout() {
 
   return (
     <Box sx={{ display: "flex", minHeight: "100vh", backgroundColor: "#f8f9fa" }}>
-      {/* 🧭 Sidebar */}
+      {/*  Sidebar */}
       <Box
        sx={{
     width: { xs: 0, sm: 240 }, // hidden on xs, fixed on sm+
@@ -87,27 +88,35 @@ export default function AdminDashboardLayout() {
     boxShadow: 1,
   }}
       >
-        <Box sx={{ display: { xs: "none", sm: "block" } }}>
-           <Typography variant="h5">Library System</Typography>
+        {/* <Container> */}
+          <Paper elevation={3} sx={{ mb: 2, p: 1, height: '100vh',
+          '&:hover': {
+          color: '#4F46E5',
+          boxShadow: 6, // Example: adds a shadow on hover
+        }
+
+           }}>
+            <Box sx={{ display: { xs: "none", sm: "block" } }}>
+           {/* <Typography variant="h4">Library System</Typography> */}
           <ListGroup variant="flush">
-          <ListGroup.Item action onClick={() => setActivePanel("analytics-dashboard")}>
-            📊 Dashboard
+          <ListGroup.Item action fontSize="md" onClick={() => setActivePanel("analytics-dashboard")}>
+             <MenuIcon sx={{marginRight: 3}}/>Dashboard
           </ListGroup.Item>
-          <ListGroup.Item action onClick={() => setActivePanel("books")}>
-            📚 Books
+          <ListGroup.Item action fontSize="md" onClick={() => setActivePanel("books")}>
+            <MenuBook sx={{marginRight: 3}} /> Books Inventory
           </ListGroup.Item>
           <ListGroup.Item action onClick={() => setActivePanel("transactions")}>
-            <SwapHoriz/> Transactions
+            <SwapHoriz sx={{marginRight: 3}} /> Transactions
           </ListGroup.Item> 
-           <ListGroup.Item action onClick={handleLogoutClick}>
-            <ListItemIcon><Logout fontSize="small" color="error" /></ListItemIcon>
+           <ListGroup.Item action onClick={handleLogoutClick} sx={{marginBottom: '20px', bottom: 0}}>
+            <ListItemIcon ><Logout fontSize="small" color="error" /></ListItemIcon>
               Logout
           </ListGroup.Item> 
          
         </ListGroup>
-        </Box>
-
-        
+        </Box>    
+          </Paper>  
+        {/* </Container>  */}
       </Box>
 
         {/* Main Content */}
