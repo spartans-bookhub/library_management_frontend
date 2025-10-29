@@ -487,7 +487,7 @@ const AdminDashboard = () => {
                     <TableCell>{book.bookAuthor}</TableCell>
                     <TableCell>{book.category}</TableCell>
                     <TableCell>{book.isbn}</TableCell>
-                    <TableCell>{book.total_copies ?? book.totalCopies ?? "-"}</TableCell>
+                    <TableCell>{book.totalCopies ?? "-"}</TableCell>
                     {/* <TableCell>{book.availableCopies ?? "-"}</TableCell> */}
                     <TableCell>
                       <IconButton color="primary" onClick={() => handleEdit(book)}>
@@ -495,7 +495,7 @@ const AdminDashboard = () => {
                       </IconButton>
                       <IconButton
                         color="error"
-                        onClick={() => deleteBook(book.bookId || book.id)}
+                        onClick={() => deleteBook(book.bookId)}
                         disabled={!book.bookId && !book.id}
                       >
                         <DeleteIcon />

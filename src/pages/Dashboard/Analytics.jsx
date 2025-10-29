@@ -81,7 +81,7 @@ export default function Analytics() {
     <Card className="mb-3 shadow-sm">
       <Card.Header>Popular Category</Card.Header>
       <Card.Body>
-        <div style={{ height: "400px" }}>
+        <div style={{ height: "550px" }}>
           <PopularCategoryChart />
         </div>
       </Card.Body>
@@ -91,8 +91,8 @@ export default function Analytics() {
   <Col xs={12} md={6} lg={6}>
     <Card className="mb-3 shadow-sm">
       <Card.Header>Borrowing Trends</Card.Header>
-      <Card.Body>
-        <div style={{ height: "400px" }}>
+      <Card.Body  style={{ paddingBottom: "24px" }}>
+        <div style={{ height: "540px" }}>
           <BorrowingChart />
         </div>
       </Card.Body>
