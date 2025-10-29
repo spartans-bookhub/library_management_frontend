@@ -52,8 +52,9 @@ import React, { useEffect, useState } from "react";
         bookAuthor: "",
         category: "",
         isbn: "",
-        totalCopies: "",
+        totalCopies: "0",
         imageUrl: "",
+        availableCopies: "0",
       },
       validationSchema,
       onSubmit: async (values, { resetForm }) => {
