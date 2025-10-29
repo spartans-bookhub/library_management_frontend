@@ -75,7 +75,7 @@ const BookList = () => {
   const [chatLoading, setChatLoading] = useState(false);
   const [chatContext, setChatContext] = useState(null);
   const [quickSuggestions, setQuickSuggestions] = useState([]);
-  const booksPerPage = 12;
+  const booksPerPage = 15;
 
   const {} = useAuth();
   const { addToCart, isInCart, getItemQuantity } = useCart();
