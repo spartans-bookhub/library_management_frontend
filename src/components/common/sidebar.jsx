@@ -76,20 +76,21 @@ const Sidebar = ({ open, onClose }) => {
         sx={{
           width: drawerWidth,
           height: "100%",
-          backgroundColor: "#efefef",
+          backgroundColor: "var(--sidebar-primary-foreground)",
           borderRadius: 0,
         }}
       >
         <Box
           sx={{
             p: 3,
-            backgroundColor: "#efefef",
+            // backgroundColor: "#efefef",
+            backgroundColor: "var(--sidebar-primary-foreground)",
             color: "text.primary",
             borderBottom: "1px solid",
             borderColor: "divider",
           }}
         >
-          <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
+          <Box sx={{ display: "flex", alignItems: "center", gap: 1, }}>
             <BookIcon sx={{ color: "primary.main", fontSize: 28 }} />
             <Typography
               variant="h6"
@@ -185,11 +186,12 @@ const Sidebar = ({ open, onClose }) => {
                   borderRadius: 2,
                   minHeight: 48,
                   "&:hover": {
-                    backgroundColor: "error.main",
+                    // borderColor: "primary.main",
+                    borderColor: "primary.main",
                     color: "white",
                     boxShadow: 1,
                     "& .MuiListItemIcon-root": {
-                      color: "white",
+                      color: "red",
                     },
                   },
                 }}

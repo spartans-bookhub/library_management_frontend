@@ -31,6 +31,7 @@ import {
   SwapHoriz,
   Logout
 } from "@mui/icons-material";
+import {  ThemeProvider } from "@mui/material";
 import { Line } from "react-chartjs-2";
 import "bootstrap/dist/css/bootstrap.min.css";
 import { useState } from "react";
@@ -78,6 +79,7 @@ export default function AdminDashboardLayout() {
   };
 
   return (
+    <ThemeProvider theme={typographyTheme}>
     <Box sx={{ display: "flex", minHeight: "100vh", backgroundColor: "#f8f9fa" }}>
       {/*  Sidebar */}
       <Box
@@ -126,5 +128,8 @@ export default function AdminDashboardLayout() {
 
    
     </Box>
+
+    </ThemeProvider>
+
   );
 };

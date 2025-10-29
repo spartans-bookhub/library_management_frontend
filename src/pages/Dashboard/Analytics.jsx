@@ -1,5 +1,4 @@
-
-import React from 'react'
+import React from "react";
 import {
   Container,
   Row,
@@ -35,7 +34,7 @@ import {
   Tooltip,
   Legend,
   Filler,
-} from 'chart.js';
+} from "chart.js";
 
 // Register Chart.js components
 ChartJS.register(
@@ -51,18 +50,13 @@ ChartJS.register(
 import { Line } from "react-chartjs-2";
 import "bootstrap/dist/css/bootstrap.min.css";
 import { useState } from "react";
-import { BorrowingChart } from './borrowChart';
-import PopularCategoryChart from './popularCategoryChart';
+import { BorrowingChart } from "./borrowChart";
+import PopularCategoryChart from "./popularCategoryChart";
 
 export default function Analytics() {
-
-
-
   return (
     <div>
-
       <Box sx={{ flexGrow: 1, p: 3 }}>
-
         <Navbar
           bg="white"
           expand="lg"
@@ -70,37 +64,33 @@ export default function Analytics() {
           style={{ padding: "0.8rem 1.5rem" }}
         >
           <Navbar.Brand>Dashboard</Navbar.Brand>
-         
         </Navbar>
 
-       
-
         {/* Chart */}
-      <Row>
-  <Col xs={12} md={6} lg={6}>
-    <Card className="mb-3 shadow-sm">
-      <Card.Header>Popular Category</Card.Header>
-      <Card.Body>
-        <div style={{ height: "550px" }}>
-          <PopularCategoryChart />
-        </div>
-      </Card.Body>
-    </Card>
-  </Col>
+        <Row>
+          <Col xs={12} md={6} lg={6}>
+            <Card className="mb-3 shadow-sm">
+              <Card.Header>Popular Category</Card.Header>
+              <Card.Body>
+                <div style={{ height: "550px" }}>
+                  <PopularCategoryChart />
+                </div>
+              </Card.Body>
+            </Card>
+          </Col>
 
-  <Col xs={12} md={6} lg={6}>
-    <Card className="mb-3 shadow-sm">
-      <Card.Header>Borrowing Trends</Card.Header>
-      <Card.Body  style={{ paddingBottom: "24px" }}>
-        <div style={{ height: "540px" }}>
-          <BorrowingChart />
-        </div>
-      </Card.Body>
-    </Card>
-  </Col>
-</Row>
-
+          <Col xs={12} md={6} lg={6}>
+            <Card className="mb-3 shadow-sm">
+              <Card.Header>Borrowing Trends</Card.Header>
+              <Card.Body style={{ paddingBottom: "24px" }}>
+                <div style={{ height: "540px" }}>
+                  <BorrowingChart />
+                </div>
+              </Card.Body>
+            </Card>
+          </Col>
+        </Row>
       </Box>
     </div>
-  )
+  );
 }
