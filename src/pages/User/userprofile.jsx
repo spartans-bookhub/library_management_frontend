@@ -12,7 +12,7 @@ import {
   ThemeProvider
 } from "@mui/material";
 import { Menu as MenuIcon } from "@mui/icons-material";
-import EditProfile from "./EditProfile";
+import EditProfile from "./editprofile";
 import PhoneIcon from "@mui/icons-material/Phone";
 import LocationOnIcon from "@mui/icons-material/LocationOn";
 import Sidebar from "../../components/common/sidebar";
