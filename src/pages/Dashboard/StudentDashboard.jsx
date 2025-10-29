@@ -35,7 +35,7 @@ import Sidebar from "../../components/common/sidebar";
 import { typographyTheme } from "../../styles/typography";
 
 const Dashboard = () => {
-  const { user, isAdmin } = useAuth();
+  const { user } = useAuth();
   const [selectedTab, setSelectedTab] = useState(0);
   const [borrowedBooks, setBorrowedBooks] = useState([]);
   const [historyData, setHistoryData] = useState([]);
@@ -90,16 +90,6 @@ const Dashboard = () => {
     const today = new Date();
     const due = new Date(dueDate);
     return due < today;
-  };
-
-  // Calculate fine amount based on overdue days
-  const calculateFine = (dueDate) => {
-    const today = new Date();
-    const due = new Date(dueDate);
-    const diffTime = today - due;
-    const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
-    const finePerDay = 5; // $5 per day
-    return diffDays > 0 ? diffDays * finePerDay : 0;
   };
 
   // Fetch all data needed for dashboard counts
@@ -182,12 +172,11 @@ const Dashboard = () => {
       return;
     }
 
-    if (isOverdue(bookData.dueDate)) {
-      const fineAmount = calculateFine(bookData.dueDate);
+    if (isOverdue(bookData.dueDate) && bookData.fineAmount > 0) {
       setFineModal({
         open: true,
         bookData,
-        fineAmount,
+        fineAmount: bookData.fineAmount,
         paymentCompleted: false,
       });
       return;
@@ -269,11 +258,15 @@ const Dashboard = () => {
 
   const activeBorrowedBooksColumns = [
     {
-      field: "transactionId",
-      headerName: "Txn ID",
+      field: "serialNo",
+      headerName: "Serial no.",
       width: 100,
       headerAlign: "center",
       align: "center",
+      renderCell: (params) => {
+        const index = borrowedBooks.findIndex(book => book.transactionId === params.row.transactionId);
+        return index + 1;
+      },
     },
     {
       field: "bookTitle",
@@ -345,11 +338,15 @@ const Dashboard = () => {
 
   const historyColumns = [
     {
-      field: "transactionId",
-      headerName: "Txn ID",
+      field: "serialNo",
+      headerName: "Serial no.",
       width: 100,
       headerAlign: "center",
       align: "center",
+      renderCell: (params) => {
+        const index = historyData.findIndex(item => item.transactionId === params.row.transactionId);
+        return index + 1;
+      },
     },
     {
       field: "bookTitle",
@@ -880,8 +877,8 @@ const Dashboard = () => {
         onClose={handleCloseFineModal}
         maxWidth="sm"
         fullWidth
-        PaperProps={{
-          sx: {
+        sx={{
+          "& .MuiDialog-paper": {
             borderRadius: 2,
             p: 1,
           },
@@ -934,11 +931,7 @@ const Dashboard = () => {
                   color="error.main"
                   sx={{ fontWeight: 500 }}
                 >
-                  Days Overdue:{" "}
-                  {Math.ceil(
-                    (new Date() - new Date(fineModal.bookData.dueDate)) /
-                      (1000 * 60 * 60 * 24)
-                  )}
+                  Status: {fineModal.bookData.transactionStatus}
                 </Typography>
               </Paper>
 
@@ -965,7 +958,7 @@ const Dashboard = () => {
                     color: "error.main",
                   }}
                 >
-                  ${fineModal.fineAmount}
+                  ₹{fineModal.fineAmount}
                 </Typography>
               </Box>
 
@@ -1010,7 +1003,7 @@ const Dashboard = () => {
                 },
               }}
             >
-              Pay Fine (${fineModal.fineAmount})
+              Pay Fine (₹{fineModal.fineAmount})
             </Button>
           ) : (
             <Button

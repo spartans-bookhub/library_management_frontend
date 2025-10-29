@@ -21,8 +21,16 @@ import {
   Pagination,
   ThemeProvider,
   IconButton,
+  Dialog,
+  DialogTitle,
+  DialogContent,
+  DialogActions,
+  List,
+  ListItem,
+  ListItemText,
+  Divider,
 } from "@mui/material";
-import { Menu as MenuIcon } from "@mui/icons-material";
+import { Menu as MenuIcon, Warning as WarningIcon } from "@mui/icons-material";
 import SearchIcon from "@mui/icons-material/Search";
 import { libraryService } from "../../services/libraryService";
 import { useAuth } from "../../context/AuthContext";
@@ -42,6 +50,10 @@ const BookList = () => {
   const [sortBy, setSortBy] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
   const [mobileOpen, setMobileOpen] = useState(false);
+  const [overdueModal, setOverdueModal] = useState({
+    open: false,
+    overdueBooks: [],
+  });
   const booksPerPage = 12;
 
   const {} = useAuth();
@@ -50,6 +62,7 @@ const BookList = () => {
 
   useEffect(() => {
     fetchBooks();
+    checkOverdueBooks();
   }, []);
 
   useEffect(() => {
@@ -69,6 +82,31 @@ const BookList = () => {
     } finally {
       setLoading(false);
     }
+  };
+
+  const checkOverdueBooks = async () => {
+    try {
+      const borrowedBooks = await libraryService.getBorrowedBooks();
+      const overdueBooks = borrowedBooks.filter(
+        (book) => book.fineAmount > 0 && book.transactionStatus === "DUE"
+      );
+
+      if (overdueBooks.length > 0) {
+        setOverdueModal({
+          open: true,
+          overdueBooks,
+        });
+      }
+    } catch (error) {
+      console.error("Failed to check overdue books:", error);
+    }
+  };
+
+  const handleCloseOverdueModal = () => {
+    setOverdueModal({
+      open: false,
+      overdueBooks: [],
+    });
   };
 
   const applyFilters = () => {
@@ -628,6 +666,159 @@ const BookList = () => {
           </Paper>
         </Box>
       </Box>
+
+      <Dialog
+        open={overdueModal.open}
+        onClose={handleCloseOverdueModal}
+        maxWidth="sm"
+        fullWidth
+        sx={{
+          "& .MuiDialog-paper": {
+            borderRadius: 2,
+            p: 1,
+          },
+        }}
+      >
+        <DialogTitle
+          sx={{
+            display: "flex",
+            alignItems: "center",
+            gap: 2,
+            pb: 2,
+            backgroundColor: "#fff3cd",
+            color: "#856404",
+          }}
+        >
+          <WarningIcon sx={{ fontSize: 28, color: "error.main" }} />
+          <Box>
+            <Typography variant="h6" sx={{ fontWeight: 700 }}>
+              Overdue Books Alert
+            </Typography>
+            <Typography variant="body2" color="text.secondary">
+              You have {overdueModal.overdueBooks.length} overdue book
+              {overdueModal.overdueBooks.length > 1 ? "s" : ""} with pending
+              fines
+            </Typography>
+          </Box>
+        </DialogTitle>
+
+        <DialogContent sx={{ pb: 2 }}>
+          <List>
+            {overdueModal.overdueBooks.map((book, index) => (
+              <React.Fragment key={book.transactionId}>
+                <ListItem
+                  sx={{
+                    backgroundColor: "#fef2f2",
+                    borderRadius: 1.5,
+                    mb: 1,
+                    border: "1px solid #fecaca",
+                  }}
+                >
+                  <ListItemText
+                    primary={
+                      <Typography
+                        variant="h6"
+                        sx={{ fontWeight: 600, color: "text.primary" }}
+                      >
+                        {book.bookTitle}
+                      </Typography>
+                    }
+                    secondary={
+                      <Box sx={{ mt: 1 }}>
+                        <Typography
+                          variant="body2"
+                          color="text.secondary"
+                          sx={{ mb: 0.5 }}
+                        >
+                          Due Date: <strong>{book.dueDate}</strong>
+                        </Typography>
+                        <Typography
+                          variant="body2"
+                          color="text.secondary"
+                          sx={{ mb: 0.5 }}
+                        >
+                          Status:{" "}
+                          <strong style={{ color: "#d32f2f" }}>
+                            {book.transactionStatus}
+                          </strong>
+                        </Typography>
+                        <Typography
+                          variant="body1"
+                          color="error.main"
+                          sx={{ fontWeight: 600 }}
+                        >
+                          Fine Amount: ₹{book.fineAmount}
+                        </Typography>
+                      </Box>
+                    }
+                  />
+                </ListItem>
+                {index < overdueModal.overdueBooks.length - 1 && (
+                  <Divider sx={{ my: 1 }} />
+                )}
+              </React.Fragment>
+            ))}
+          </List>
+
+          <Box
+            sx={{
+              mt: 3,
+              p: 2,
+              backgroundColor: "#f8fafc",
+              borderRadius: 1.5,
+              display: "flex",
+              justifyContent: "space-between",
+              alignItems: "center",
+            }}
+          >
+            <Typography variant="h6" sx={{ fontWeight: 600 }}>
+              Total Fine Amount:
+            </Typography>
+            <Typography
+              variant="h5"
+              sx={{
+                fontWeight: 700,
+                color: "error.main",
+              }}
+            >
+              ₹
+              {overdueModal.overdueBooks.reduce(
+                (total, book) => total + book.fineAmount,
+                0
+              )}
+            </Typography>
+          </Box>
+        </DialogContent>
+
+        <DialogActions sx={{ p: 3, pt: 1 }}>
+          <Button
+            onClick={handleCloseOverdueModal}
+            variant="outlined"
+            sx={{
+              fontWeight: 600,
+              textTransform: "none",
+              borderRadius: 1.5,
+            }}
+          >
+            I'll Handle Later
+          </Button>
+          <Button
+            onClick={() => {
+              handleCloseOverdueModal();
+              window.location.href = "/student-dashboard";
+            }}
+            variant="contained"
+            color="primary"
+            sx={{
+              fontWeight: 600,
+              textTransform: "none",
+              borderRadius: 1.5,
+            }}
+          >
+            Go to Dashboard
+          </Button>
+        </DialogActions>
+      </Dialog>
     </ThemeProvider>
   );
 };
