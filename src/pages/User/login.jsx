@@ -13,11 +13,13 @@ import {
   DialogTitle,
   DialogContent,
   DialogActions,
+  ThemeProvider,
 } from "@mui/material";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../../context/AuthContext";
 import { authService } from "../../services/authService";
 import ForgotPasswordDialog from "./forgotpassword";
+import { typographyTheme } from "../../styles/typography";
 
 const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
@@ -90,14 +92,43 @@ const Login = () => {
   }
 
   return (
-    <Container maxWidth="sm" sx={{ mt: 4 }}>
-      <Paper elevation={3} sx={{ p: 4 }}>
-        <Typography variant="h4" component="h1" gutterBottom>
-          Login
+    <ThemeProvider theme={typographyTheme}>
+      <Container maxWidth="sm" sx={{ mt: 6, mb: 4 }}>
+        <Paper elevation={3} sx={{ p: { xs: 3, sm: 5 }, borderRadius: 2 }}>
+        <Typography 
+          variant="h4" 
+          component="h1" 
+          gutterBottom 
+          sx={{ 
+            fontWeight: 600,
+            textAlign: 'center',
+            mb: 2,
+            color: 'text.primary'
+          }}
+        >
+          Welcome Back
+        </Typography>
+        <Typography 
+          variant="body2" 
+          sx={{ 
+            textAlign: 'center',
+            color: 'text.secondary',
+            mb: 4,
+            fontWeight: 500
+          }}
+        >
+          Please sign in to your account
         </Typography>
 
         {apiError && (
-          <Alert severity="error" sx={{ mb: 2 }}>
+          <Alert 
+            severity="error" 
+            sx={{ 
+              mb: 3,
+              borderRadius: 1.5,
+              fontWeight: 500
+            }}
+          >
             {apiError}
           </Alert>
         )}
@@ -105,7 +136,7 @@ const Login = () => {
         <Box component="form" onSubmit={handleSubmit} noValidate>
           <Stack spacing={3}>
             <TextField
-              label="Email"
+              label="Email Address"
               name="email"
               type="email"
               value={formData.email}
@@ -114,6 +145,14 @@ const Login = () => {
               helperText={errors.email}
               required
               fullWidth
+              sx={{
+                '& .MuiInputLabel-root': {
+                  fontWeight: 500,
+                },
+                '& .MuiOutlinedInput-root': {
+                  borderRadius: 1.5,
+                },
+              }}
             />
 
             <TextField
@@ -126,38 +165,85 @@ const Login = () => {
               helperText={errors.password}
               required
               fullWidth
+              sx={{
+                '& .MuiInputLabel-root': {
+                  fontWeight: 500,
+                },
+                '& .MuiOutlinedInput-root': {
+                  borderRadius: 1.5,
+                },
+              }}
             />
-             <Typography variant="body2">
+            <Box sx={{ textAlign: 'right' }}>
               <Link
                 component="button"
                 variant="body2"
                 type="button"  
-                onClick={()=>setOpenForgot(true) }>
+                onClick={()=>setOpenForgot(true)}
+                sx={{
+                  fontWeight: 500,
+                  textDecoration: 'none',
+                  '&:hover': {
+                    textDecoration: 'underline',
+                  },
+                }}
+              >
                 Forgot Password?
               </Link>   
-             </Typography>
-                <ForgotPasswordDialog
-                  open={openForgot}
-                  onClose={() => setOpenForgot(false)}
-                />
-            <Button variant="contained" type="submit" fullWidth>
-              Login
+            </Box>
+            <ForgotPasswordDialog
+              open={openForgot}
+              onClose={() => setOpenForgot(false)}
+            />
+            <Button 
+              variant="contained" 
+              type="submit" 
+              fullWidth
+              size="large"
+              sx={{
+                py: 1.5,
+                borderRadius: 1.5,
+                fontWeight: 600,
+                fontSize: '1rem',
+                textTransform: 'none',
+                boxShadow: 2,
+                '&:hover': {
+                  boxShadow: 3,
+                },
+              }}
+            >
+              Sign In
             </Button>
 
-            <Typography variant="body2" align="center">
+            <Typography 
+              variant="body2" 
+              align="center"
+              sx={{ 
+                mt: 3,
+                color: 'text.secondary'
+              }}
+            >
               Don't have an account?{" "}
               <Link
                 component="button"
                 variant="body2"
                 onClick={() => navigate("/register")}
+                sx={{
+                  fontWeight: 600,
+                  textDecoration: 'none',
+                  '&:hover': {
+                    textDecoration: 'underline',
+                  },
+                }}
               >
-                Register here
+                Create Account
               </Link>
             </Typography>
           </Stack>
         </Box>
-      </Paper>
-    </Container>
+        </Paper>
+      </Container>
+    </ThemeProvider>
   );
 };
 

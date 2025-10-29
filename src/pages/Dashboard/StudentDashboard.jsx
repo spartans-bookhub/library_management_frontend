@@ -13,14 +13,29 @@ import {
   Alert,
   CircularProgress,
   Snackbar,
+  Toolbar,
+  IconButton,
+  ThemeProvider,
+  Dialog,
+  DialogTitle,
+  DialogContent,
+  DialogActions,
+  Divider,
 } from "@mui/material";
 import { DataGrid } from "@mui/x-data-grid";
+import {
+  Menu as MenuIcon,
+  Warning as WarningIcon,
+  Payment as PaymentIcon,
+} from "@mui/icons-material";
 
 import { useAuth } from "../../context/AuthContext";
 import { libraryService } from "../../services/libraryService";
+import Sidebar from "../../components/common/sidebar";
+import { typographyTheme } from "../../styles/typography";
 
 const Dashboard = () => {
-  const { user , isAdmin } = useAuth();
+  const { user } = useAuth();
   const [selectedTab, setSelectedTab] = useState(0);
   const [borrowedBooks, setBorrowedBooks] = useState([]);
   const [historyData, setHistoryData] = useState([]);
@@ -36,6 +51,17 @@ const Dashboard = () => {
     message: "",
     severity: "success",
   });
+  const [mobileOpen, setMobileOpen] = useState(false);
+  const [fineModal, setFineModal] = useState({
+    open: false,
+    bookData: null,
+    fineAmount: 0,
+    paymentCompleted: false,
+  });
+
+  const handleDrawerToggle = () => {
+    setMobileOpen(!mobileOpen);
+  };
 
   // Calculate dashboard counts from data
   const calculateCounts = (borrowedBooks, historyData) => {
@@ -135,6 +161,27 @@ const Dashboard = () => {
   };
 
   const handleReturnBook = async (bookId) => {
+    const bookData = borrowedBooks.find((book) => book.bookId === bookId);
+
+    if (!bookData) {
+      setSnackbar({
+        open: true,
+        message: "Book data not found",
+        severity: "error",
+      });
+      return;
+    }
+
+    if (isOverdue(bookData.dueDate) && bookData.fineAmount > 0) {
+      setFineModal({
+        open: true,
+        bookData,
+        fineAmount: bookData.fineAmount,
+        paymentCompleted: false,
+      });
+      return;
+    }
+
     try {
       await libraryService.returnBorrowedBook(bookId);
       setSnackbar({
@@ -142,7 +189,6 @@ const Dashboard = () => {
         message: "Book returned successfully!",
         severity: "success",
       });
-      // Refresh dashboard data to update counts
       fetchDashboardData();
     } catch (err) {
       setSnackbar({
@@ -151,6 +197,46 @@ const Dashboard = () => {
         severity: "error",
       });
     }
+  };
+
+  const handlePayFine = () => {
+    setFineModal((prev) => ({
+      ...prev,
+      paymentCompleted: true,
+    }));
+  };
+
+  const handleFinalReturn = async () => {
+    try {
+      await libraryService.returnBorrowedBook(fineModal.bookData.bookId);
+      setSnackbar({
+        open: true,
+        message: "Book returned successfully! Fine payment processed.",
+        severity: "success",
+      });
+      setFineModal({
+        open: false,
+        bookData: null,
+        fineAmount: 0,
+        paymentCompleted: false,
+      });
+      fetchDashboardData();
+    } catch (err) {
+      setSnackbar({
+        open: true,
+        message: err.message,
+        severity: "error",
+      });
+    }
+  };
+
+  const handleCloseFineModal = () => {
+    setFineModal({
+      open: false,
+      bookData: null,
+      fineAmount: 0,
+      paymentCompleted: false,
+    });
   };
 
   const handleCloseSnackbar = () => {
@@ -172,11 +258,15 @@ const Dashboard = () => {
 
   const activeBorrowedBooksColumns = [
     {
-      field: "transactionId",
-      headerName: "Txn ID",
+      field: "serialNo",
+      headerName: "Serial no.",
       width: 100,
       headerAlign: "center",
       align: "center",
+      renderCell: (params) => {
+        const index = borrowedBooks.findIndex(book => book.transactionId === params.row.transactionId);
+        return index + 1;
+      },
     },
     {
       field: "bookTitle",
@@ -205,7 +295,9 @@ const Dashboard = () => {
             borderRadius: 1,
             fontSize: "0.875rem",
             fontWeight: isOverdue(params.value) ? 600 : 400,
-            backgroundColor: isOverdue(params.value) ? "#ffebee" : "transparent",
+            backgroundColor: isOverdue(params.value)
+              ? "#ffebee"
+              : "transparent",
             color: isOverdue(params.value) ? "#d32f2f" : "inherit",
           }}
         >
@@ -229,6 +321,13 @@ const Dashboard = () => {
           sx={{
             minWidth: "80px",
             fontSize: "0.75rem",
+            fontWeight: 600,
+            borderRadius: 1.5,
+            textTransform: "none",
+            boxShadow: 1,
+            "&:hover": {
+              boxShadow: 2,
+            },
           }}
         >
           Return
@@ -239,11 +338,15 @@ const Dashboard = () => {
 
   const historyColumns = [
     {
-      field: "transactionId",
-      headerName: "Txn ID",
+      field: "serialNo",
+      headerName: "Serial no.",
       width: 100,
       headerAlign: "center",
       align: "center",
+      renderCell: (params) => {
+        const index = historyData.findIndex(item => item.transactionId === params.row.transactionId);
+        return index + 1;
+      },
     },
     {
       field: "bookTitle",
@@ -271,9 +374,16 @@ const Dashboard = () => {
             py: 0.5,
             borderRadius: 1,
             fontSize: "0.875rem",
-            fontWeight: isOverdue(params.value) && !params.row.returnDate ? 600 : 400,
-            backgroundColor: isOverdue(params.value) && !params.row.returnDate ? "#ffebee" : "transparent",
-            color: isOverdue(params.value) && !params.row.returnDate ? "#d32f2f" : "inherit",
+            fontWeight:
+              isOverdue(params.value) && !params.row.returnDate ? 600 : 400,
+            backgroundColor:
+              isOverdue(params.value) && !params.row.returnDate
+                ? "#ffebee"
+                : "transparent",
+            color:
+              isOverdue(params.value) && !params.row.returnDate
+                ? "#d32f2f"
+                : "inherit",
           }}
         >
           {params.value}
@@ -319,8 +429,24 @@ const Dashboard = () => {
   ];
 
   const renderCurrentBorrowedBooks = () => (
-    <Paper elevation={2} sx={{ p: 3, mt: 3, minHeight: 400 }}>
-      <Typography variant="h5" gutterBottom sx={{ mb: 3, fontWeight: 600 }}>
+    <Paper
+      elevation={2}
+      sx={{
+        p: 3,
+        mt: 3,
+        minHeight: 400,
+        borderRadius: 2,
+      }}
+    >
+      <Typography
+        variant="h5"
+        gutterBottom
+        sx={{
+          mb: 3,
+          fontWeight: 700,
+          color: "text.primary",
+        }}
+      >
         Active Borrows
       </Typography>
 
@@ -334,7 +460,13 @@ const Dashboard = () => {
           <CircularProgress />
         </Box>
       ) : error ? (
-        <Alert severity="error" sx={{ mb: 2 }}>
+        <Alert
+          severity="error"
+          sx={{
+            mb: 2,
+            borderRadius: 1.5,
+          }}
+        >
           {error}
         </Alert>
       ) : (
@@ -343,32 +475,40 @@ const Dashboard = () => {
             rows={borrowedBooks}
             columns={activeBorrowedBooksColumns}
             getRowId={(row) => row.transactionId}
-            getRowClassName={(params) => 
-              isOverdue(params.row.dueDate) ? 'overdue-row' : ''
+            getRowClassName={(params) =>
+              isOverdue(params.row.dueDate) ? "overdue-row" : ""
             }
             pageSize={5}
             rowsPerPageOptions={[5, 10, 25]}
             disableSelectionOnClick
             disableRowSelectionOnClick
             sx={{
+              border: "1px solid #e0e0e0",
+              borderRadius: 1.5,
               "& .MuiDataGrid-header": {
-                backgroundColor: "#f5f5f5",
-                fontWeight: 600,
+                backgroundColor: "#f8fafc",
+                fontWeight: 700,
+                color: "text.primary",
               },
               "& .MuiDataGrid-cell": {
                 borderRight: "1px solid #e0e0e0",
+                fontWeight: 500,
               },
               "& .MuiDataGrid-row:hover": {
-                backgroundColor: "#f9f9f9",
+                backgroundColor: "#f8fafc",
               },
               "& .overdue-row": {
-                backgroundColor: "#fff5f5",
+                backgroundColor: "#fef2f2",
                 "& .MuiDataGrid-cell": {
-                  borderColor: "#ffcdd2",
+                  borderColor: "#fecaca",
                 },
                 "&:hover": {
-                  backgroundColor: "#ffebee",
+                  backgroundColor: "#fee2e2",
                 },
+              },
+              "& .MuiDataGrid-footerContainer": {
+                borderTop: "1px solid #e0e0e0",
+                backgroundColor: "#f8fafc",
               },
             }}
             initialState={{
@@ -384,8 +524,24 @@ const Dashboard = () => {
   );
 
   const renderHistory = () => (
-    <Paper elevation={2} sx={{ p: 3, mt: 3, minHeight: 400 }}>
-      <Typography variant="h5" gutterBottom sx={{ mb: 3, fontWeight: 600 }}>
+    <Paper
+      elevation={2}
+      sx={{
+        p: 3,
+        mt: 3,
+        minHeight: 400,
+        borderRadius: 2,
+      }}
+    >
+      <Typography
+        variant="h5"
+        gutterBottom
+        sx={{
+          mb: 3,
+          fontWeight: 700,
+          color: "text.primary",
+        }}
+      >
         Borrowing History
       </Typography>
 
@@ -399,7 +555,13 @@ const Dashboard = () => {
           <CircularProgress />
         </Box>
       ) : error ? (
-        <Alert severity="error" sx={{ mb: 2 }}>
+        <Alert
+          severity="error"
+          sx={{
+            mb: 2,
+            borderRadius: 1.5,
+          }}
+        >
           {error}
         </Alert>
       ) : (
@@ -408,32 +570,42 @@ const Dashboard = () => {
             rows={historyData}
             columns={historyColumns}
             getRowId={(row) => row.transactionId}
-            getRowClassName={(params) => 
-              isOverdue(params.row.dueDate) && !params.row.returnDate ? 'overdue-row' : ''
+            getRowClassName={(params) =>
+              isOverdue(params.row.dueDate) && !params.row.returnDate
+                ? "overdue-row"
+                : ""
             }
             pageSize={5}
             rowsPerPageOptions={[5, 10, 25]}
             disableSelectionOnClick
             disableRowSelectionOnClick
             sx={{
+              border: "1px solid #e0e0e0",
+              borderRadius: 1.5,
               "& .MuiDataGrid-header": {
-                backgroundColor: "#f5f5f5",
-                fontWeight: 600,
+                backgroundColor: "#f8fafc",
+                fontWeight: 700,
+                color: "text.primary",
               },
               "& .MuiDataGrid-cell": {
                 borderRight: "1px solid #e0e0e0",
+                fontWeight: 500,
               },
               "& .MuiDataGrid-row:hover": {
-                backgroundColor: "#f9f9f9",
+                backgroundColor: "#f8fafc",
               },
               "& .overdue-row": {
-                backgroundColor: "#fff5f5",
+                backgroundColor: "#fef2f2",
                 "& .MuiDataGrid-cell": {
-                  borderColor: "#ffcdd2",
+                  borderColor: "#fecaca",
                 },
                 "&:hover": {
-                  backgroundColor: "#ffebee",
+                  backgroundColor: "#fee2e2",
                 },
+              },
+              "& .MuiDataGrid-footerContainer": {
+                borderTop: "1px solid #e0e0e0",
+                backgroundColor: "#f8fafc",
               },
             }}
             initialState={{
@@ -449,98 +621,406 @@ const Dashboard = () => {
   );
 
   return (
-    <Container maxWidth="lg" sx={{ mt: 4 }}>
-      <Paper elevation={3} sx={{ p: 4, mb: 4 }}>
+    <ThemeProvider theme={typographyTheme}>
+      <Box sx={{ display: "flex" }}>
+        <Sidebar open={mobileOpen} onClose={handleDrawerToggle} />
+
         <Box
-          display="flex"
-          justifyContent="space-between"
-          alignItems="center"
-          mb={3}
-        >
-          <Box>
-            <Typography variant="h4" component="h1">
-              Welcome, {user?.userName || "User"}!
-            </Typography>
-            <Typography variant="subtitle1" color="text.secondary">
-              {user?.role || "STUDENT"}
-            </Typography>
-          </Box>
-        </Box>
-
-        <Grid container spacing={3}>
-          <Grid item xs={12} md={4}>
-            <Card>
-              <CardContent>
-                <Typography variant="h6" gutterBottom>
-                  Currently Borrowed
-                </Typography>
-                <Typography variant="h3" color="primary.main">
-                  {dashboardCounts.currentlyBorrowed}
-                </Typography>
-                <Typography variant="body2" color="text.secondary">
-                  Active borrowings
-                </Typography>
-              </CardContent>
-            </Card>
-          </Grid>
-
-          <Grid item xs={12} md={4}>
-            <Card>
-              <CardContent>
-                <Typography variant="h6" gutterBottom>
-                  Overdue Books
-                </Typography>
-                <Typography variant="h3" color="error.main">
-                  {dashboardCounts.overdue}
-                </Typography>
-                <Typography variant="body2" color="text.secondary">
-                  Past due date
-                </Typography>
-              </CardContent>
-            </Card>
-          </Grid>
-
-          <Grid item xs={12} md={4}>
-            <Card>
-              <CardContent>
-                <Typography variant="h6" gutterBottom>
-                  Total Borrowed
-                </Typography>
-                <Typography variant="h3" color="success.main">
-                  {dashboardCounts.totalBorrowed}
-                </Typography>
-                <Typography variant="body2" color="text.secondary">
-                  Lifetime borrowings
-                </Typography>
-              </CardContent>
-            </Card>
-          </Grid>
-        </Grid>
-      </Paper>
-
-      <Paper elevation={1} sx={{ mt: 3 }}>
-        <BottomNavigation
-          showLabels
-          value={selectedTab}
-          onChange={(_event, value) => setSelectedTab(value)}
+          component="main"
           sx={{
-            borderRadius: "8px 8px 0 0",
-            "& .MuiBottomNavigationAction-root": {
-              color: "text.secondary",
-              "&.Mui-selected": {
-                color: "primary.main",
-              },
-            },
+            flexGrow: 1,
+            width: { sm: `calc(100% - 280px)` },
+            ml: { md: `280px` },
+            minHeight: "100vh",
+            backgroundColor: "#f8fafc",
           }}
         >
-          <BottomNavigationAction label="Active Borrows" />
-          <BottomNavigationAction label="History" />
-        </BottomNavigation>
-      </Paper>
+          <Box
+            sx={{
+              display: { xs: "block", md: "none" },
+              backgroundColor: "white",
+              borderBottom: "1px solid #e0e0e0",
+            }}
+          >
+            <Toolbar>
+              <IconButton
+                color="inherit"
+                aria-label="open drawer"
+                edge="start"
+                onClick={handleDrawerToggle}
+                sx={{ mr: 2 }}
+              >
+                <MenuIcon />
+              </IconButton>
+              <Typography
+                variant="h6"
+                sx={{
+                  fontWeight: 600,
+                  color: "primary.main",
+                }}
+              >
+                Dashboard
+              </Typography>
+            </Toolbar>
+          </Box>
 
-      {selectedTab === 0 && renderCurrentBorrowedBooks()}
-      {selectedTab === 1 && renderHistory()}
+          <Container maxWidth="lg" sx={{ py: 4 }}>
+            <Paper
+              elevation={2}
+              sx={{
+                p: 4,
+                mb: 4,
+                borderRadius: 2,
+                background: "linear-gradient(135deg, #667eea 0%, #764ba2 100%)",
+                color: "white",
+              }}
+            >
+              <Box
+                display="flex"
+                justifyContent="space-between"
+                alignItems="center"
+                mb={3}
+              >
+                <Box>
+                  <Typography
+                    variant="h4"
+                    component="h1"
+                    sx={{
+                      fontWeight: 700,
+                      mb: 1,
+                    }}
+                  >
+                    Welcome, {user?.userName || "User"}!
+                  </Typography>
+                  <Typography
+                    variant="subtitle1"
+                    sx={{
+                      opacity: 0.9,
+                      fontWeight: 500,
+                    }}
+                  >
+                    {user?.role || "STUDENT"} Dashboard
+                  </Typography>
+                </Box>
+              </Box>
 
+              <Grid container spacing={3}>
+                <Grid item xs={12} md={4}>
+                  <Card
+                    sx={{
+                      backgroundColor: "rgba(255, 255, 255, 0.95)",
+                      backdropFilter: "blur(10px)",
+                      borderRadius: 2,
+                      boxShadow: 3,
+                    }}
+                  >
+                    <CardContent sx={{ p: 3 }}>
+                      <Typography
+                        variant="h6"
+                        gutterBottom
+                        sx={{
+                          fontWeight: 600,
+                          color: "text.primary",
+                        }}
+                      >
+                        Currently Borrowed
+                      </Typography>
+                      <Typography
+                        variant="h2"
+                        sx={{
+                          fontWeight: 700,
+                          color: "primary.main",
+                          mb: 1,
+                        }}
+                      >
+                        {dashboardCounts.currentlyBorrowed}
+                      </Typography>
+                      <Typography
+                        variant="body2"
+                        sx={{
+                          color: "text.secondary",
+                          fontWeight: 500,
+                        }}
+                      >
+                        Active borrowings
+                      </Typography>
+                    </CardContent>
+                  </Card>
+                </Grid>
+
+                <Grid item xs={12} md={4}>
+                  <Card
+                    sx={{
+                      backgroundColor: "rgba(255, 255, 255, 0.95)",
+                      backdropFilter: "blur(10px)",
+                      borderRadius: 2,
+                      boxShadow: 3,
+                    }}
+                  >
+                    <CardContent sx={{ p: 3 }}>
+                      <Typography
+                        variant="h6"
+                        gutterBottom
+                        sx={{
+                          fontWeight: 600,
+                          color: "text.primary",
+                        }}
+                      >
+                        Overdue Books
+                      </Typography>
+                      <Typography
+                        variant="h2"
+                        sx={{
+                          fontWeight: 700,
+                          color: "error.main",
+                          mb: 1,
+                        }}
+                      >
+                        {dashboardCounts.overdue}
+                      </Typography>
+                      <Typography
+                        variant="body2"
+                        sx={{
+                          color: "text.secondary",
+                          fontWeight: 500,
+                        }}
+                      >
+                        Past due date
+                      </Typography>
+                    </CardContent>
+                  </Card>
+                </Grid>
+
+                <Grid item xs={12} md={4}>
+                  <Card
+                    sx={{
+                      backgroundColor: "rgba(255, 255, 255, 0.95)",
+                      backdropFilter: "blur(10px)",
+                      borderRadius: 2,
+                      boxShadow: 3,
+                    }}
+                  >
+                    <CardContent sx={{ p: 3 }}>
+                      <Typography
+                        variant="h6"
+                        gutterBottom
+                        sx={{
+                          fontWeight: 600,
+                          color: "text.primary",
+                        }}
+                      >
+                        Total Borrowed
+                      </Typography>
+                      <Typography
+                        variant="h2"
+                        sx={{
+                          fontWeight: 700,
+                          color: "success.main",
+                          mb: 1,
+                        }}
+                      >
+                        {dashboardCounts.totalBorrowed}
+                      </Typography>
+                      <Typography
+                        variant="body2"
+                        sx={{
+                          color: "text.secondary",
+                          fontWeight: 500,
+                        }}
+                      >
+                        Lifetime borrowings
+                      </Typography>
+                    </CardContent>
+                  </Card>
+                </Grid>
+              </Grid>
+            </Paper>
+
+            <Paper
+              elevation={2}
+              sx={{
+                mt: 3,
+                borderRadius: 2,
+                overflow: "hidden",
+              }}
+            >
+              <BottomNavigation
+                showLabels
+                value={selectedTab}
+                onChange={(_event, value) => setSelectedTab(value)}
+                sx={{
+                  backgroundColor: "white",
+                  borderBottom: "1px solid #e0e0e0",
+                  "& .MuiBottomNavigationAction-root": {
+                    color: "text.secondary",
+                    fontWeight: 500,
+                    "&.Mui-selected": {
+                      color: "primary.main",
+                      fontWeight: 600,
+                    },
+                  },
+                }}
+              >
+                <BottomNavigationAction label="Active Borrows" />
+                <BottomNavigationAction label="History" />
+              </BottomNavigation>
+            </Paper>
+
+            {selectedTab === 0 && renderCurrentBorrowedBooks()}
+            {selectedTab === 1 && renderHistory()}
+          </Container>
+        </Box>
+      </Box>
+      /* Fine Payment Modal */
+      <Dialog
+        open={fineModal.open}
+        onClose={handleCloseFineModal}
+        maxWidth="sm"
+        fullWidth
+        sx={{
+          "& .MuiDialog-paper": {
+            borderRadius: 2,
+            p: 1,
+          },
+        }}
+      >
+        <DialogTitle
+          sx={{
+            display: "flex",
+            alignItems: "center",
+            gap: 2,
+            pb: 2,
+          }}
+        >
+          <WarningIcon color="error" sx={{ fontSize: 28 }} />
+          <Box>
+            <Typography variant="h6" sx={{ fontWeight: 700 }}>
+              Overdue Book Fine
+            </Typography>
+            <Typography variant="body2" color="text.secondary">
+              Payment required before return
+            </Typography>
+          </Box>
+        </DialogTitle>
+
+        <DialogContent sx={{ pb: 2 }}>
+          {fineModal.bookData && (
+            <>
+              <Paper
+                elevation={1}
+                sx={{
+                  p: 3,
+                  mb: 3,
+                  borderRadius: 2,
+                  backgroundColor: "#fef2f2",
+                  border: "1px solid #fecaca",
+                }}
+              >
+                <Typography variant="h6" sx={{ fontWeight: 600, mb: 1 }}>
+                  {fineModal.bookData.bookTitle}
+                </Typography>
+                <Typography
+                  variant="body2"
+                  color="text.secondary"
+                  sx={{ mb: 0.5 }}
+                >
+                  Due Date: {fineModal.bookData.dueDate}
+                </Typography>
+                <Typography
+                  variant="body2"
+                  color="error.main"
+                  sx={{ fontWeight: 500 }}
+                >
+                  Status: {fineModal.bookData.transactionStatus}
+                </Typography>
+              </Paper>
+
+              <Divider sx={{ my: 2 }} />
+
+              <Box
+                sx={{
+                  display: "flex",
+                  justifyContent: "space-between",
+                  alignItems: "center",
+                  p: 2,
+                  backgroundColor: "#f8fafc",
+                  borderRadius: 1.5,
+                  mb: 2,
+                }}
+              >
+                <Typography variant="h6" sx={{ fontWeight: 600 }}>
+                  Total Fine Amount:
+                </Typography>
+                <Typography
+                  variant="h5"
+                  sx={{
+                    fontWeight: 700,
+                    color: "error.main",
+                  }}
+                >
+                  ₹{fineModal.fineAmount}
+                </Typography>
+              </Box>
+
+              {!fineModal.paymentCompleted ? (
+                <Alert severity="warning" sx={{ borderRadius: 1.5 }}>
+                  Please pay the fine to proceed with book return.
+                </Alert>
+              ) : (
+                <Alert severity="success" sx={{ borderRadius: 1.5 }}>
+                  Payment successful! You can now return the book.
+                </Alert>
+              )}
+            </>
+          )}
+        </DialogContent>
+
+        <DialogActions sx={{ p: 3, pt: 1 }}>
+          <Button
+            onClick={handleCloseFineModal}
+            variant="outlined"
+            sx={{
+              fontWeight: 600,
+              textTransform: "none",
+              borderRadius: 1.5,
+            }}
+          >
+            Cancel
+          </Button>
+
+          {!fineModal.paymentCompleted ? (
+            <Button
+              onClick={handlePayFine}
+              variant="contained"
+              startIcon={<PaymentIcon />}
+              sx={{
+                fontWeight: 600,
+                textTransform: "none",
+                borderRadius: 1.5,
+                backgroundColor: "success.main",
+                "&:hover": {
+                  backgroundColor: "success.dark",
+                },
+              }}
+            >
+              Pay Fine (₹{fineModal.fineAmount})
+            </Button>
+          ) : (
+            <Button
+              onClick={handleFinalReturn}
+              variant="contained"
+              color="primary"
+              sx={{
+                fontWeight: 600,
+                textTransform: "none",
+                borderRadius: 1.5,
+              }}
+            >
+              Return Book
+            </Button>
+          )}
+        </DialogActions>
+      </Dialog>
       <Snackbar
         open={snackbar.open}
         autoHideDuration={6000}
@@ -555,7 +1035,7 @@ const Dashboard = () => {
           {snackbar.message}
         </Alert>
       </Snackbar>
-    </Container>
+    </ThemeProvider>
   );
 };
 
