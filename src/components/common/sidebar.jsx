@@ -18,6 +18,7 @@ import {
   ShoppingCart as CartIcon,
   Settings as SettingsIcon,
   Logout as LogoutIcon,
+  AccountCircle as AccountCircleIcon,
 } from "@mui/icons-material";
 import { useNavigate, useLocation } from "react-router-dom";
 import { useAuth } from "../../context/AuthContext";
@@ -50,8 +51,8 @@ const Sidebar = ({ open, onClose }) => {
       badge: getCartItemCount(),
     },
     {
-      text: "Settings",
-      icon: <SettingsIcon />,
+      text: "Profile",
+      icon: <AccountCircleIcon />,
       path: "/userprofile",
     },
   ];
@@ -88,12 +89,15 @@ const Sidebar = ({ open, onClose }) => {
             borderColor: "divider",
           }}
         >
-          <Typography
-            variant="h6"
-            sx={{ fontWeight: 700, color: "primary.main" }}
-          >
-            BookNest
-          </Typography>
+          <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
+            <BookIcon sx={{ color: "primary.main", fontSize: 28 }} />
+            <Typography
+              variant="h6"
+              sx={{ fontWeight: 700, color: "primary.main" }}
+            >
+              BookNest
+            </Typography>
+          </Box>
           <Typography
             variant="body2"
             sx={{ color: "text.secondary", mt: 0.5, fontWeight: 500 }}
@@ -101,7 +105,14 @@ const Sidebar = ({ open, onClose }) => {
             Library Management
           </Typography>
         </Box>
-        <Box sx={{ flexGrow: 1, display: 'flex', flexDirection: 'column', height: 'calc(100vh - 120px)' }}>
+        <Box
+          sx={{
+            flexGrow: 1,
+            display: "flex",
+            flexDirection: "column",
+            height: "calc(100vh - 120px)",
+          }}
+        >
           <List sx={{ pt: 2 }}>
             {menuItems.map((item) => (
               <ListItem key={item.text} disablePadding sx={{ mb: 0.5 }}>
@@ -150,8 +161,8 @@ const Sidebar = ({ open, onClose }) => {
                         style: {
                           fontWeight: isSelected(item.path) ? 600 : 500,
                           fontSize: "0.95rem",
-                        }
-                      }
+                        },
+                      },
                     }}
                   />
                 </ListItemButton>
@@ -199,8 +210,8 @@ const Sidebar = ({ open, onClose }) => {
                         fontWeight: 500,
                         fontSize: "0.95rem",
                         color: "#d32f2f",
-                      }
-                    }
+                      },
+                    },
                   }}
                 />
               </ListItemButton>

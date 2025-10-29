@@ -29,8 +29,16 @@ import {
   ListItem,
   ListItemText,
   Divider,
+  Fab,
+  Slide,
 } from "@mui/material";
-import { Menu as MenuIcon, Warning as WarningIcon } from "@mui/icons-material";
+import {
+  Menu as MenuIcon,
+  Warning as WarningIcon,
+  Chat as ChatIcon,
+  Close as CloseIcon,
+  Send as SendIcon,
+} from "@mui/icons-material";
 import SearchIcon from "@mui/icons-material/Search";
 import { libraryService } from "../../services/libraryService";
 import { useAuth } from "../../context/AuthContext";
@@ -38,6 +46,13 @@ import { useCart } from "../../context/CartContext";
 import { useToast } from "../../context/ToastContext";
 import { typographyTheme } from "../../styles/typography";
 import Sidebar from "../../components/common/sidebar";
+import {
+  prepareChatContext,
+  callOpenAI,
+  getWelcomeMessage,
+  formatChatMessage,
+  getQuickSuggestions,
+} from "../../utils/chatbotUtils";
 
 const BookList = () => {
   const [books, setBooks] = useState([]);
@@ -54,6 +69,12 @@ const BookList = () => {
     open: false,
     overdueBooks: [],
   });
+  const [chatOpen, setChatOpen] = useState(false);
+  const [chatMessages, setChatMessages] = useState([]);
+  const [chatInput, setChatInput] = useState("");
+  const [chatLoading, setChatLoading] = useState(false);
+  const [chatContext, setChatContext] = useState(null);
+  const [quickSuggestions, setQuickSuggestions] = useState([]);
   const booksPerPage = 12;
 
   const {} = useAuth();
@@ -63,6 +84,7 @@ const BookList = () => {
   useEffect(() => {
     fetchBooks();
     checkOverdueBooks();
+    initializeChatContext();
   }, []);
 
   useEffect(() => {
@@ -107,6 +129,51 @@ const BookList = () => {
       open: false,
       overdueBooks: [],
     });
+  };
+
+  const initializeChatContext = async () => {
+    const context = await prepareChatContext();
+    setChatContext(context);
+    setQuickSuggestions(getQuickSuggestions(context));
+    return context;
+  };
+
+  const handleSuggestionClick = (suggestion) => {
+    setChatInput(suggestion);
+  };
+
+  const handleSendMessage = async () => {
+    if (!chatInput.trim() || chatLoading) return;
+
+    const userMessage = chatInput.trim();
+    setChatInput("");
+    setChatLoading(true);
+
+    // Add user message
+    const userMsg = formatChatMessage(userMessage, "user");
+    setChatMessages((prev) => [...prev, userMsg]);
+
+    try {
+      const response = await callOpenAI(userMessage, chatMessages, chatContext);
+      const aiMsg = formatChatMessage(response, "ai");
+      setChatMessages((prev) => [...prev, aiMsg]);
+    } catch (error) {
+      const errorMsg = formatChatMessage(
+        "Sorry, I encountered an error. Please try again.",
+        "ai"
+      );
+      setChatMessages((prev) => [...prev, errorMsg]);
+    } finally {
+      setChatLoading(false);
+    }
+  };
+
+  const handleChatToggle = () => {
+    setChatOpen(!chatOpen);
+    if (!chatOpen && chatMessages.length === 0) {
+      const welcomeMsg = getWelcomeMessage(chatContext);
+      setChatMessages([welcomeMsg]);
+    }
   };
 
   const applyFilters = () => {
@@ -666,6 +733,243 @@ const BookList = () => {
           </Paper>
         </Box>
       </Box>
+
+      <Fab
+        color="primary"
+        onClick={handleChatToggle}
+        sx={{
+          position: "fixed",
+          bottom: 20,
+          right: 20,
+          zIndex: 1000,
+          boxShadow: 3,
+          "&:hover": {
+            boxShadow: 6,
+            transform: "scale(1.05)",
+          },
+          transition: "all 0.2s ease-in-out",
+        }}
+      >
+        {chatOpen ? <CloseIcon /> : <ChatIcon />}
+      </Fab>
+
+      <Slide direction="up" in={chatOpen} mountOnEnter unmountOnExit>
+        <Paper
+          elevation={8}
+          sx={{
+            position: "fixed",
+            bottom: 90,
+            right: 20,
+            width: { xs: 320, sm: 400 },
+            height: 500,
+            zIndex: 999,
+            borderRadius: 2,
+            display: "flex",
+            flexDirection: "column",
+            overflow: "hidden",
+          }}
+        >
+          <Box
+            sx={{
+              p: 2,
+              backgroundColor: "primary.main",
+              color: "white",
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "space-between",
+            }}
+          >
+            <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
+              <ChatIcon />
+              <Typography variant="h6" sx={{ fontWeight: 600 }}>
+                BookNest AI
+              </Typography>
+            </Box>
+            <IconButton
+              size="small"
+              onClick={handleChatToggle}
+              sx={{ color: "white" }}
+            >
+              <CloseIcon />
+            </IconButton>
+          </Box>
+
+          {/* Chat Messages */}
+          <Box
+            sx={{
+              flexGrow: 1,
+              p: 2,
+              overflowY: "auto",
+              backgroundColor: "#f8fafc",
+              display: "flex",
+              flexDirection: "column",
+              gap: 1,
+            }}
+          >
+            {chatMessages.map((message, index) => (
+              <Box
+                key={index}
+                sx={{
+                  display: "flex",
+                  justifyContent:
+                    message.sender === "user" ? "flex-end" : "flex-start",
+                  mb: 1,
+                }}
+              >
+                <Paper
+                  elevation={1}
+                  sx={{
+                    p: 1.5,
+                    maxWidth: "80%",
+                    backgroundColor:
+                      message.sender === "user" ? "primary.main" : "white",
+                    color: message.sender === "user" ? "white" : "text.primary",
+                    borderRadius:
+                      message.sender === "user"
+                        ? "15px 15px 5px 15px"
+                        : "15px 15px 15px 5px",
+                  }}
+                >
+                  <Typography
+                    variant="body2"
+                    sx={{
+                      whiteSpace: "pre-wrap",
+                      fontSize: "0.875rem",
+                      lineHeight: 1.4,
+                    }}
+                  >
+                    {message.text}
+                  </Typography>
+                </Paper>
+              </Box>
+            ))}
+
+            {chatLoading && (
+              <Box
+                sx={{ display: "flex", justifyContent: "flex-start", mb: 1 }}
+              >
+                <Paper
+                  elevation={1}
+                  sx={{
+                    p: 1.5,
+                    backgroundColor: "white",
+                    borderRadius: "15px 15px 15px 5px",
+                  }}
+                >
+                  <Box sx={{ display: "flex", gap: 0.5 }}>
+                    <CircularProgress size={8} />
+                    <CircularProgress
+                      size={8}
+                      sx={{ animationDelay: "0.2s" }}
+                    />
+                    <CircularProgress
+                      size={8}
+                      sx={{ animationDelay: "0.4s" }}
+                    />
+                  </Box>
+                </Paper>
+              </Box>
+            )}
+          </Box>
+
+          <Box
+            sx={{
+              p: 2,
+              borderTop: "1px solid #e0e0e0",
+              backgroundColor: "white",
+            }}
+          >
+            {/* Quick Suggestions */}
+            {chatMessages.length <= 1 && quickSuggestions.length > 0 && (
+              <Box sx={{ mb: 2 }}>
+                <Typography
+                  variant="caption"
+                  sx={{
+                    color: "text.secondary",
+                    fontWeight: 500,
+                    mb: 1,
+                    display: "block",
+                  }}
+                >
+                  Quick suggestions:
+                </Typography>
+                <Box
+                  sx={{
+                    display: "flex",
+                    flexWrap: "wrap",
+                    gap: 1,
+                  }}
+                >
+                  {quickSuggestions.map((suggestion, index) => (
+                    <Button
+                      key={index}
+                      variant="outlined"
+                      size="small"
+                      onClick={() => handleSuggestionClick(suggestion)}
+                      sx={{
+                        textTransform: "none",
+                        fontSize: "0.75rem",
+                        borderRadius: 2,
+                        px: 1.5,
+                        py: 0.5,
+                        borderColor: "grey.300",
+                        color: "text.secondary",
+                        "&:hover": {
+                          backgroundColor: "primary.light",
+                          borderColor: "primary.main",
+                          color: "primary.main",
+                        },
+                      }}
+                    >
+                      {suggestion}
+                    </Button>
+                  ))}
+                </Box>
+              </Box>
+            )}
+
+            <Box sx={{ display: "flex", gap: 1 }}>
+              <TextField
+                fullWidth
+                size="small"
+                placeholder="Ask me anything about books..."
+                value={chatInput}
+                onChange={(e) => setChatInput(e.target.value)}
+                onKeyDown={(e) => {
+                  if (e.key === "Enter" && !e.shiftKey) {
+                    e.preventDefault();
+                    handleSendMessage();
+                  }
+                }}
+                disabled={chatLoading}
+                sx={{
+                  "& .MuiOutlinedInput-root": {
+                    borderRadius: 3,
+                  },
+                }}
+              />
+              <IconButton
+                color="primary"
+                onClick={handleSendMessage}
+                disabled={!chatInput.trim() || chatLoading}
+                sx={{
+                  backgroundColor: "primary.main",
+                  color: "white",
+                  "&:hover": {
+                    backgroundColor: "primary.dark",
+                  },
+                  "&:disabled": {
+                    backgroundColor: "grey.300",
+                    color: "grey.500",
+                  },
+                }}
+              >
+                <SendIcon />
+              </IconButton>
+            </Box>
+          </Box>
+        </Paper>
+      </Slide>
 
       <Dialog
         open={overdueModal.open}
