@@ -20,7 +20,7 @@ import ResetPassword from "./pages/User/resetpassword";
 import NotFound from "./pages/OtherPages/NotFound";
 import Home from "./components/Home";
 import AdminDashboardLayout from "./pages/Dashboard/adminDashboardLayout";
-import AdminDashboard from "./pages/Dashboard/AdminDashboard";
+import AdminDashboard from "./pages/Dashboard/adminDashboard";
 import BorrowReturnHistory from "./pages/Dashboard/BorrowReturnHistory";
 // import TransactionTable from "./pages/Dashboard/TransactionTable";
 
