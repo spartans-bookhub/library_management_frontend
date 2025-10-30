@@ -5,7 +5,7 @@ import Registration from "./pages/User/registration";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import Navbar from "./components/common/navbar";
 import Footer from "./components/common/footer";
-import Login from "./pages/User/Login";
+import Login from "./pages/User/login";
 import Dashboard from "./pages/Dashboard/StudentDashboard";
 import StudentDashboard from "./pages/Dashboard/StudentDashboard";
 import BookList from "./pages/Books/BookList";
