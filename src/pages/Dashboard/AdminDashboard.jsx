@@ -131,20 +131,204 @@ const AdminDashboard = () => {
         )}
       </Box>
 
-      {/* Snackbar Alerts */}
-      <Snackbar
-        open={snackbar.open}
-        autoHideDuration={3000}
-        onClose={() => setSnackbar((prev) => ({ ...prev, open: false }))}
-      >
-        <Alert
-          severity={snackbar.severity}
-          onClose={() => setSnackbar((prev) => ({ ...prev, open: false }))}
-          variant="filled"
-        >
-          {snackbar.message}
-        </Alert>
-      </Snackbar>
+        <Stack direction={{ xs: "column", md: "row" }} spacing={2} alignItems="center" flexWrap="wrap">
+          <TextField
+            label="Title"
+            name="bookTitle"
+            value={newBook.bookTitle}
+            onChange={handleInputChange}
+            error={!!errors.bookTitle}
+            helperText={errors.bookTitle}
+            disabled={isSubmitting}
+            fullWidth
+          />
+          <TextField
+            label="ISBN"
+            name="isbn"
+            value={newBook.isbn}
+            onChange={handleInputChange}
+            error={!!errors.isbn}
+            helperText={errors.isbn}
+            disabled={isSubmitting}
+            placeholder="e.g., 978-0-123456-78-9"
+            fullWidth
+            sx={{ minWidth: 240 }}
+          />
+          <TextField
+            label="Author"
+            name="bookAuthor"
+            value={newBook.bookAuthor}
+            onChange={handleInputChange}
+            error={!!errors.bookAuthor}
+            helperText={errors.bookAuthor}
+            disabled={isSubmitting}
+            fullWidth
+          />
+          {/* Removed duplicate TextField components */}
+          <TextField
+            select
+            label="Category"
+            name="category"
+            value={newBook.category}
+            onChange={handleInputChange}
+            error={!!errors.category}
+            helperText={errors.category}
+            disabled={isSubmitting}
+            fullWidth
+             sx={{ minWidth: 180 }}
+          >
+            <MenuItem value="Fiction">Fiction</MenuItem>
+            <MenuItem value="Science">Science</MenuItem>
+            <MenuItem value="Technology">Technology</MenuItem>
+            <MenuItem value="History">History</MenuItem>
+            <MenuItem value="Others">Others</MenuItem>
+          </TextField>
+
+          <Button 
+            variant="contained" 
+            color="primary" 
+            onClick={addBook} 
+            disabled={isSubmitting}
+            sx={{ height: "56px" }}
+            
+          >
+            {isSubmitting ? "Adding..." : "Add"}
+          </Button>
+          
+          {/*  Total Copies */}
+          <TextField
+            label="Total No. of Copies"
+            name="totalCopies"
+            type="number"
+            value={newBook.totalCopies}
+            onChange={handleInputChange}
+            error={!!errors.totalCopies}
+            helperText={errors.totalCopies}
+            disabled={isSubmitting}
+            sx={{ minWidth: 140 }}
+            // inputProps={{ min: 1 }}
+          />
+
+          {/* Upload Image */}
+          <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
+            <input
+              accept="image/*"
+              id="book-image-file"
+              type="file"
+              style={{ display: "none" }}
+              onChange={(e) => handleFileChange(e.target.files?.[0])}
+            />
+            <label htmlFor="book-image-file">
+              <Button variant="outlined" component="span" disabled={isSubmitting || uploading}>
+                {uploading ? "Uploading..." : "Upload Image"}
+              </Button>
+            </label>
+            {uploading && <CircularProgress size={20} />}
+            <Avatar
+              src={newBook.imageUrl || undefined}
+              variant="rounded"
+              sx={{ width: 56, height: 56, bgcolor: "#e0e0e0" }}
+            />
+          </Box>
+
+          <Box sx={{ width: 320 }}>
+            {uploading && <LinearProgress variant="determinate" value={uploadProgress} sx={{ mb: 1 }} />}
+            <TextField
+              label="Image URL / Preview"
+              name="imageUrl"
+              value={newBook.imageUrl}
+              onChange={handleInputChange}
+              error={!!errors.imageUrl}
+              helperText={errors.imageUrl}
+              disabled={isSubmitting}
+              fullWidth
+            />
+          </Box>
+
+          <Box sx={{ display: "flex", gap: 2, alignItems: "center" }}>
+            <Button
+              variant="contained"
+              color="primary"
+              onClick={addBook}
+              disabled={isSubmitting || uploading}
+            >
+              {isSubmitting ? (isEditing ? "Updating..." : "Adding...") : isEditing ? "Update Book" : "Add Book"}
+            </Button>
+            {isEditing && (
+              <Button variant="outlined" color="secondary" onClick={cancelEdit} disabled={isSubmitting}>
+                Cancel
+              </Button>
+            )}
+          </Box>
+        </Stack>
+      {/* </Paper> */}
+
+      {/* ✅ BOOK TABLE */}
+      <Paper sx={{ p: 3, mb: 4 }}>
+        <Typography variant="h6" gutterBottom>
+          Book List
+        </Typography>
+
+        <TableContainer>
+          <Table>
+            <TableHead>
+              <TableRow sx={{ backgroundColor: "#e3f2fd" }}>
+                {/* ✅ Serial Number instead of Book ID */}
+                <TableCell><strong>#</strong></TableCell>
+                <TableCell><strong>Image</strong></TableCell>
+                <TableCell><strong>Title</strong></TableCell>
+                <TableCell><strong>Author</strong></TableCell>
+                <TableCell><strong>Category</strong></TableCell>
+                <TableCell><strong>ISBN</strong></TableCell>
+                <TableCell><strong>Total Copies</strong></TableCell>
+                {/* <TableCell><strong>Available</strong></TableCell> */}
+                <TableCell><strong>Action</strong></TableCell>
+              </TableRow>
+            </TableHead>
+
+            <TableBody>
+              {books.length === 0 ? (
+                <TableRow>
+                  <TableCell colSpan={9} align="center">
+                    No books added yet.
+                  </TableCell>
+                </TableRow>
+              ) : (
+                books.map((book, index) => (
+                  <TableRow key={book.bookId || book.id || book.tempId || book.isbn}>
+                    <TableCell>{index + 1}</TableCell>
+                    <TableCell>
+                      <Avatar
+                        src={book.image_url ?? book.imageUrl}
+                        variant="rounded"
+                        sx={{ width: 48, height: 48 }}
+                      />
+                    </TableCell>
+                    <TableCell>{book.bookTitle}</TableCell>
+                    <TableCell>{book.bookAuthor}</TableCell>
+                    <TableCell>{book.category}</TableCell>
+                    <TableCell>{book.isbn}</TableCell>
+                    <TableCell>{book.totalCopies ?? "-"}</TableCell>
+                    {/* <TableCell>{book.availableCopies ?? "-"}</TableCell> */}
+                    <TableCell>
+                      <IconButton color="primary" onClick={() => handleEdit(book)}>
+                        <EditIcon />
+                      </IconButton>
+                      <IconButton
+                        color="error"
+                        onClick={() => deleteBook(book.bookId)}
+                        disabled={!book.bookId && !book.id}
+                      >
+                        <DeleteIcon />
+                      </IconButton>
+                    </TableCell>
+                  </TableRow>
+                ))
+              )}
+            </TableBody>
+          </Table>
+        </TableContainer>
+      </Paper>
     </Box>
   );
 };
