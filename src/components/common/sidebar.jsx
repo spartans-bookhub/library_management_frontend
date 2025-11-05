@@ -51,8 +51,8 @@ const Sidebar = ({ open, onClose }) => {
       badge: getCartItemCount(),
     },
     {
-      text: "Profile",
-      icon: <AccountCircleIcon />,
+      text: "Settings",
+      icon: <SettingsIcon />,
       path: "/userprofile",
     },
   ];
@@ -76,29 +76,25 @@ const Sidebar = ({ open, onClose }) => {
         sx={{
           width: drawerWidth,
           height: "100%",
-          backgroundColor: "var(--sidebar-primary-foreground)",
+          backgroundColor: "#efefef",
           borderRadius: 0,
         }}
       >
         <Box
           sx={{
             p: 3,
-            // backgroundColor: "#efefef",
-            backgroundColor: "var(--sidebar-primary-foreground)",
+            backgroundColor: "#efefef",
             color: "text.primary",
             borderBottom: "1px solid",
             borderColor: "divider",
           }}
         >
-          <Box sx={{ display: "flex", alignItems: "center", gap: 1, }}>
-            <BookIcon sx={{ color: "primary.main", fontSize: 28 }} />
-            <Typography
-              variant="h6"
-              sx={{ fontWeight: 700, color: "primary.main" }}
-            >
-              BookNest
-            </Typography>
-          </Box>
+          <Typography
+            variant="h6"
+            sx={{ fontWeight: 700, color: "primary.main" }}
+          >
+            BookNest
+          </Typography>
           <Typography
             variant="body2"
             sx={{ color: "text.secondary", mt: 0.5, fontWeight: 500 }}
@@ -106,14 +102,7 @@ const Sidebar = ({ open, onClose }) => {
             Library Management
           </Typography>
         </Box>
-        <Box
-          sx={{
-            flexGrow: 1,
-            display: "flex",
-            flexDirection: "column",
-            height: "calc(100vh - 120px)",
-          }}
-        >
+        <Box sx={{ flexGrow: 1, display: 'flex', flexDirection: 'column', height: 'calc(100vh - 120px)' }}>
           <List sx={{ pt: 2 }}>
             {menuItems.map((item) => (
               <ListItem key={item.text} disablePadding sx={{ mb: 0.5 }}>
@@ -162,8 +151,8 @@ const Sidebar = ({ open, onClose }) => {
                         style: {
                           fontWeight: isSelected(item.path) ? 600 : 500,
                           fontSize: "0.95rem",
-                        },
-                      },
+                        }
+                      }
                     }}
                   />
                 </ListItemButton>
@@ -186,12 +175,11 @@ const Sidebar = ({ open, onClose }) => {
                   borderRadius: 2,
                   minHeight: 48,
                   "&:hover": {
-                    // borderColor: "primary.main",
-                    borderColor: "primary.main",
+                    backgroundColor: "error.main",
                     color: "white",
                     boxShadow: 1,
                     "& .MuiListItemIcon-root": {
-                      color: "red",
+                      color: "white",
                     },
                   },
                 }}
@@ -212,8 +200,8 @@ const Sidebar = ({ open, onClose }) => {
                         fontWeight: 500,
                         fontSize: "0.95rem",
                         color: "#d32f2f",
-                      },
-                    },
+                      }
+                    }
                   }}
                 />
               </ListItemButton>
